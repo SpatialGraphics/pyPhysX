@@ -7,7 +7,6 @@
 #include <PxPhysicsAPI.h>
 
 #include <nanobind/nanobind.h>
-#include <nanobind/stl/tuple.h>
 
 namespace nb = nanobind;
 using namespace nb::literals;
@@ -65,10 +64,35 @@ void bindMath(nb::module_& m) {
             });
 
     nb::class_<PxQuat>(m, "PxQuat")
+            .def(nb::init<>())
+            .def(nb::init<float>())
+            .def(nb::init<float, float, float, float>(), "nx"_a, "ny"_a, "nz"_a, "nw"_a)
+            .def(nb::init<float, PxVec3>(), "angleRadians"_a, "unitAxis"_a)
+            .def(nb::init<PxMat33>(), "m"_a)
             .def_rw("x", &PxQuat::x)
             .def_rw("y", &PxQuat::y)
             .def_rw("z", &PxQuat::z)
-            .def_rw("w", &PxQuat::w);
+            .def_rw("w", &PxQuat::w)
+            .def("isIdentity", &PxQuat::isIdentity)
+            .def("isFinite", &PxQuat::isFinite)
+            .def("isUnit", &PxQuat::isUnit)
+            .def("isSane", &PxQuat::isSane)
+            .def("toRadiansAndUnitAxis", &PxQuat::toRadiansAndUnitAxis)
+            .def("getAngle", nb::overload_cast<>(&PxQuat::getAngle, nb::const_))
+            .def("getAngle", nb::overload_cast<const PxQuat&>(&PxQuat::getAngle, nb::const_))
+            .def("magnitudeSquared", &PxQuat::magnitudeSquared)
+            .def("dot", &PxQuat::dot)
+            .def("getNormalized", &PxQuat::getNormalized)
+            .def("magnitude", &PxQuat::magnitude)
+            .def("normalize", &PxQuat::normalize)
+            .def("getConjugate", &PxQuat::getConjugate)
+            .def("getImaginaryPart", &PxQuat::getImaginaryPart)
+            .def("getBasisVector0", &PxQuat::getBasisVector0)
+            .def("getBasisVector1", &PxQuat::getBasisVector1)
+            .def("getBasisVector2", &PxQuat::getBasisVector2)
+            .def("rotate", &PxQuat::rotate)
+            .def("rotateInv", &PxQuat::rotateInv);
+
     nb::class_<PxTransform>(m, "PxTransform")
             .def_rw("translation", &PxTransform::p)
             .def_rw("rotation", &PxTransform::q);
