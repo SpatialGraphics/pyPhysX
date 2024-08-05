@@ -20,6 +20,8 @@ find_package(nanobind CONFIG REQUIRED)
 
 set(BINDING_FILES
         src/py_physx_ext.cpp
+
+        src/py_math.cpp
 )
 
 # We are now ready to compile the actual extension module
@@ -56,5 +58,8 @@ target_link_libraries(py_physx_ext PRIVATE
         physx5
 )
 
+file(GLOB PY_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/pyPhysX/*.py" "${CMAKE_CURRENT_SOURCE_DIR}/src/pyPhysX/*.pyi")
+
 # Install directive for scikit-build-core
 install(TARGETS py_physx_ext LIBRARY DESTINATION pyPhysX)
+install(FILES ${PY_FILES} DESTINATION pyPhysX)
