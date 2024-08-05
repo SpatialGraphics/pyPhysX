@@ -4,7 +4,7 @@ project(pyPhysX LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
-#add_subdirectory(third_party)
+add_subdirectory(third_party)
 
 # Try to import all Python components potentially needed by nanobind
 find_package(Python 3.8
@@ -52,18 +52,9 @@ nanobind_add_stub(
         DEPENDS py_physx_ext
 )
 
-#target_link_libraries(py_physx_ext PRIVATE
-#        filament
-#        math
-#        utils
-#        filamat
-#        filabridge
-#
-#        ktxreader
-#        filameshio
-#        uberarchive
-#        gltfio_core
-#)
+target_link_libraries(py_physx_ext PRIVATE
+        physx5
+)
 
 # Install directive for scikit-build-core
 install(TARGETS py_physx_ext LIBRARY DESTINATION pyPhysX)

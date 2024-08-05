@@ -5,10 +5,16 @@
 //  property of any third parties.
 
 #include <nanobind/nanobind.h>
+#include <PxMaterial.h>
 
 namespace nb = nanobind;
 using namespace nb::literals;
+using namespace physx;
 
 NB_MODULE(py_physx, m) {
     m.doc() = "python binding for PhysX";
+
+    nb::class_<PxMaterial>(m, "PxMaterial")
+            .def("setDynamicFriction", &PxMaterial::setDynamicFriction, "coef"_a)
+            .def("getDynamicFriction", &PxMaterial::getDynamicFriction);
 }
