@@ -12,13 +12,11 @@ using namespace nb::literals;
 using namespace physx;
 
 extern void bindMath(nb::module_& m);
+extern void bindMaterial(nb::module_& m);
 
 NB_MODULE(py_physx_ext, m) {
     m.doc() = "python binding for PhysX";
 
     bindMath(m);
-
-    nb::class_<PxMaterial>(m, "PxMaterial")
-            .def("setDynamicFriction", &PxMaterial::setDynamicFriction, "coef"_a)
-            .def("getDynamicFriction", &PxMaterial::getDynamicFriction);
+    bindMaterial(m);
 }

@@ -8,12 +8,11 @@ if (UNIX)
         target_link_directories(physx5 INTERFACE $<BUILD_INTERFACE:${physx5_SOURCE_DIR}/bin/linux.clang/release>)
     endif ()
     target_link_libraries(physx5 INTERFACE
-            -Wl,--start-group
             libPhysXCharacterKinematic_static_64.a libPhysXCommon_static_64.a
             libPhysXCooking_static_64.a libPhysXExtensions_static_64.a
             libPhysXFoundation_static_64.a libPhysXPvdSDK_static_64.a
             libPhysX_static_64.a libPhysXVehicle_static_64.a
-            -Wl,--end-group)
+    )
     target_include_directories(physx5 SYSTEM INTERFACE $<BUILD_INTERFACE:${physx5_SOURCE_DIR}/include>)
 endif ()
 

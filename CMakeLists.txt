@@ -22,6 +22,7 @@ set(BINDING_FILES
         src/py_physx_ext.cpp
 
         src/py_math.cpp
+        src/py_material.cpp
 )
 
 # We are now ready to compile the actual extension module
