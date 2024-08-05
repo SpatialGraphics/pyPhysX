@@ -1,0 +1,6 @@
+
+
+class PxMaterial:
+    def setDynamicFriction(self, coef: float) -> None: ...
+
+    def getDynamicFriction(self) -> float: ...

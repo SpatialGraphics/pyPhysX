@@ -11,7 +11,7 @@ namespace nb = nanobind;
 using namespace nb::literals;
 using namespace physx;
 
-NB_MODULE(py_physx, m) {
+NB_MODULE(py_physx_ext, m) {
     m.doc() = "python binding for PhysX";
 
     nb::class_<PxMaterial>(m, "PxMaterial")
