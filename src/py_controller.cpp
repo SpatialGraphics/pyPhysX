@@ -7,6 +7,7 @@
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
+#include <nanobind/stl/function.h>
 
 namespace nb = nanobind;
 using namespace nb::literals;
@@ -90,7 +91,11 @@ void bindController(nb::module_& m) {
     nb::class_<PxController>(m, "PxController")
             .def("getType", &PxController::getType)
             .def("release", &PxController::release)
-            .def("move", &PxController::move)
+            .def("move",
+                 [](PxController* controller, const PxVec3& disp, PxF32 minDist, PxF32 elapsedTime,
+                    const PxControllerFilters& filters, const PxObstacleContext* obstacles) {
+                     return controller->move(disp, minDist, elapsedTime, filters, obstacles).operator uint32_t();
+                 })
             .def("setPosition", &PxController::setPosition)
             .def("getPosition", &PxController::getPosition)
             .def("setFootPosition", &PxController::setFootPosition)
@@ -164,4 +169,76 @@ void bindController(nb::module_& m) {
             .def(nb::init<>())
             .def_rw("mHalfHeight", &PxCapsuleObstacle::mHalfHeight)
             .def_rw("mRadius", &PxCapsuleObstacle::mRadius);
+
+    class ControllerBehaviorCallback : public PxControllerBehaviorCallback {
+    public:
+        ControllerBehaviorCallback(const std::function<int(const PxController& controller)>& c1,
+                                   const std::function<int(const PxObstacle& obstacle)>& c2,
+                                   const std::function<int(const PxShape& shape, const PxActor& actor)>& c3)
+            : c1{c1}, c2{c2}, c3{c3} {}
+
+        PxControllerBehaviorFlags getBehaviorFlags(const PxController& controller) override {
+            return PxControllerBehaviorFlags(c1(controller));
+        }
+
+        PxControllerBehaviorFlags getBehaviorFlags(const PxObstacle& obstacle) override {
+            return PxControllerBehaviorFlags(c2(obstacle));
+        }
+
+        PxControllerBehaviorFlags getBehaviorFlags(const PxShape& shape, const PxActor& actor) override {
+            return PxControllerBehaviorFlags(c3(shape, actor));
+        }
+
+    private:
+        std::function<int(const PxController& controller)> c1;
+        std::function<int(const PxObstacle& obstacle)> c2;
+        std::function<int(const PxShape& shape, const PxActor& actor)> c3;
+    };
+    nb::class_<PxControllerBehaviorCallback> pxControllerBehaviorCallback(m, "PxControllerBehaviorCallback");
+    nb::class_<ControllerBehaviorCallback, PxControllerBehaviorCallback>(m, "ControllerBehaviorCallback")
+            .def(nb::init<const std::function<int(const PxController& controller)>&,
+                          const std::function<int(const PxObstacle& obstacle)>&,
+                          const std::function<int(const PxShape& shape, const PxActor& actor)>&>());
+
+    class UserControllerHitReport : public PxUserControllerHitReport {
+    public:
+        UserControllerHitReport(const std::function<void(const PxControllersHit& hit)>& c1,
+                                const std::function<void(const PxControllerObstacleHit& hit)>& c2,
+                                const std::function<void(const PxControllerShapeHit& hit)>& c3)
+            : c1(c1), c2(c2), c3(c3) {}
+
+        void onControllerHit(const PxControllersHit& hit) override { return c1(hit); }
+
+        void onObstacleHit(const PxControllerObstacleHit& hit) override { return c2(hit); }
+
+        void onShapeHit(const PxControllerShapeHit& hit) override { return c3(hit); }
+
+    private:
+        std::function<void(const PxControllersHit& hit)> c1;
+        std::function<void(const PxControllerObstacleHit& hit)> c2;
+        std::function<void(const PxControllerShapeHit& hit)> c3;
+    };
+    nb::class_<PxUserControllerHitReport> pxUserControllerHitReport(m, "PxUserControllerHitReport");
+    nb::class_<UserControllerHitReport, PxUserControllerHitReport>(m, "UserControllerHitReport")
+            .def(nb::init<const std::function<void(const PxControllersHit& hit)>&,
+                          const std::function<void(const PxControllerObstacleHit& hit)>&,
+                          const std::function<void(const PxControllerShapeHit& hit)>&>());
+
+    class ControllerFilterCallback : public PxControllerFilterCallback {
+    public:
+        explicit ControllerFilterCallback(
+                const std::function<bool(const physx::PxController& a, const physx::PxController& b)>& c)
+            : c(c) {}
+
+        bool filter(const physx::PxController& a, const physx::PxController& b) override { return c(a, b); }
+
+    private:
+        std::function<bool(const physx::PxController& a, const physx::PxController& b)> c;
+    };
+    nb::class_<PxControllerFilterCallback> pxControllerFilterCallback(m, "PxControllerFilterCallback");
+    nb::class_<ControllerFilterCallback, PxControllerFilterCallback>(m, "ControllerFilterCallback")
+            .def(nb::init<const std::function<bool(const physx::PxController& a, const physx::PxController& b)>&>());
+
+    nb::class_<PxControllerFilters>(m, "PxControllerFilters")
+            .def(nb::init<const PxFilterData*, PxQueryFilterCallback*, PxControllerFilterCallback*>());
 }
