@@ -35,7 +35,9 @@ extern void bindRender(nb::module_& m);
 extern void bindFilter(nb::module_& m);
 extern void bindQuery(nb::module_& m);
 
+#ifdef SUPPORT_CUDA
 extern void bindCuda(nb::module_& m);
+#endif
 
 NB_MODULE(py_physx_ext, m) {
     m.doc() = "python binding for PhysX";
@@ -64,5 +66,7 @@ NB_MODULE(py_physx_ext, m) {
     bindFilter(m);
     bindQuery(m);
 
+#ifdef SUPPORT_CUDA
     bindCuda(m);
+#endif
 }

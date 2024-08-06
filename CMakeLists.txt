@@ -18,6 +18,11 @@ execute_process(
 # Import nanobind through CMake's find_package mechanism
 find_package(nanobind CONFIG REQUIRED)
 
+find_package(CUDAToolkit)
+if (CUDAToolkit_FOUND)
+    add_definitions(-DSUPPORT_CUDA)
+endif ()
+
 set(BINDING_FILES
         src/py_physx_ext.cpp
 
@@ -44,8 +49,15 @@ set(BINDING_FILES
         src/py_render.cpp
         src/py_filter.cpp
         src/py_query.cpp
+)
+
+set(CUDA_FILES
         src/py_cuda.cpp
 )
+
+if (CUDAToolkit_FOUND)
+    list(APPEND BINDING_FILES ${CUDA_FILES})
+endif ()
 
 # We are now ready to compile the actual extension module
 nanobind_add_module(
