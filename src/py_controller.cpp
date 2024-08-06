@@ -36,7 +36,12 @@ void bindController(nb::module_& m) {
             .def("createController", &PxControllerManager::createController)
             .def("purgeControllers", &PxControllerManager::purgeControllers)
             .def("getRenderBuffer", &PxControllerManager::getRenderBuffer)
-            .def("setDebugRenderingFlags", &PxControllerManager::setDebugRenderingFlags)
+            .def(
+                    "setDebugRenderingFlags",
+                    [](PxControllerManager* manager, int flags) {
+                        manager->setDebugRenderingFlags(PxControllerDebugRenderFlags(flags));
+                    },
+                    "flags"_a)
             .def("getNbObstacleContexts", &PxControllerManager::getNbObstacleContexts)
             .def("getObstacleContext", &PxControllerManager::getObstacleContext)
             .def("createObstacleContext", &PxControllerManager::createObstacleContext)
@@ -122,4 +127,41 @@ void bindController(nb::module_& m) {
             .def("setHalfHeight", &PxBoxController::setHalfHeight)
             .def("setHalfSideExtent", &PxBoxController::setHalfSideExtent)
             .def("setHalfForwardExtent", &PxBoxController::setHalfForwardExtent);
+
+    nb::class_<PxControllerState>(m, "PxControllerState")
+            .def_rw("deltaXP", &PxControllerState::deltaXP)
+            .def_rw("touchedShape", &PxControllerState::touchedShape)
+            .def_rw("touchedActor", &PxControllerState::touchedActor)
+            .def_rw("touchedObstacleHandle", &PxControllerState::touchedObstacleHandle)
+            .def_rw("collisionFlags", &PxControllerState::collisionFlags)
+            .def_rw("standOnAnotherCCT", &PxControllerState::standOnAnotherCCT)
+            .def_rw("standOnObstacle", &PxControllerState::standOnObstacle)
+            .def_rw("isMovingUp", &PxControllerState::isMovingUp);
+
+    nb::class_<PxControllerStats>(m, "PxControllerStats")
+            .def_rw("nbIterations", &PxControllerStats::nbIterations)
+            .def_rw("nbFullUpdates", &PxControllerStats::nbFullUpdates)
+            .def_rw("nbPartialUpdates", &PxControllerStats::nbPartialUpdates)
+            .def_rw("nbTessellation", &PxControllerStats::nbTessellation);
+
+    nb::class_<PxObstacleContext>(m, "PxObstacleContext")
+            .def("release", &PxObstacleContext::release)
+            .def("getControllerManager", &PxObstacleContext::getControllerManager)
+            .def("addObstacle", &PxObstacleContext::addObstacle)
+            .def("removeObstacle", &PxObstacleContext::removeObstacle)
+            .def("updateObstacle", &PxObstacleContext::updateObstacle)
+            .def("getNbObstacles", &PxObstacleContext::getNbObstacles)
+            .def("getObstacle", &PxObstacleContext::getObstacle)
+            .def("getObstacleByHandle", &PxObstacleContext::getObstacleByHandle);
+
+    nb::class_<PxObstacle>(m, "PxObstacle").def("getType", &PxObstacle::getType);
+
+    nb::class_<PxBoxObstacle, PxObstacle>(m, "PxBoxObstacle")
+            .def(nb::init<>())
+            .def_rw("mHalfExtents", &PxBoxObstacle::mHalfExtents);
+
+    nb::class_<PxCapsuleObstacle, PxObstacle>(m, "PxCapsuleObstacle")
+            .def(nb::init<>())
+            .def_rw("mHalfHeight", &PxCapsuleObstacle::mHalfHeight)
+            .def_rw("mRadius", &PxCapsuleObstacle::mRadius);
 }

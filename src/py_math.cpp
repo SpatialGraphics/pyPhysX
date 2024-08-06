@@ -15,6 +15,55 @@ using namespace nb::literals;
 using namespace physx;
 
 void bindMath(nb::module_& m) {
+    nb::class_<PxVec3d>(m, "PxVec3d")
+            .def(nb::init<>())
+            .def(nb::init<double>(), "a"_a)
+            .def(nb::init<double, double, double>(), "nx"_a, "ny"_a, "nz"_a)
+            .def_rw("x", &PxVec3d::x)
+            .def_rw("y", &PxVec3d::y)
+            .def_rw("z", &PxVec3d::z)
+            .def("isZero", &PxVec3d::isZero)
+            .def("isFinite", &PxVec3d::isFinite)
+            .def("isNormalized", &PxVec3d::isNormalized)
+            .def("magnitudeSquared", &PxVec3d::magnitudeSquared)
+            .def("magnitude", &PxVec3d::magnitude)
+            .def("dot", &PxVec3d::dot, "v"_a)
+            .def("cross", &PxVec3d::cross, "v"_a)
+            .def("getNormalized", &PxVec3d::getNormalized)
+            .def("normalize", &PxVec3d::normalize)
+            .def("normalizeSafe", &PxVec3d::normalizeSafe)
+            .def("normalizeFast", &PxVec3d::normalizeFast)
+            .def("multiply", &PxVec3d::multiply, "a"_a)
+            .def("minimum", &PxVec3d::minimum, "v"_a)
+            .def("minElement", &PxVec3d::minElement)
+            .def("maximum", &PxVec3d::maximum, "v"_a)
+            .def("maxElement", &PxVec3d::maxElement)
+            .def("abs", &PxVec3d::abs)
+            .def("__iadd__", &PxVec3d::operator+=)
+            .def("__add__", &PxVec3d::operator+)
+            .def("__isub__", &PxVec3d::operator-=)
+            .def("__sub__",
+                 [](PxVec3d& s, const PxVec3d& factor) {
+                     return s - factor;
+                 })
+            .def("__imul__", &PxVec3d::operator*=)
+            .def("__mul__", &PxVec3d::operator*)
+            .def("__itruediv__", &PxVec3d::operator/=)
+            .def("__truediv__", &PxVec3d::operator/)
+            .def("__neg__",
+                 [](PxVec3d& s) {
+                     return -s;
+                 })
+            .def("__ne__", &PxVec3d::operator!=)
+            .def("__eq__", &PxVec3d::operator==)
+            .def("__setitem__",
+                 [](PxVec3d& self, unsigned index, double val) {
+                     self[index] = val;
+                 })
+            .def("__getitem__", [](PxVec3d& self, unsigned index) {
+                return self[index];
+            });
+
     nb::class_<PxVec3>(m, "PxVec3")
             .def(nb::init<>())
             .def(nb::init<float>(), "a"_a)
@@ -308,9 +357,11 @@ void bindMath(nb::module_& m) {
             .def_static("basisExtent", &PxBounds3::basisExtent)
             .def_static("poseExtent", &PxBounds3::poseExtent)
             .def_static("transformSafe", nb::overload_cast<const PxMat33&, const PxBounds3&>(&PxBounds3::transformSafe))
-            .def_static("transformSafe", nb::overload_cast<const PxTransform&, const PxBounds3&>(&PxBounds3::transformSafe))
+            .def_static("transformSafe",
+                        nb::overload_cast<const PxTransform&, const PxBounds3&>(&PxBounds3::transformSafe))
             .def_static("transformFast", nb::overload_cast<const PxMat33&, const PxBounds3&>(&PxBounds3::transformFast))
-            .def_static("transformFast", nb::overload_cast<const PxTransform&, const PxBounds3&>(&PxBounds3::transformFast))
+            .def_static("transformFast",
+                        nb::overload_cast<const PxTransform&, const PxBounds3&>(&PxBounds3::transformFast))
             .def("setEmpty", &PxBounds3::setEmpty)
             .def("setMaximal", &PxBounds3::setMaximal)
             .def("include", nb::overload_cast<const PxVec3&>(&PxBounds3::include))

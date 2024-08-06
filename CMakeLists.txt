@@ -41,6 +41,7 @@ set(BINDING_FILES
 
         src/py_controller.cpp
         src/py_constraint.cpp
+        src/py_render.cpp
 )
 
 # We are now ready to compile the actual extension module
