@@ -8,10 +8,15 @@ if (UNIX)
         target_link_directories(physx5 INTERFACE $<BUILD_INTERFACE:${physx5_SOURCE_DIR}/bin/linux.clang/release>)
     endif ()
     target_link_libraries(physx5 INTERFACE
-            libPhysXCharacterKinematic_static_64.a libPhysXCommon_static_64.a
-            libPhysXCooking_static_64.a libPhysXExtensions_static_64.a
-            libPhysXFoundation_static_64.a libPhysXPvdSDK_static_64.a
-            libPhysX_static_64.a libPhysXVehicle_static_64.a
+            libPhysX_static_64.a
+            libPhysXCharacterKinematic_static_64.a
+            libPhysXCommon_static_64.a
+            libPhysXCooking_static_64.a
+            libPhysXExtensions_static_64.a
+            libPhysXFoundation_static_64.a
+            libPhysXPvdSDK_static_64.a
+            libPhysXVehicle2_static_64.a
+            libPhysXVehicle_static_64.a
     )
     target_include_directories(physx5 SYSTEM INTERFACE $<BUILD_INTERFACE:${physx5_SOURCE_DIR}/include>)
 endif ()
@@ -23,7 +28,8 @@ if (WIN32)
             PhysXVehicle2_static_64.lib PhysXExtensions_static_64.lib
             PhysXVehicle_static_64.lib PhysX_static_64.lib PhysXPvdSDK_static_64.lib
             PhysXCooking_static_64.lib PhysXCommon_static_64.lib
-            PhysXCharacterKinematic_static_64.lib PhysXFoundation_static_64.lib)
+            PhysXCharacterKinematic_static_64.lib PhysXFoundation_static_64.lib
+    )
 endif ()
 
 target_compile_definitions(physx5 INTERFACE PX_PHYSX_STATIC_LIB)

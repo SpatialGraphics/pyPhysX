@@ -6,6 +6,7 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/vector.h>
 #include <nanobind/eigen/dense.h>
 
 namespace nb = nanobind;
@@ -85,8 +86,19 @@ void bindArticulationReducedCoordinate(nb::module_& m) {
             .def("createCache", &PxArticulationReducedCoordinate::createCache, nb::rv_policy::reference)
             .def("getCacheDataSize", &PxArticulationReducedCoordinate::getCacheDataSize)
             .def("zeroCache", &PxArticulationReducedCoordinate::zeroCache)
-            .def("applyCache", &PxArticulationReducedCoordinate::applyCache)
-            .def("copyInternalStateToCache", &PxArticulationReducedCoordinate::copyInternalStateToCache)
+            .def(
+                    "applyCache",
+                    [](PxArticulationReducedCoordinate* articulation, PxArticulationCache& cache, const int flags,
+                       bool autowake) {
+                        articulation->applyCache(cache, PxArticulationCacheFlags(flags), autowake);
+                    },
+                    "cache"_a, "flags"_a, "autowake"_a = true)
+            .def(
+                    "copyInternalStateToCache",
+                    [](PxArticulationReducedCoordinate* articulation, PxArticulationCache& cache, const int flags) {
+                        articulation->copyInternalStateToCache(cache, PxArticulationCacheFlags(flags));
+                    },
+                    "cache"_a, "flags"_a)
             .def("packJointData", &PxArticulationReducedCoordinate::packJointData)
             .def("unpackJointData", &PxArticulationReducedCoordinate::unpackJointData)
             .def("commonInit", &PxArticulationReducedCoordinate::commonInit)
@@ -119,7 +131,12 @@ void bindArticulationReducedCoordinate(nb::module_& m) {
             .def("getNbFixedTendons", &PxArticulationReducedCoordinate::getNbFixedTendons)
             .def("createMimicJoint", &PxArticulationReducedCoordinate::createMimicJoint)
             .def("getNbMimicJoints", &PxArticulationReducedCoordinate::getNbMimicJoints)
-            .def("updateKinematic", &PxArticulationReducedCoordinate::updateKinematic)
+            .def(
+                    "updateKinematic",
+                    [](PxArticulationReducedCoordinate* articulation, int flags) {
+                        articulation->updateKinematic(PxArticulationKinematicFlags(flags));
+                    },
+                    "flags"_a)
             .def("getSolverResidual", &PxArticulationReducedCoordinate::getSolverResidual);
 
     nb::class_<PxArticulationJointReducedCoordinate>(m, "PxArticulationJointReducedCoordinate")
@@ -166,10 +183,164 @@ void bindArticulationReducedCoordinate(nb::module_& m) {
             .def_rw("maxForce", &PxArticulationDrive::maxForce)
             .def_rw("driveType", &PxArticulationDrive::driveType);
 
+    nb::class_<PxSpatialForce>(m, "PxSpatialForce")
+            .def_rw("force", &PxSpatialForce::force)
+            .def_rw("torque", &PxSpatialForce::torque);
+
+    nb::class_<PxSpatialVelocity>(m, "PxSpatialVelocity")
+            .def_rw("linear", &PxSpatialVelocity::linear)
+            .def_rw("angular", &PxSpatialVelocity::angular);
+
+    nb::class_<PxArticulationRootLinkData>(m, "PxArticulationRootLinkData")
+            .def_rw("transform", &PxArticulationRootLinkData::transform)
+            .def_rw("worldLinVel", &PxArticulationRootLinkData::worldLinVel)
+            .def_rw("worldAngVel", &PxArticulationRootLinkData::worldAngVel)
+            .def_rw("worldLinAccel", &PxArticulationRootLinkData::worldLinAccel)
+            .def_rw("worldAngAccel", &PxArticulationRootLinkData::worldAngAccel);
+
     nb::class_<PxArticulationCache>(m, "PxArticulationCache")
             .def("release", &PxArticulationCache::release)
-            .def("denseJacobian", [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
-                auto dofs = articulation->getDofs();
-                return Eigen::Map<Eigen::VectorXf>(cache->denseJacobian, dofs);
+            .def("externalForces",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto links = articulation->getNbLinks();
+                     return std::vector<PxSpatialForce>(cache->externalForces, cache->externalForces + links);
+                 })
+            .def("denseJacobian",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto rows = articulation->getNbLinks() * 6;
+                     auto cols = articulation->getDofs() + 6;
+                     return Eigen::Map<Eigen::MatrixXf>(cache->denseJacobian, rows, cols);
+                 })
+            .def("massMatrix",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto rows = articulation->getDofs();
+                     return Eigen::Map<Eigen::MatrixXf>(cache->massMatrix, rows, rows);
+                 })
+            .def("jointVelocity",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto rows = articulation->getDofs();
+                     return Eigen::Map<Eigen::VectorXf>(cache->jointVelocity, rows);
+                 })
+            .def("jointAcceleration",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto rows = articulation->getDofs();
+                     return Eigen::Map<Eigen::VectorXf>(cache->jointAcceleration, rows);
+                 })
+            .def("jointPosition",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto rows = articulation->getDofs();
+                     return Eigen::Map<Eigen::VectorXf>(cache->jointPosition, rows);
+                 })
+            .def("jointForce",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto rows = articulation->getDofs();
+                     return Eigen::Map<Eigen::VectorXf>(cache->jointForce, rows);
+                 })
+            .def("jointTargetPositions",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto rows = articulation->getDofs();
+                     return Eigen::Map<Eigen::VectorXf>(cache->jointTargetPositions, rows);
+                 })
+            .def("jointTargetVelocities",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto rows = articulation->getDofs();
+                     return Eigen::Map<Eigen::VectorXf>(cache->jointTargetVelocities, rows);
+                 })
+            .def("linkVelocity",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto links = articulation->getNbLinks();
+                     return std::vector<PxSpatialVelocity>(cache->linkVelocity, cache->linkVelocity + links);
+                 })
+            .def("linkAcceleration",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto links = articulation->getNbLinks();
+                     return std::vector<PxSpatialVelocity>(cache->linkAcceleration, cache->linkAcceleration + links);
+                 })
+            .def("linkIncomingJointForce",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto links = articulation->getNbLinks();
+                     return std::vector<PxSpatialForce>(cache->linkIncomingJointForce,
+                                                        cache->linkIncomingJointForce + links);
+                 })
+            .def("linkForce",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto links = articulation->getNbLinks();
+                     return std::vector<PxVec3>(cache->linkForce, cache->linkForce + links);
+                 })
+            .def("linkTorque",
+                 [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                     auto links = articulation->getNbLinks();
+                     return std::vector<PxVec3>(cache->linkTorque, cache->linkTorque + links);
+                 })
+            .def("rootLinkData", [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                return std::vector<PxArticulationRootLinkData>(cache->rootLinkData, cache->rootLinkData + 1);
             });
+
+    nb::class_<PxArticulationTendon>(m, "PxArticulationTendon")
+            .def("setStiffness", &PxArticulationTendon::setStiffness)
+            .def("getStiffness", &PxArticulationTendon::getStiffness)
+            .def("setDamping", &PxArticulationTendon::setDamping)
+            .def("getDamping", &PxArticulationTendon::getDamping)
+            .def("setLimitStiffness", &PxArticulationTendon::setLimitStiffness)
+            .def("getLimitStiffness", &PxArticulationTendon::getLimitStiffness)
+            .def("setOffset", &PxArticulationTendon::setOffset)
+            .def("getOffset", &PxArticulationTendon::getOffset)
+            .def("getArticulation", &PxArticulationTendon::getArticulation, nb::rv_policy::reference)
+            .def("release", &PxArticulationTendon::release);
+
+    nb::class_<PxArticulationSpatialTendon, PxArticulationTendon>(m, "PxArticulationSpatialTendon")
+            .def("createAttachment", &PxArticulationSpatialTendon::createAttachment)
+            .def("getNbAttachments", &PxArticulationSpatialTendon::getNbAttachments);
+    nb::class_<PxArticulationAttachment>(m, "PxArticulationAttachment")
+            .def("setRestLength", &PxArticulationAttachment::setRestLength)
+            .def("getRestLength", &PxArticulationAttachment::getRestLength)
+            .def("setLimitParameters", &PxArticulationAttachment::setLimitParameters)
+            .def("getLimitParameters", &PxArticulationAttachment::getLimitParameters)
+            .def("setRelativeOffset", &PxArticulationAttachment::setRelativeOffset)
+            .def("getRelativeOffset", &PxArticulationAttachment::getRelativeOffset)
+            .def("setCoefficient", &PxArticulationAttachment::setCoefficient)
+            .def("getCoefficient", &PxArticulationAttachment::getCoefficient)
+            .def("getLink", &PxArticulationAttachment::getLink, nb::rv_policy::reference)
+            .def("getParent", &PxArticulationAttachment::getParent, nb::rv_policy::reference)
+            .def("isLeaf", &PxArticulationAttachment::isLeaf)
+            .def("getTendon", &PxArticulationAttachment::getTendon, nb::rv_policy::reference)
+            .def("release", &PxArticulationAttachment::release);
+
+    nb::class_<PxArticulationFixedTendon, PxArticulationTendon>(m, "PxArticulationFixedTendon")
+            .def("createTendonJoint", &PxArticulationFixedTendon::createTendonJoint)
+            .def("getNbTendonJoints", &PxArticulationFixedTendon::getNbTendonJoints)
+            .def("setRestLength", &PxArticulationFixedTendon::setRestLength)
+            .def("getRestLength", &PxArticulationFixedTendon::getRestLength)
+            .def("setLimitParameters", &PxArticulationFixedTendon::setLimitParameters)
+            .def("getLimitParameters", &PxArticulationFixedTendon::getLimitParameters);
+    nb::class_<PxArticulationTendonJoint>(m, "PxArticulationTendonJoint")
+            .def("setCoefficient", &PxArticulationTendonJoint::setCoefficient)
+            .def("getCoefficient", &PxArticulationTendonJoint::getCoefficient)
+            .def("getLink", &PxArticulationTendonJoint::getLink, nb::rv_policy::reference)
+            .def("getParent", &PxArticulationTendonJoint::getParent, nb::rv_policy::reference)
+            .def("getTendon", &PxArticulationTendonJoint::getTendon, nb::rv_policy::reference)
+            .def("release", &PxArticulationTendonJoint::release);
+    nb::class_<PxArticulationTendonLimit>(m, "PxArticulationTendonLimit")
+            .def_rw("lowLimit", &PxArticulationTendonLimit::lowLimit)
+            .def_rw("highLimit", &PxArticulationTendonLimit::highLimit);
+
+    nb::class_<PxResidual>(m, "PxResidual")
+            .def_rw("rmsResidual", &PxResidual::rmsResidual)
+            .def_rw("maxResidual", &PxResidual::maxResidual);
+
+    nb::class_<PxResiduals>(m, "PxResiduals")
+            .def_rw("positionIterationResidual", &PxResiduals::positionIterationResidual)
+            .def_rw("velocityIterationResidual", &PxResiduals::velocityIterationResidual);
+
+    nb::class_<PxArticulationMimicJoint>(m, "PxArticulationMimicJoint")
+            .def("release", &PxArticulationMimicJoint::release)
+            .def("getArticulation", &PxArticulationMimicJoint::getArticulation, nb::rv_policy::reference)
+            .def("getGearRatio", &PxArticulationMimicJoint::getGearRatio)
+            .def("setGearRatio", &PxArticulationMimicJoint::setGearRatio)
+            .def("getOffset", &PxArticulationMimicJoint::getOffset)
+            .def("setOffset", &PxArticulationMimicJoint::setOffset)
+            .def("getJointA", &PxArticulationMimicJoint::getJointA, nb::rv_policy::reference)
+            .def("getJointB", &PxArticulationMimicJoint::getJointB, nb::rv_policy::reference)
+            .def("getAxisA", &PxArticulationMimicJoint::getAxisA)
+            .def("getAxisB", &PxArticulationMimicJoint::getAxisB);
 }

@@ -30,6 +30,7 @@ extern void bindHeightField(nb::module_& m);
 extern void bindArticulationReducedCoordinate(nb::module_& m);
 
 extern void bindController(nb::module_& m);
+extern void bindConstraint(nb::module_& m);
 
 NB_MODULE(py_physx_ext, m) {
     m.doc() = "python binding for PhysX";
@@ -53,4 +54,5 @@ NB_MODULE(py_physx_ext, m) {
     bindArticulationReducedCoordinate(m);
 
     bindController(m);
+    bindConstraint(m);
 }

@@ -40,6 +40,7 @@ set(BINDING_FILES
         src/py_articulation_reduced_coordinate.cpp
 
         src/py_controller.cpp
+        src/py_constraint.cpp
 )
 
 # We are now ready to compile the actual extension module
