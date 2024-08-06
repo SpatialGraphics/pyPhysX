@@ -68,7 +68,7 @@ void bindPhysics(nb::module_& m) {
                     },
                     nb::rv_policy::reference)
             .def("getNbShapes", &PxPhysics::getNbShapes)
-            .def("createConstraint", &PxPhysics::createConstraint, nb::rv_policy::reference)
+//            .def("createConstraint", &PxPhysics::createConstraint, nb::rv_policy::reference)
             .def("createArticulationReducedCoordinate", &PxPhysics::createArticulationReducedCoordinate,
                  nb::rv_policy::reference)
             //            .def("createFEMCloth", &PxPhysics::createFEMCloth, nb::rv_policy::reference)
