@@ -20,6 +20,8 @@ extern void bindScene(nb::module_& m);
 extern void bindPhysics(nb::module_& m);
 extern void bindFoundation(nb::module_& m);
 
+extern void bindAggregate(nb::module_& m);
+
 NB_MODULE(py_physx_ext, m) {
     m.doc() = "python binding for PhysX";
 
@@ -31,4 +33,6 @@ NB_MODULE(py_physx_ext, m) {
     bindScene(m);
     bindPhysics(m);
     bindFoundation(m);
+
+    bindAggregate(m);
 }

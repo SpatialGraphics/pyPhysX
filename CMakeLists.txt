@@ -29,6 +29,8 @@ set(BINDING_FILES
         src/py_scene.cpp
         src/py_physics.cpp
         src/py_foundation.cpp
+
+        src/py_aggregate.cpp
 )
 
 # We are now ready to compile the actual extension module
