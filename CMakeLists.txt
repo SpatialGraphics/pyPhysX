@@ -23,9 +23,12 @@ set(BINDING_FILES
 
         src/py_math.cpp
         src/py_material.cpp
-        src/py_actor.cpp
         src/py_shape.cpp
+        src/py_actor.cpp
         src/py_joint.cpp
+        src/py_scene.cpp
+        src/py_physics.cpp
+        src/py_foundation.cpp
 )
 
 # We are now ready to compile the actual extension module
