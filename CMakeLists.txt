@@ -37,6 +37,7 @@ set(BINDING_FILES
         src/py_soft_body_mesh.cpp
         src/py_convex_mesh.cpp
         src/py_height_field.cpp
+        src/py_articulation_reduced_coordinate.cpp
 )
 
 # We are now ready to compile the actual extension module

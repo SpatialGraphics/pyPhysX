@@ -27,6 +27,7 @@ extern void bindTetrahedronMesh(nb::module_& m);
 extern void bindSoftBodyMesh(nb::module_& m);
 extern void bindConvexMesh(nb::module_& m);
 extern void bindHeightField(nb::module_& m);
+extern void bindArticulationReducedCoordinate(nb::module_& m);
 
 NB_MODULE(py_physx_ext, m) {
     m.doc() = "python binding for PhysX";
@@ -47,4 +48,5 @@ NB_MODULE(py_physx_ext, m) {
     bindSoftBodyMesh(m);
     bindConvexMesh(m);
     bindHeightField(m);
+    bindArticulationReducedCoordinate(m);
 }
