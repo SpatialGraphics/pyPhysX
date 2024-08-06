@@ -26,6 +26,15 @@ void bindActor(nb::module_& m) {
             .value("eSEND_SLEEP_NOTIFIES", PxActorFlag::Enum::eSEND_SLEEP_NOTIFIES)
             .value("eDISABLE_SIMULATION", PxActorFlag::Enum::eDISABLE_SIMULATION);
 
+    nb::enum_<PxActorType::Enum>(m, "PxActorType")
+            .value("eRIGID_STATIC", PxActorType::Enum::eRIGID_STATIC)
+            .value("eRIGID_DYNAMIC", PxActorType::Enum::eRIGID_DYNAMIC)
+            .value("eARTICULATION_LINK", PxActorType::Enum::eARTICULATION_LINK)
+            .value("eSOFTBODY", PxActorType::Enum::eSOFTBODY)
+            .value("eFEMCLOTH", PxActorType::Enum::eFEMCLOTH)
+            .value("ePBD_PARTICLESYSTEM", PxActorType::Enum::ePBD_PARTICLESYSTEM)
+            .value("eHAIRSYSTEM", PxActorType::Enum::eHAIRSYSTEM);
+
     nb::enum_<PxRigidBodyFlag::Enum>(m, "PxRigidBodyFlag")
             .value("eKINEMATIC", PxRigidBodyFlag::Enum::eKINEMATIC)
             .value("eUSE_KINEMATIC_TARGET_FOR_SCENE_QUERIES",
@@ -43,12 +52,22 @@ void bindActor(nb::module_& m) {
     nb::class_<PxActor>(m, "PxActor")
             .def("release", &PxActor::release)
             .def("getType", &PxActor::getType)
-            .def("getScene", &PxActor::getScene)
-            .def("setName", &PxActor::setName)
+            .def("getScene", &PxActor::getScene, nb::rv_policy::reference)
+            .def("setName", &PxActor::setName, "name"_a)
             .def("getName", &PxActor::getName)
-            .def("getWorldBounds", &PxActor::getWorldBounds)
-            .def("setActorFlag", &PxActor::setActorFlag)
-            .def("setDominanceGroup", &PxActor::setDominanceGroup)
+            .def("getWorldBounds", &PxActor::getWorldBounds, "inflation"_a = 1.01f)
+            .def("setActorFlag", &PxActor::setActorFlag, "flag"_a, "value"_a)
+            .def(
+                    "setActorFlags",
+                    [](PxActor* actor, int flags) {
+                        actor->setActorFlags(PxActorFlags(flags));
+                    },
+                    "flags"_a)
+            .def("getActorFlags",
+                 [](PxActor* actor) {
+                     return actor->getActorFlags().operator uint32_t();
+                 })
+            .def("setDominanceGroup", &PxActor::setDominanceGroup, "dominanceGroup"_a)
             .def("getDominanceGroup", &PxActor::getDominanceGroup);
 
     nb::class_<PxRigidActor, PxActor>(m, "PxRigidActor")

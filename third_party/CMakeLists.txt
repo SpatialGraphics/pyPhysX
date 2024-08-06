@@ -28,3 +28,9 @@ endif ()
 
 target_compile_definitions(physx5 INTERFACE PX_PHYSX_STATIC_LIB)
 target_compile_definitions(physx5 INTERFACE PHYSX_VERSION="${PHYSX_VERSION}")
+
+# Eigen
+set(EIGEN_BUILD_DOC OFF CACHE BOOL "" FORCE)
+set(BUILD_TESTING OFF)
+set(EIGEN_BUILD_PKGCONFIG OFF)
+add_subdirectory(eigen)

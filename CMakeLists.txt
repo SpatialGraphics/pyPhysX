@@ -74,6 +74,7 @@ nanobind_add_stub(
 
 target_link_libraries(py_physx_ext PRIVATE
         physx5
+        Eigen3::Eigen
 )
 
 file(GLOB PY_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/pyPhysX/*.py" "${CMAKE_CURRENT_SOURCE_DIR}/src/pyPhysX/*.pyi")

@@ -6,13 +6,46 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
+#include <nanobind/eigen/dense.h>
 
 namespace nb = nanobind;
 using namespace nb::literals;
 using namespace physx;
 
 void bindArticulationReducedCoordinate(nb::module_& m) {
+    nb::enum_<PxArticulationJointType::Enum>(m, "PxArticulationJointType")
+            .value("eFIX", PxArticulationJointType::Enum::eFIX)
+            .value("ePRISMATIC", PxArticulationJointType::Enum::ePRISMATIC)
+            .value("eREVOLUTE", PxArticulationJointType::Enum::eREVOLUTE)
+            .value("eREVOLUTE_UNWRAPPED", PxArticulationJointType::Enum::eREVOLUTE_UNWRAPPED)
+            .value("eSPHERICAL", PxArticulationJointType::Enum::eSPHERICAL);
+
+    nb::enum_<PxArticulationAxis::Enum>(m, "PxArticulationAxis")
+            .value("eTWIST", PxArticulationAxis::Enum::eTWIST)
+            .value("eSWING1", PxArticulationAxis::Enum::eSWING1)
+            .value("eSWING2", PxArticulationAxis::Enum::eSWING2)
+            .value("eX", PxArticulationAxis::Enum::eX)
+            .value("eY", PxArticulationAxis::Enum::eY)
+            .value("eZ", PxArticulationAxis::Enum::eZ);
+
+    nb::enum_<PxArticulationMotion::Enum>(m, "PxArticulationMotion")
+            .value("eLOCKED", PxArticulationMotion::Enum::eLOCKED)
+            .value("eLIMITED", PxArticulationMotion::Enum::eLIMITED)
+            .value("eFREE", PxArticulationMotion::Enum::eFREE);
+
+    nb::enum_<PxArticulationDriveType::Enum>(m, "PxArticulationDriveType")
+            .value("eFORCE", PxArticulationDriveType::Enum::eFORCE)
+            .value("eACCELERATION", PxArticulationDriveType::Enum::eACCELERATION);
+
+    nb::enum_<PxArticulationFlag::Enum>(m, "PxArticulationFlag")
+            .value("eFIX_BASE", PxArticulationFlag::Enum::eFIX_BASE)
+            .value("eDRIVE_LIMITS_ARE_FORCES", PxArticulationFlag::Enum::eDRIVE_LIMITS_ARE_FORCES)
+            .value("eDISABLE_SELF_COLLISION", PxArticulationFlag::Enum::eDISABLE_SELF_COLLISION);
+
+    nb::enum_<PxArticulationKinematicFlag::Enum>(m, "PxArticulationKinematicFlag")
+            .value("ePOSITION", PxArticulationKinematicFlag::Enum::ePOSITION)
+            .value("eVELOCITY", PxArticulationKinematicFlag::Enum::eVELOCITY);
+
     nb::class_<PxArticulationReducedCoordinate>(m, "PxArticulationReducedCoordinate")
             .def("getScene", &PxArticulationReducedCoordinate::getScene, nb::rv_policy::reference)
             .def("setSolverIterationCounts", &PxArticulationReducedCoordinate::setSolverIterationCounts)
@@ -38,12 +71,18 @@ void bindArticulationReducedCoordinate(nb::module_& m) {
             .def("getName", &PxArticulationReducedCoordinate::getName)
             .def("getWorldBounds", &PxArticulationReducedCoordinate::getWorldBounds)
             .def("getAggregate", &PxArticulationReducedCoordinate::getAggregate)
-            .def("setArticulationFlags", &PxArticulationReducedCoordinate::setArticulationFlags)
+            .def("setArticulationFlags",
+                 [](PxArticulationReducedCoordinate* articulation, int flags) {
+                     articulation->setArticulationFlags(PxArticulationFlags(flags));
+                 })
             .def("setArticulationFlag", &PxArticulationReducedCoordinate::setArticulationFlag)
-            .def("getArticulationFlags", &PxArticulationReducedCoordinate::getArticulationFlags)
+            .def("getArticulationFlags",
+                 [](PxArticulationReducedCoordinate* articulation) {
+                     return articulation->getArticulationFlags().operator uint32_t();
+                 })
             .def("getDofs", &PxArticulationReducedCoordinate::getDofs)
 
-            .def("createCache", &PxArticulationReducedCoordinate::createCache)
+            .def("createCache", &PxArticulationReducedCoordinate::createCache, nb::rv_policy::reference)
             .def("getCacheDataSize", &PxArticulationReducedCoordinate::getCacheDataSize)
             .def("zeroCache", &PxArticulationReducedCoordinate::zeroCache)
             .def("applyCache", &PxArticulationReducedCoordinate::applyCache)
@@ -82,4 +121,55 @@ void bindArticulationReducedCoordinate(nb::module_& m) {
             .def("getNbMimicJoints", &PxArticulationReducedCoordinate::getNbMimicJoints)
             .def("updateKinematic", &PxArticulationReducedCoordinate::updateKinematic)
             .def("getSolverResidual", &PxArticulationReducedCoordinate::getSolverResidual);
+
+    nb::class_<PxArticulationJointReducedCoordinate>(m, "PxArticulationJointReducedCoordinate")
+            .def("getParentArticulationLink", &PxArticulationJointReducedCoordinate::getParentArticulationLink)
+            .def("setParentPose", &PxArticulationJointReducedCoordinate::setParentPose)
+            .def("getParentPose", &PxArticulationJointReducedCoordinate::getParentPose)
+            .def("getChildArticulationLink", &PxArticulationJointReducedCoordinate::getChildArticulationLink)
+            .def("setChildPose", &PxArticulationJointReducedCoordinate::setChildPose)
+            .def("getChildPose", &PxArticulationJointReducedCoordinate::getChildPose)
+            .def("setJointType", &PxArticulationJointReducedCoordinate::setJointType)
+            .def("getJointType", &PxArticulationJointReducedCoordinate::getJointType)
+            .def("setMotion", &PxArticulationJointReducedCoordinate::setMotion)
+            .def("getMotion", &PxArticulationJointReducedCoordinate::getMotion)
+            .def("setLimitParams", &PxArticulationJointReducedCoordinate::setLimitParams)
+            .def("getLimitParams", &PxArticulationJointReducedCoordinate::getLimitParams)
+            .def("setDriveParams", &PxArticulationJointReducedCoordinate::setDriveParams)
+            .def("getDriveParams", &PxArticulationJointReducedCoordinate::getDriveParams)
+            .def("setDriveTarget", &PxArticulationJointReducedCoordinate::setDriveTarget)
+            .def("getDriveTarget", &PxArticulationJointReducedCoordinate::getDriveTarget)
+            .def("setDriveVelocity", &PxArticulationJointReducedCoordinate::setDriveVelocity)
+            .def("getDriveVelocity", &PxArticulationJointReducedCoordinate::getDriveVelocity)
+            .def("setArmature", &PxArticulationJointReducedCoordinate::setArmature)
+            .def("getArmature", &PxArticulationJointReducedCoordinate::getArmature)
+            .def("setFrictionCoefficient", &PxArticulationJointReducedCoordinate::setFrictionCoefficient)
+            .def("getFrictionCoefficient", &PxArticulationJointReducedCoordinate::getFrictionCoefficient)
+            .def("setMaxJointVelocity", &PxArticulationJointReducedCoordinate::setMaxJointVelocity)
+            .def("getMaxJointVelocity", &PxArticulationJointReducedCoordinate::getMaxJointVelocity)
+            .def("setJointPosition", &PxArticulationJointReducedCoordinate::setJointPosition)
+            .def("getJointPosition", &PxArticulationJointReducedCoordinate::getJointPosition)
+            .def("setJointVelocity", &PxArticulationJointReducedCoordinate::setJointVelocity)
+            .def("getJointVelocity", &PxArticulationJointReducedCoordinate::getJointVelocity);
+
+    nb::class_<PxArticulationLimit>(m, "PxArticulationLimit")
+            .def(nb::init<>())
+            .def(nb::init<PxReal, PxReal>())
+            .def_rw("low", &PxArticulationLimit::low)
+            .def_rw("high", &PxArticulationLimit::high);
+
+    nb::class_<PxArticulationDrive>(m, "PxArticulationDrive")
+            .def(nb::init<>())
+            .def(nb::init<PxReal, PxReal, PxReal, PxArticulationDriveType::Enum>())
+            .def_rw("stiffness", &PxArticulationDrive::stiffness)
+            .def_rw("damping", &PxArticulationDrive::damping)
+            .def_rw("maxForce", &PxArticulationDrive::maxForce)
+            .def_rw("driveType", &PxArticulationDrive::driveType);
+
+    nb::class_<PxArticulationCache>(m, "PxArticulationCache")
+            .def("release", &PxArticulationCache::release)
+            .def("denseJacobian", [](PxArticulationCache* cache, PxArticulationReducedCoordinate* articulation) {
+                auto dofs = articulation->getDofs();
+                return Eigen::Map<Eigen::VectorXf>(cache->denseJacobian, dofs);
+            });
 }

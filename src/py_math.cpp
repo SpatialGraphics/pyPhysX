@@ -299,6 +299,42 @@ void bindMath(nb::module_& m) {
                 m(std::get<0>(index), std::get<1>(index)) = value;
             });
 
+    nb::class_<PxBounds3>(m, "PxBounds3")
+            .def(nb::init())
+            .def(nb::init<PxVec3, PxVec3>(), "minimum"_a, "maximum"_a)
+            .def("empty", &PxBounds3::empty)
+            .def("boundsOfPoints", &PxBounds3::boundsOfPoints)
+            .def("centerExtents", &PxBounds3::centerExtents)
+            .def("basisExtent", &PxBounds3::basisExtent)
+            .def("poseExtent", &PxBounds3::poseExtent)
+            .def("transformSafe", nb::overload_cast<const PxMat33&, const PxBounds3&>(&PxBounds3::transformSafe))
+            .def("transformSafe", nb::overload_cast<const PxTransform&, const PxBounds3&>(&PxBounds3::transformSafe))
+            .def("transformFast", nb::overload_cast<const PxMat33&, const PxBounds3&>(&PxBounds3::transformFast))
+            .def("transformFast", nb::overload_cast<const PxTransform&, const PxBounds3&>(&PxBounds3::transformFast))
+            .def("setEmpty", &PxBounds3::setEmpty)
+            .def("setMaximal", &PxBounds3::setMaximal)
+            .def("include", nb::overload_cast<const PxVec3&>(&PxBounds3::include))
+            .def("include", nb::overload_cast<const PxBounds3&>(&PxBounds3::include))
+            .def("isEmpty", &PxBounds3::isEmpty)
+            .def("intersects", &PxBounds3::intersects)
+            .def("intersects1D", &PxBounds3::intersects1D)
+            .def("contains", &PxBounds3::contains)
+            .def("isInside", &PxBounds3::isInside)
+            .def("getCenter", nb::overload_cast<>(&PxBounds3::getCenter, nb::const_))
+            .def("getCenter", nb::overload_cast<uint32_t>(&PxBounds3::getCenter, nb::const_))
+            .def("getExtents", nb::overload_cast<uint32_t>(&PxBounds3::getExtents, nb::const_))
+            .def("getDimensions", &PxBounds3::getDimensions)
+            .def("getExtents", nb::overload_cast<>(&PxBounds3::getExtents, nb::const_))
+            .def("scaleSafe", &PxBounds3::scaleSafe)
+            .def("scaleFast", &PxBounds3::scaleFast)
+            .def("fattenSafe", &PxBounds3::fattenSafe)
+            .def("fattenFast", &PxBounds3::fattenFast)
+            .def("isFinite", &PxBounds3::isFinite)
+            .def("isValid", &PxBounds3::isValid)
+            .def("closestPoint", &PxBounds3::closestPoint)
+            .def_rw("minimum", &PxBounds3::minimum)
+            .def_rw("maximum", &PxBounds3::maximum);
+
     nb::enum_<PxZERO>(m, "PxZERO").value("PxZero", PxZERO::PxZero);
     nb::enum_<PxEMPTY>(m, "PxEMPTY").value("PxEmpty", PxEMPTY::PxEmpty);
     nb::enum_<PxIDENTITY>(m, "PxIDENTITY").value("PxIdentity", PxIDENTITY::PxIdentity);
