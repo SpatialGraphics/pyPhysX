@@ -14,6 +14,27 @@ using namespace nb::literals;
 using namespace physx;
 
 void bindActor(nb::module_& m) {
+    nb::enum_<PxParticleFlag::Enum>(m, "PxParticleFlag")
+            .value("eDISABLE_SELF_COLLISION", PxParticleFlag::Enum::eDISABLE_SELF_COLLISION)
+            .value("eDISABLE_RIGID_COLLISION", PxParticleFlag::Enum::eDISABLE_RIGID_COLLISION)
+            .value("eFULL_DIFFUSE_ADVECTION", PxParticleFlag::Enum::eFULL_DIFFUSE_ADVECTION)
+            .value("eENABLE_SPECULATIVE_CCD", PxParticleFlag::Enum::eENABLE_SPECULATIVE_CCD);
+    nb::enum_<PxParticleLockFlag::Enum>(m, "PxParticleLockFlag")
+            .value("eLOCK_X", PxParticleLockFlag::Enum::eLOCK_X)
+            .value("eLOCK_Y", PxParticleLockFlag::Enum::eLOCK_Y)
+            .value("eLOCK_Z", PxParticleLockFlag::Enum::eLOCK_Z);
+    nb::enum_<PxParticleBufferFlag::Enum>(m, "PxParticleBufferFlag")
+            .value("eNONE", PxParticleBufferFlag::Enum::eNONE)
+            .value("eUPDATE_POSITION", PxParticleBufferFlag::Enum::eUPDATE_POSITION)
+            .value("eUPDATE_VELOCITY", PxParticleBufferFlag::Enum::eUPDATE_VELOCITY)
+            .value("eUPDATE_PHASE", PxParticleBufferFlag::Enum::eUPDATE_PHASE)
+            .value("eUPDATE_RESTPOSITION", PxParticleBufferFlag::Enum::eUPDATE_RESTPOSITION)
+            .value("eUPDATE_CLOTH", PxParticleBufferFlag::Enum::eUPDATE_CLOTH)
+            .value("eUPDATE_RIGID", PxParticleBufferFlag::Enum::eUPDATE_RIGID)
+            .value("eUPDATE_DIFFUSE_PARAM", PxParticleBufferFlag::Enum::eUPDATE_DIFFUSE_PARAM)
+            .value("eUPDATE_ATTACHMENTS", PxParticleBufferFlag::Enum::eUPDATE_ATTACHMENTS)
+            .value("eALL", PxParticleBufferFlag::Enum::eALL);
+
     nb::enum_<PxForceMode::Enum>(m, "PxForceMode")
             .value("eFORCE", PxForceMode::Enum::eFORCE)
             .value("eIMPULSE", PxForceMode::Enum::eIMPULSE)
@@ -231,7 +252,10 @@ void bindActor(nb::module_& m) {
             .def("removeRigidAttachment", &PxPBDParticleSystem::removeRigidAttachment)
             .def("enableCCD", &PxPBDParticleSystem::enableCCD)
             .def("setParticleLockFlag", &PxPBDParticleSystem::setParticleLockFlag)
-            .def("createPhase", &PxPBDParticleSystem::createPhase)
+            .def("createPhase",
+                 [](PxPBDParticleSystem* system, PxPBDMaterial* material, int flags) {
+                     return system->createPhase(material, PxParticlePhaseFlags(flags));
+                 })
             .def("getNbParticleMaterials", &PxPBDParticleSystem::getNbParticleMaterials)
             .def("addParticleBuffer", &PxPBDParticleSystem::addParticleBuffer)
             .def("removeParticleBuffer", &PxPBDParticleSystem::removeParticleBuffer)
@@ -248,4 +272,16 @@ void bindActor(nb::module_& m) {
             .def("getGridSizeY", &PxPBDParticleSystem::getGridSizeY)
             .def("setGridSizeZ", &PxPBDParticleSystem::setGridSizeZ)
             .def("getGridSizeZ", &PxPBDParticleSystem::getGridSizeZ);
+    nb::class_<PxParticleBuffer>(m, "PxParticleBuffer")
+            .def("setNbActiveParticles", &PxParticleBuffer::setNbActiveParticles)
+            .def("getNbActiveParticles", &PxParticleBuffer::getNbActiveParticles)
+            .def("getMaxParticles", &PxParticleBuffer::getMaxParticles)
+            .def("getNbParticleVolumes", &PxParticleBuffer::getNbParticleVolumes)
+            .def("setNbParticleVolumes", &PxParticleBuffer::setNbParticleVolumes)
+            .def("getMaxParticleVolumes", &PxParticleBuffer::getMaxParticleVolumes)
+            .def("getFlatListStartIndex", &PxParticleBuffer::getFlatListStartIndex)
+            .def("raiseFlags", &PxParticleBuffer::raiseFlags)
+            .def("release", &PxParticleBuffer::release)
+            .def("getUniqueId", &PxParticleBuffer::getUniqueId);
+
 }

@@ -6,14 +6,25 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
-#include <nanobind/stl/array.h>
-#include <nanobind/stl/tuple.h>
 
 namespace nb = nanobind;
 using namespace nb::literals;
 using namespace physx;
 
 void bindShape(nb::module_& m) {
+    nb::enum_<PxGeometryType::Enum>(m, "PxGeometryType")
+            .value("eSPHERE", PxGeometryType::Enum::eSPHERE)
+            .value("ePLANE", PxGeometryType::Enum::ePLANE)
+            .value("eCAPSULE", PxGeometryType::Enum::eCAPSULE)
+            .value("eBOX", PxGeometryType::Enum::eBOX)
+            .value("eCONVEXMESH", PxGeometryType::Enum::eCONVEXMESH)
+            .value("ePARTICLESYSTEM", PxGeometryType::Enum::ePARTICLESYSTEM)
+            .value("eTETRAHEDRONMESH", PxGeometryType::Enum::eTETRAHEDRONMESH)
+            .value("eTRIANGLEMESH", PxGeometryType::Enum::eTRIANGLEMESH)
+            .value("eHEIGHTFIELD", PxGeometryType::Enum::eHEIGHTFIELD)
+            .value("eHAIRSYSTEM", PxGeometryType::Enum::eHAIRSYSTEM)
+            .value("eCUSTOM", PxGeometryType::Enum::eCUSTOM);
+
     nb::enum_<PxShapeFlag::Enum>(m, "PxShapeFlag")
             .value("eSIMULATION_SHAPE", PxShapeFlag::Enum::eSIMULATION_SHAPE)
             .value("eSCENE_QUERY_SHAPE", PxShapeFlag::Enum::eSCENE_QUERY_SHAPE)
@@ -75,10 +86,6 @@ void bindShape(nb::module_& m) {
     nb::class_<PxPlaneGeometry, PxGeometry>(m, "PxPlaneGeometry")
             .def(nb::init<>())
             .def("isValid", &PxPlaneGeometry::isValid);
-
-    nb::class_<PxHeightFieldGeometry, PxGeometry>(m, "PxHeightFieldGeometry")
-            .def(nb::init<PxHeightField*, PxMeshGeometryFlags, PxReal, PxReal, PxReal>())
-            .def("isValid", &PxHeightFieldGeometry::isValid);
 
     nb::class_<PxTriangleMeshGeometry, PxGeometry>(m, "PxTriangleMeshGeometry")
             .def(nb::init<PxTriangleMesh*, const PxMeshScale&, PxMeshGeometryFlags>())

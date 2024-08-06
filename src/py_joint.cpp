@@ -38,6 +38,10 @@ void bindJoint(nb::module_& m) {
             .value("eMIN_DISTANCE_ENABLED", PxDistanceJointFlag::Enum::eMIN_DISTANCE_ENABLED)
             .value("eSPRING_ENABLED", PxDistanceJointFlag::Enum::eSPRING_ENABLED);
 
+    nb::enum_<PxJointActorIndex::Enum>(m, "PxJointActorIndex")
+            .value("eACTOR0", PxJointActorIndex::Enum::eACTOR0)
+            .value("eACTOR1", PxJointActorIndex::Enum::eACTOR1);
+
     nb::class_<PxJoint>(m, "PxJoint")
             .def("setActors", &PxJoint::setActors)
             .def("setLocalPose", &PxJoint::setLocalPose)
@@ -46,9 +50,15 @@ void bindJoint(nb::module_& m) {
             .def("getRelativeLinearVelocity", &PxJoint::getRelativeLinearVelocity)
             .def("getRelativeAngularVelocity", &PxJoint::getRelativeAngularVelocity)
             .def("setBreakForce", &PxJoint::setBreakForce)
-            .def("setConstraintFlags", &PxJoint::setConstraintFlags)
+            .def("setConstraintFlags",
+                 [](PxJoint* joint, int flags) {
+                     joint->setConstraintFlags(PxConstraintFlags(flags));
+                 })
             .def("setConstraintFlag", &PxJoint::setConstraintFlag)
-            .def("getConstraintFlags", &PxJoint::getConstraintFlags)
+            .def("getConstraintFlags",
+                 [](PxJoint* joint) {
+                     return joint->getConstraintFlags().operator uint32_t();
+                 })
             .def("setInvMassScale0", &PxJoint::setInvMassScale0)
             .def("getInvMassScale0", &PxJoint::getInvMassScale0)
             .def("setInvInertiaScale0", &PxJoint::setInvInertiaScale0)
@@ -93,7 +103,7 @@ void bindJoint(nb::module_& m) {
             .def("setDistanceJointFlag", &PxDistanceJoint::setDistanceJointFlag);
 
     nb::class_<PxGearJoint, PxJoint>(m, "PxGearJoint")
-            .def("setHinges", &PxGearJoint::setHinges)
+            //            .def("setHinges", &PxGearJoint::setHinges)
             .def("setGearRatio", &PxGearJoint::setGearRatio)
             .def("getGearRatio", &PxGearJoint::getGearRatio);
 
