@@ -84,10 +84,6 @@ void bindShape(nb::module_& m) {
             .def(nb::init<PxTriangleMesh*, const PxMeshScale&, PxMeshGeometryFlags>())
             .def("isValid", &PxTriangleMeshGeometry::isValid);
 
-    nb::class_<PxConvexMeshGeometry, PxGeometry>(m, "PxConvexMeshGeometry")
-            .def(nb::init<PxConvexMesh*, const PxMeshScale&, PxConvexMeshGeometryFlags>())
-            .def("isValid", &PxConvexMeshGeometry::isValid);
-
     nb::class_<PxTetrahedronMeshGeometry, PxGeometry>(m, "PxTetrahedronMeshGeometry")
             .def(nb::init<PxTetrahedronMesh*>())
             .def("isValid", &PxTetrahedronMeshGeometry::isValid);

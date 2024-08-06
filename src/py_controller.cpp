@@ -223,6 +223,18 @@ void bindController(nb::module_& m) {
             .def(nb::init<const std::function<void(const PxControllersHit& hit)>&,
                           const std::function<void(const PxControllerObstacleHit& hit)>&,
                           const std::function<void(const PxControllerShapeHit& hit)>&>());
+    nb::class_<PxControllerHit>(m, "PxControllerHit")
+            .def_rw("controller", &PxControllerHit::controller)
+            .def_rw("worldPos", &PxControllerHit::worldPos)
+            .def_rw("worldNormal", &PxControllerHit::worldNormal)
+            .def_rw("dir", &PxControllerHit::dir)
+            .def_rw("length", &PxControllerHit::length);
+    nb::class_<PxControllerShapeHit, PxControllerHit>(m, "PxControllerShapeHit")
+            .def_rw("shape", &PxControllerShapeHit::shape)
+            .def_rw("actor", &PxControllerShapeHit::actor)
+            .def_rw("triangleIndex", &PxControllerShapeHit::triangleIndex);
+    nb::class_<PxControllersHit, PxControllerHit>(m, "PxControllersHit").def_rw("other", &PxControllersHit::other);
+    nb::class_<PxControllerObstacleHit, PxControllerHit> pxControllerObstacleHit(m, "PxControllerObstacleHit");
 
     class ControllerFilterCallback : public PxControllerFilterCallback {
     public:

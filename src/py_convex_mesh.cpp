@@ -6,7 +6,7 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
+#include <nanobind/stl/vector.h>
 
 namespace nb = nanobind;
 using namespace nb::literals;
@@ -24,4 +24,33 @@ void bindConvexMesh(nb::module_& m) {
             .def("getLocalBounds", &PxConvexMesh::getLocalBounds)
             .def("getSDF", &PxConvexMesh::getSDF)
             .def("isGpuCompatible", &PxConvexMesh::isGpuCompatible);
+
+    nb::class_<PxHullPolygon>(m, "PxHullPolygon")
+            .def_rw("mIndexBase", &PxHullPolygon::mIndexBase)
+            .def_rw("mNbVerts", &PxHullPolygon::mNbVerts)
+            .def_prop_ro("mPlane", [](PxHullPolygon* polygon) {
+                return std::vector<PxReal>(polygon->mPlane, polygon->mPlane + 4);
+            });
+
+    nb::class_<PxConvexMeshGeometry, PxGeometry>(m, "PxConvexMeshGeometry")
+            .def("__init__",
+                 [](PxConvexMesh* mesh, const PxMeshScale& scaling, int flags) {
+                     return new PxConvexMeshGeometry(mesh, scaling, PxConvexMeshGeometryFlags(flags));
+                 })
+            .def("isValid", &PxConvexMeshGeometry::isValid);
+    nb::class_<PxMeshScale>(m, "PxMeshScale")
+            .def(nb::init<>())
+            .def(nb::init<PxReal>())
+            .def(nb::init<PxVec3>())
+            .def(nb::init<PxVec3, PxQuat>())
+            .def("isIdentity", &PxMeshScale::isIdentity)
+            .def("getInverse", &PxMeshScale::getInverse)
+            .def("toMat33", &PxMeshScale::toMat33)
+            .def("hasNegativeDeterminant", &PxMeshScale::hasNegativeDeterminant)
+            .def("transform", &PxMeshScale::transform)
+            .def("isValidForTriangleMesh", &PxMeshScale::isValidForTriangleMesh)
+            .def("isValidForConvexMesh", &PxMeshScale::isValidForConvexMesh);
+
+    nb::enum_<PxConvexMeshGeometryFlag::Enum>(m, "PxConvexMeshGeometryFlag")
+            .value("eTIGHT_BOUNDS", PxConvexMeshGeometryFlag::Enum::eTIGHT_BOUNDS);
 }

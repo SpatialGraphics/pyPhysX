@@ -14,6 +14,30 @@ using namespace nb::literals;
 using namespace physx;
 
 void bindJoint(nb::module_& m) {
+    nb::enum_<PxD6Axis::Enum>(m, "PxD6Axis")
+            .value("eX", PxD6Axis::Enum::eX)
+            .value("eY", PxD6Axis::Enum::eY)
+            .value("eZ", PxD6Axis::Enum::eZ)
+            .value("eTWIST", PxD6Axis::Enum::eTWIST)
+            .value("eSWING1", PxD6Axis::Enum::eSWING1)
+            .value("eSWING2", PxD6Axis::Enum::eSWING2);
+    nb::enum_<PxD6Motion::Enum>(m, "PxD6Motion")
+            .value("eLOCKED", PxD6Motion::Enum::eLOCKED)
+            .value("eLIMITED", PxD6Motion::Enum::eLIMITED)
+            .value("eFREE", PxD6Motion::Enum::eFREE);
+    nb::enum_<PxD6Drive::Enum>(m, "PxD6Drive")
+            .value("eX", PxD6Drive::Enum::eX)
+            .value("eY", PxD6Drive::Enum::eY)
+            .value("eZ", PxD6Drive::Enum::eZ)
+            .value("eSWING", PxD6Drive::Enum::eSWING)
+            .value("eTWIST", PxD6Drive::Enum::eTWIST)
+            .value("eSLERP", PxD6Drive::Enum::eSLERP);
+
+    nb::enum_<PxDistanceJointFlag::Enum>(m, "PxDistanceJointFlag")
+            .value("eMAX_DISTANCE_ENABLED", PxDistanceJointFlag::Enum::eMAX_DISTANCE_ENABLED)
+            .value("eMIN_DISTANCE_ENABLED", PxDistanceJointFlag::Enum::eMIN_DISTANCE_ENABLED)
+            .value("eSPRING_ENABLED", PxDistanceJointFlag::Enum::eSPRING_ENABLED);
+
     nb::class_<PxJoint>(m, "PxJoint")
             .def("setActors", &PxJoint::setActors)
             .def("setLocalPose", &PxJoint::setLocalPose)
@@ -62,7 +86,10 @@ void bindJoint(nb::module_& m) {
             .def("getStiffness", &PxDistanceJoint::getStiffness)
             .def("setDamping", &PxDistanceJoint::setDamping)
             .def("getDamping", &PxDistanceJoint::getDamping)
-            .def("setDistanceJointFlags", &PxDistanceJoint::setDistanceJointFlags)
+            .def("setDistanceJointFlags",
+                 [](PxDistanceJoint* joint, int flags) {
+                     joint->setDistanceJointFlags(PxDistanceJointFlags(flags));
+                 })
             .def("setDistanceJointFlag", &PxDistanceJoint::setDistanceJointFlag);
 
     nb::class_<PxGearJoint, PxJoint>(m, "PxGearJoint")
@@ -123,4 +150,54 @@ void bindJoint(nb::module_& m) {
             .def("getDrivePosition", &PxD6Joint::getDrivePosition)
             .def("setDriveVelocity", &PxD6Joint::setDriveVelocity)
             .def("getDriveVelocity", &PxD6Joint::getDriveVelocity);
+    nb::class_<PxJointLimitParameters>(m, "PxJointLimitParameters")
+            .def(nb::init<>())
+            .def("isValid", &PxJointLimitParameters::isValid)
+            .def("isSoft", &PxJointLimitParameters::isSoft)
+            .def_rw("restitution", &PxJointLimitParameters::restitution)
+            .def_rw("bounceThreshold", &PxJointLimitParameters::bounceThreshold)
+            .def_rw("stiffness", &PxJointLimitParameters::stiffness)
+            .def_rw("damping", &PxJointLimitParameters::damping);
+    nb::class_<PxJointLinearLimit, PxJointLimitParameters>(m, "PxJointLinearLimit")
+            .def(nb::init<PxReal>())
+            .def(nb::init<PxReal, PxSpring>())
+            .def("isValid", &PxJointLinearLimit::isValid)
+            .def_rw("value", &PxJointLinearLimit::value);
+    nb::class_<PxJointLinearLimitPair, PxJointLimitParameters>(m, "PxJointLinearLimitPair")
+            .def(nb::init<const PxTolerancesScale&, PxReal, PxReal>())
+            .def(nb::init<PxReal, PxReal, const PxSpring&>())
+            .def("isValid", &PxJointLinearLimitPair::isValid)
+            .def_rw("upper", &PxJointLinearLimitPair::upper)
+            .def_rw("lower", &PxJointLinearLimitPair::lower);
+    nb::class_<PxJointAngularLimitPair, PxJointLimitParameters>(m, "PxJointAngularLimitPair")
+            .def(nb::init<PxReal, PxReal>())
+            .def(nb::init<PxReal, PxReal, PxSpring>())
+            .def("isValid", &PxJointAngularLimitPair::isValid)
+            .def_rw("upper", &PxJointAngularLimitPair::upper)
+            .def_rw("lower", &PxJointAngularLimitPair::lower);
+    nb::class_<PxJointLimitCone, PxJointLimitParameters>(m, "PxJointLimitCone")
+            .def(nb::init<PxReal, PxReal>())
+            .def(nb::init<PxReal, PxReal, PxSpring>())
+            .def("isValid", &PxJointLimitCone::isValid)
+            .def_rw("upper", &PxJointLimitCone::yAngle)
+            .def_rw("lower", &PxJointLimitCone::zAngle);
+    nb::class_<PxJointLimitPyramid, PxJointLimitParameters>(m, "PxJointLimitPyramid")
+            .def(nb::init<PxReal, PxReal, PxReal, PxReal>())
+            .def(nb::init<PxReal, PxReal, PxReal, PxReal, PxSpring>())
+            .def("isValid", &PxJointLimitPyramid::isValid)
+            .def_rw("upper", &PxJointLimitPyramid::yAngleMin)
+            .def_rw("lower", &PxJointLimitPyramid::yAngleMax)
+            .def_rw("lower", &PxJointLimitPyramid::zAngleMin)
+            .def_rw("lower", &PxJointLimitPyramid::zAngleMax);
+
+    nb::class_<PxSpring>(m, "PxSpring")
+            .def(nb::init<PxReal, PxReal>())
+            .def_rw("upper", &PxSpring::stiffness)
+            .def_rw("lower", &PxSpring::damping);
+    nb::class_<PxD6JointDrive, PxSpring>(m, "PxD6JointDrive")
+            .def(nb::init<>())
+            .def(nb::init<PxReal, PxReal, PxReal, bool>())
+            .def_rw("forceLimit", &PxD6JointDrive::forceLimit)
+            .def_rw("lower", &PxD6JointDrive::damping)
+            .def("isValid", &PxD6JointDrive::isValid);
 }
