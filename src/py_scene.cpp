@@ -14,6 +14,18 @@ using namespace nb::literals;
 using namespace physx;
 
 void bindScene(nb::module_& m) {
+    nb::enum_<PxFrictionType::Enum>(m, "PxFrictionType").value("ePATCH", PxFrictionType::Enum::ePATCH);
+    nb::enum_<PxSolverType::Enum>(m, "PxSolverType")
+            .value("ePGS", PxSolverType::Enum::ePGS)
+            .value("eTGS", PxSolverType::Enum::eTGS);
+
+    nb::enum_<PxBroadPhaseType::Enum>(m, "PxBroadPhaseType")
+            .value("eSAP", PxBroadPhaseType::Enum::eSAP)
+            .value("eMBP", PxBroadPhaseType::Enum::eMBP)
+            .value("eABP", PxBroadPhaseType::Enum::eABP)
+            .value("ePABP", PxBroadPhaseType::Enum::ePABP)
+            .value("eGPU", PxBroadPhaseType::Enum::eGPU);
+
     nb::enum_<PxHitFlag::Enum>(m, "PxHitFlag")
             .value("ePOSITION", PxHitFlag::Enum::ePOSITION)
             .value("eNORMAL", PxHitFlag::Enum::eNORMAL)
@@ -42,6 +54,18 @@ void bindScene(nb::module_& m) {
             .value("eNONE", PxQueryHitType::Enum::eNONE)
             .value("eBLOCK", PxQueryHitType::Enum::eBLOCK)
             .value("eTOUCH", PxQueryHitType::Enum::eTOUCH);
+
+    nb::enum_<PxSceneQueryUpdateMode::Enum>(m, "PxSceneQueryUpdateMode")
+            .value("eBUILD_ENABLED_COMMIT_ENABLED", PxSceneQueryUpdateMode::Enum::eBUILD_ENABLED_COMMIT_ENABLED)
+            .value("eBUILD_ENABLED_COMMIT_DISABLED", PxSceneQueryUpdateMode::Enum::eBUILD_ENABLED_COMMIT_DISABLED)
+            .value("eBUILD_DISABLED_COMMIT_DISABLED", PxSceneQueryUpdateMode::Enum::eBUILD_DISABLED_COMMIT_DISABLED);
+
+    nb::enum_<PxPruningStructureType::Enum>(m, "PxPruningStructureType")
+            .value("eNONE", PxPruningStructureType::Enum::eNONE)
+            .value("eDYNAMIC_AABB_TREE", PxPruningStructureType::Enum::eDYNAMIC_AABB_TREE)
+            .value("eSTATIC_AABB_TREE", PxPruningStructureType::Enum::eSTATIC_AABB_TREE);
+
+    nb::enum_<PxParticleSolverType::Enum>(m, "PxParticleSolverType").value("eNONE", PxParticleSolverType::Enum::ePBD);
 
     nb::enum_<PxSceneFlag::Enum>(m, "PxSceneFlag")
             .value("eENABLE_ACTIVE_ACTORS ", PxSceneFlag::Enum::eENABLE_ACTIVE_ACTORS)
@@ -103,6 +127,33 @@ void bindScene(nb::module_& m) {
             .def_rw("gpuComputeVersion", &PxSceneDesc::gpuComputeVersion)
             .def_rw("contactPairSlabSize", &PxSceneDesc::contactPairSlabSize)
             .def_rw("sceneQuerySystem", &PxSceneDesc::sceneQuerySystem);
+    nb::class_<PxSceneLimits>(m, "PxSceneLimits")
+            .def(nb::init<>())
+            .def("setToDefault", &PxSceneLimits::setToDefault)
+            .def("isValid", &PxSceneLimits::isValid)
+            .def_rw("maxNbActors", &PxSceneLimits::maxNbActors)
+            .def_rw("maxNbBodies", &PxSceneLimits::maxNbBodies)
+            .def_rw("maxNbStaticShapes", &PxSceneLimits::maxNbStaticShapes)
+            .def_rw("maxNbDynamicShapes", &PxSceneLimits::maxNbDynamicShapes)
+            .def_rw("maxNbAggregates", &PxSceneLimits::maxNbAggregates)
+            .def_rw("maxNbConstraints", &PxSceneLimits::maxNbConstraints)
+            .def_rw("maxNbRegions", &PxSceneLimits::maxNbRegions)
+            .def_rw("maxNbBroadPhaseOverlaps", &PxSceneLimits::maxNbBroadPhaseOverlaps);
+    nb::class_<PxGpuDynamicsMemoryConfig>(m, "PxGpuDynamicsMemoryConfig")
+            .def(nb::init<>())
+            .def("isValid", &PxGpuDynamicsMemoryConfig::isValid)
+            .def_rw("tempBufferCapacity", &PxGpuDynamicsMemoryConfig::tempBufferCapacity)
+            .def_rw("maxRigidContactCount", &PxGpuDynamicsMemoryConfig::maxRigidContactCount)
+            .def_rw("maxRigidPatchCount", &PxGpuDynamicsMemoryConfig::maxRigidPatchCount)
+            .def_rw("heapCapacity", &PxGpuDynamicsMemoryConfig::heapCapacity)
+            .def_rw("foundLostPairsCapacity", &PxGpuDynamicsMemoryConfig::foundLostPairsCapacity)
+            .def_rw("foundLostAggregatePairsCapacity", &PxGpuDynamicsMemoryConfig::foundLostAggregatePairsCapacity)
+            .def_rw("totalAggregatePairsCapacity", &PxGpuDynamicsMemoryConfig::totalAggregatePairsCapacity)
+            .def_rw("maxSoftBodyContacts", &PxGpuDynamicsMemoryConfig::maxSoftBodyContacts)
+            .def_rw("maxFemClothContacts", &PxGpuDynamicsMemoryConfig::maxFemClothContacts)
+            .def_rw("maxParticleContacts", &PxGpuDynamicsMemoryConfig::maxParticleContacts)
+            .def_rw("collisionStackSize", &PxGpuDynamicsMemoryConfig::collisionStackSize)
+            .def_rw("maxHairContacts", &PxGpuDynamicsMemoryConfig::maxHairContacts);
 
     nb::class_<PxScene>(m, "PxScene")
             .def("release", &PxScene::release)
@@ -116,7 +167,10 @@ void bindScene(nb::module_& m) {
             .def("getName", &PxScene::getName)
             .def("addArticulation", &PxScene::addArticulation)
             .def("removeArticulation", &PxScene::removeArticulation)
-            .def("addActor", &PxScene::addActor)
+            .def("addActor",
+                 [](PxScene* scene, PxActor& actor) {
+                     return scene->addActor(actor);
+                 })
             .def("addActors",
                  [](PxScene* scene, std::vector<PxActor*> actors) {
                      scene->addActors(actors.data(), actors.size());
@@ -128,7 +182,7 @@ void bindScene(nb::module_& m) {
                  })
             .def("addAggregate", &PxScene::addAggregate)
             .def("removeAggregate", &PxScene::removeAggregate)
-            .def("addCollection", &PxScene::addCollection)
+            //            .def("addCollection", &PxScene::addCollection)
             .def("getNbActors", &PxScene::getNbActors)
             .def("getNbSoftBodies", &PxScene::getNbSoftBodies)
             .def("getNbParticleSystems", &PxScene::getNbParticleSystems)
@@ -138,4 +192,84 @@ void bindScene(nb::module_& m) {
             .def("getNbArticulations", &PxScene::getNbArticulations)
             .def("getNbConstraints", &PxScene::getNbConstraints)
             .def("getNbAggregates", &PxScene::getNbAggregates);
+
+    nb::class_<PxSceneQuerySystemBase>(m, "PxSceneQuerySystemBase")
+            .def("setDynamicTreeRebuildRateHint", &PxSceneQuerySystemBase::setDynamicTreeRebuildRateHint)
+            .def("getDynamicTreeRebuildRateHint", &PxSceneQuerySystemBase::getDynamicTreeRebuildRateHint)
+            .def("forceRebuildDynamicTree", &PxSceneQuerySystemBase::forceRebuildDynamicTree)
+            .def("setUpdateMode", &PxSceneQuerySystemBase::setUpdateMode)
+            .def("getUpdateMode", &PxSceneQuerySystemBase::getUpdateMode)
+            .def("getStaticTimestamp", &PxSceneQuerySystemBase::getStaticTimestamp)
+            .def("flushUpdates", &PxSceneQuerySystemBase::flushUpdates)
+            .def("raycast", &PxSceneQuerySystemBase::raycast)
+            .def("sweep", &PxSceneQuerySystemBase::sweep)
+            .def("overlap", &PxSceneQuerySystemBase::overlap);
+    nb::class_<PxSceneSQSystem, PxSceneQuerySystemBase>(m, "PxSceneSQSystem")
+            .def("setSceneQueryUpdateMode", &PxSceneSQSystem::setSceneQueryUpdateMode)
+            .def("getSceneQueryUpdateMode", &PxSceneSQSystem::getSceneQueryUpdateMode)
+            .def("getSceneQueryStaticTimestamp", &PxSceneSQSystem::getSceneQueryStaticTimestamp)
+            .def("flushQueryUpdates", &PxSceneSQSystem::flushQueryUpdates)
+            .def("forceDynamicTreeRebuild", &PxSceneSQSystem::forceDynamicTreeRebuild)
+            .def("getStaticStructure", &PxSceneSQSystem::getStaticStructure)
+            .def("getDynamicStructure", &PxSceneSQSystem::getDynamicStructure)
+//            .def("sceneQueriesUpdate", &PxSceneSQSystem::sceneQueriesUpdate)
+            .def("checkQueries", &PxSceneSQSystem::checkQueries)
+            .def("fetchQueries", &PxSceneSQSystem::fetchQueries);
+    nb::class_<PxSceneQuerySystem, PxSceneQuerySystemBase>(m, "PxSceneQuerySystem")
+            .def("release", &PxSceneQuerySystem::release)
+            .def("acquireReference", &PxSceneQuerySystem::acquireReference)
+            .def("preallocate", &PxSceneQuerySystem::preallocate)
+            .def("flushMemory", &PxSceneQuerySystem::flushMemory)
+            .def("addSQShape", &PxSceneQuerySystem::addSQShape)
+            .def("removeSQShape", &PxSceneQuerySystem::removeSQShape)
+            .def("updateSQShape", &PxSceneQuerySystem::updateSQShape)
+            //            .def("addSQCompound", &PxSceneQuerySystem::addSQCompound)
+            .def("removeSQCompound", &PxSceneQuerySystem::removeSQCompound)
+            .def("updateSQCompound", &PxSceneQuerySystem::updateSQCompound)
+            .def("shiftOrigin", &PxSceneQuerySystem::shiftOrigin)
+            //            .def("visualize", &PxSceneQuerySystem::visualize)
+            .def("merge", &PxSceneQuerySystem::merge)
+            .def("getHandle", &PxSceneQuerySystem::getHandle)
+            .def("sync", &PxSceneQuerySystem::sync)
+            .def("finalizeUpdates", &PxSceneQuerySystem::finalizeUpdates)
+            .def("prepareSceneQueryBuildStep", &PxSceneQuerySystem::prepareSceneQueryBuildStep)
+            .def("sceneQueryBuildStep", &PxSceneQuerySystem::sceneQueryBuildStep);
+
+    class SimulationEventCallback : public PxSimulationEventCallback {
+    public:
+        void onAdvance(const PxRigidBody* const* bodyBuffer,
+                       const PxTransform* poseBuffer,
+                       const PxU32 count) override {}
+        void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) override {}
+        void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override {}
+        void onSleep(physx::PxActor** actors, PxU32 count) override {}
+        void onTrigger(physx::PxTriggerPair* pairs, PxU32 count) override {}
+        void onWake(physx::PxActor** actors, PxU32 count) override {}
+    };
+    nb::class_<PxSimulationEventCallback> pxSimulationEventCallback(m, "PxSimulationEventCallback");
+    nb::class_<SimulationEventCallback, PxSimulationEventCallback> simulationEventCallback(m,
+                                                                                           "SimulationEventCallback");
+
+    class ContactModifyCallback : public PxContactModifyCallback {
+    public:
+        void onContactModify(physx::PxContactModifyPair* const pairs, physx::PxU32 count) override {}
+    };
+    nb::class_<PxContactModifyCallback> pxContactModifyCallback(m, "PxContactModifyCallback");
+    nb::class_<ContactModifyCallback, PxContactModifyCallback> contactModifyCallback(m, "ContactModifyCallback");
+
+    class CCDContactModifyCallback : public PxCCDContactModifyCallback {
+    public:
+        void onCCDContactModify(physx::PxContactModifyPair* const pairs, physx::PxU32 count) override {}
+    };
+    nb::class_<PxCCDContactModifyCallback> pxCCDContactModifyCallback(m, "PxCCDContactModifyCallback");
+    nb::class_<CCDContactModifyCallback, PxCCDContactModifyCallback> cCDContactModifyCallback(
+            m, "CCDContactModifyCallback");
+
+    class BroadPhaseCallback : public PxBroadPhaseCallback {
+    public:
+        void onObjectOutOfBounds(physx::PxAggregate& aggregate) override {}
+        void onObjectOutOfBounds(physx::PxShape& shape, physx::PxActor& actor) override {}
+    };
+    nb::class_<PxBroadPhaseCallback> pxBroadPhaseCallback(m, "PxBroadPhaseCallback");
+    nb::class_<BroadPhaseCallback, PxBroadPhaseCallback> broadPhaseCallback(m, "BroadPhaseCallback");
 }

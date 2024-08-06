@@ -13,6 +13,34 @@ using namespace nb::literals;
 using namespace physx;
 
 void bindSoftBodyMesh(nb::module_& m) {
+    nb::enum_<PxSoftBodyFlag::Enum>(m, "PxSoftBodyFlag")
+            .value("eDISABLE_SELF_COLLISION", PxSoftBodyFlag::Enum::eDISABLE_SELF_COLLISION)
+            .value("eCOMPUTE_STRESS_TENSOR", PxSoftBodyFlag::Enum::eCOMPUTE_STRESS_TENSOR)
+            .value("eENABLE_CCD", PxSoftBodyFlag::Enum::eENABLE_CCD)
+            .value("eDISPLAY_SIM_MESH", PxSoftBodyFlag::Enum::eDISPLAY_SIM_MESH)
+            .value("eKINEMATIC", PxSoftBodyFlag::Enum::eKINEMATIC)
+            .value("ePARTIALLY_KINEMATIC", PxSoftBodyFlag::Enum::ePARTIALLY_KINEMATIC);
+
+    nb::class_<PxFEMParameters>(m, "PxFEMParameters")
+            .def(nb::init<>())
+            .def_rw("velocityDamping", &PxFEMParameters::velocityDamping)
+            .def_rw("settlingThreshold", &PxFEMParameters::settlingThreshold)
+            .def_rw("sleepThreshold", &PxFEMParameters::sleepThreshold)
+            .def_rw("sleepDamping", &PxFEMParameters::sleepDamping)
+            .def_rw("selfCollisionFilterDistance", &PxFEMParameters::selfCollisionFilterDistance)
+            .def_rw("selfCollisionStressTolerance", &PxFEMParameters::selfCollisionStressTolerance);
+
+    nb::class_<PxSoftBodyAuxData>(m, "PxSoftBodyAuxData").def("release", &PxSoftBodyAuxData::release);
+
+    nb::class_<PxConeLimitedConstraint>(m, "PxConeLimitedConstraint")
+            .def(nb::init<>())
+            .def_rw("mAxis", &PxConeLimitedConstraint::mAxis)
+            .def_rw("mAngle", &PxConeLimitedConstraint::mAngle)
+            .def_rw("mLowLimit", &PxConeLimitedConstraint::mLowLimit)
+            .def_rw("mHighLimit", &PxConeLimitedConstraint::mHighLimit)
+            .def("isValid", &PxConeLimitedConstraint::isValid)
+            .def("setToDefault", &PxConeLimitedConstraint::setToDefault);
+
     nb::class_<PxSoftBodyMesh>(m, "PxSoftBodyMesh")
             .def("getCollisionMesh", nb::overload_cast<>(&PxSoftBodyMesh::getCollisionMesh, nb::const_))
             .def("getCollisionMesh", nb::overload_cast<>(&PxSoftBodyMesh::getSimulationMesh, nb::const_));

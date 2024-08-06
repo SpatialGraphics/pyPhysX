@@ -13,6 +13,10 @@ using namespace nb::literals;
 using namespace physx;
 
 void bindFilter(nb::module_& m) {
+    nb::enum_<PxPairFilteringMode::Enum>(m, "PxPairFilteringMode")
+            .value("eSUPPRESS", PxPairFilteringMode::Enum::eSUPPRESS)
+            .value("eDEFAULT", PxPairFilteringMode::Enum::eDEFAULT);
+
     nb::class_<PxFilterData>(m, "PxFilterData")
             .def(nb::init<>())
             .def(nb::init<PxU32, PxU32, PxU32, PxU32>())
@@ -65,4 +69,34 @@ void bindFilter(nb::module_& m) {
                                                              const PxRigidActor* actor, uint32_t& queryFlags)>&,
                     const std::function<PxQueryHitType::Enum(const PxFilterData& filterData, const PxQueryHit& hit,
                                                              const PxShape* shape, const PxRigidActor* actor)>&>());
+
+    class SimulationFilterCallback : public PxSimulationFilterCallback {
+    public:
+        PxFilterFlags pairFound(physx::PxU64 pairID,
+                                physx::PxFilterObjectAttributes attributes0,
+                                physx::PxFilterData filterData0,
+                                const physx::PxActor* a0,
+                                const physx::PxShape* s0,
+                                physx::PxFilterObjectAttributes attributes1,
+                                physx::PxFilterData filterData1,
+                                const physx::PxActor* a1,
+                                const physx::PxShape* s1,
+                                physx::PxPairFlags& pairFlags) override {
+            return {};
+        }
+        void pairLost(physx::PxU64 pairID,
+                      physx::PxFilterObjectAttributes attributes0,
+                      physx::PxFilterData filterData0,
+                      physx::PxFilterObjectAttributes attributes1,
+                      physx::PxFilterData filterData1,
+                      bool objectRemoved) override {}
+        bool statusChange(physx::PxU64& pairID,
+                          physx::PxPairFlags& pairFlags,
+                          physx::PxFilterFlags& filterFlags) override {
+            return false;
+        }
+    };
+    nb::class_<PxSimulationFilterCallback> pxSimulationFilterCallback(m, "PxSimulationFilterCallback");
+    nb::class_<SimulationFilterCallback, PxSimulationFilterCallback> simulationFilterCallback(
+            m, "SimulationFilterCallback");
 }

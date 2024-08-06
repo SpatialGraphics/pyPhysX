@@ -19,7 +19,10 @@ void bindTriangleMesh(nb::module_& m) {
             .def("getVerticesForModification", &PxTriangleMesh::getVerticesForModification)
             .def("refitBVH", &PxTriangleMesh::refitBVH)
             .def("getNbTriangles", &PxTriangleMesh::getNbTriangles)
-            .def("getTriangleMeshFlags", &PxTriangleMesh::getTriangleMeshFlags)
+            .def("getTriangleMeshFlags",
+                 [](PxTriangleMesh* mesh) {
+                     return mesh->getTriangleMeshFlags().operator uint32_t();
+                 })
             .def("release", &PxTriangleMesh::release)
             .def("getTriangleMaterialIndex", &PxTriangleMesh::getTriangleMaterialIndex)
             .def("getLocalBounds", &PxTriangleMesh::getLocalBounds)
