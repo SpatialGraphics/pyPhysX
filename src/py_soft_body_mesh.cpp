@@ -13,6 +13,14 @@ using namespace nb::literals;
 using namespace physx;
 
 void bindSoftBodyMesh(nb::module_& m) {
+    nb::enum_<PxSoftBodyDataFlag::Enum>(m, "PxSoftBodyDataFlag")
+            .value("eNONE", PxSoftBodyDataFlag::Enum::eNONE)
+            .value("ePOSITION_INVMASS", PxSoftBodyDataFlag::Enum::ePOSITION_INVMASS)
+            .value("eSIM_POSITION_INVMASS", PxSoftBodyDataFlag::Enum::eSIM_POSITION_INVMASS)
+            .value("eSIM_VELOCITY", PxSoftBodyDataFlag::Enum::eSIM_VELOCITY)
+            .value("eREST_POSITION_INVMASS", PxSoftBodyDataFlag::Enum::eREST_POSITION_INVMASS)
+            .value("eALL", PxSoftBodyDataFlag::Enum::eALL);
+
     nb::enum_<PxSoftBodyFlag::Enum>(m, "PxSoftBodyFlag")
             .value("eDISABLE_SELF_COLLISION", PxSoftBodyFlag::Enum::eDISABLE_SELF_COLLISION)
             .value("eCOMPUTE_STRESS_TENSOR", PxSoftBodyFlag::Enum::eCOMPUTE_STRESS_TENSOR)

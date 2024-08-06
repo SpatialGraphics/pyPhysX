@@ -6,7 +6,7 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
-#include <nanobind/stl/array.h>
+#include <nanobind/stl/vector.h>
 #include <nanobind/stl/tuple.h>
 
 namespace nb = nanobind;
@@ -199,8 +199,14 @@ void bindActor(nb::module_& m) {
             .def("getRestPositionBufferD", &PxSoftBody::getRestPositionBufferD)
             .def("getSimPositionInvMassBufferD", &PxSoftBody::getSimPositionInvMassBufferD)
             .def("getSimVelocityBufferD", &PxSoftBody::getSimVelocityBufferD)
-            .def("markDirty", &PxSoftBody::markDirty)
-            .def("setKinematicTargetBufferD", &PxSoftBody::setKinematicTargetBufferD)
+            .def("markDirty",
+                 [](PxSoftBody* body, int flags) {
+                     return body->markDirty(PxSoftBodyDataFlags(flags));
+                 })
+            .def("setKinematicTargetBufferD",
+                 [](PxSoftBody* body, const std::vector<PxVec4>& positions, int flags) {
+                     return body->setKinematicTargetBufferD(positions.data(), PxSoftBodyFlags(flags));
+                 })
             //            .def("getCudaContextManager", &PxSoftBody::getCudaContextManager)
             .def("setWakeCounter", &PxSoftBody::setWakeCounter)
             .def("getWakeCounter", &PxSoftBody::getWakeCounter)

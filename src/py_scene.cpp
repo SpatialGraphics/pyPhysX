@@ -158,7 +158,10 @@ void bindScene(nb::module_& m) {
     nb::class_<PxScene>(m, "PxScene")
             .def("release", &PxScene::release)
             .def("setFlag", &PxScene::setFlag)
-            .def("getFlags", &PxScene::getFlags)
+            .def("getFlags",
+                 [](PxScene* scene) {
+                     return scene->getFlags().operator uint32_t();
+                 })
             .def("setLimits", &PxScene::setLimits)
             .def("getLimits", &PxScene::getLimits)
             .def("getPhysics", &PxScene::getPhysics)
@@ -183,7 +186,10 @@ void bindScene(nb::module_& m) {
             .def("addAggregate", &PxScene::addAggregate)
             .def("removeAggregate", &PxScene::removeAggregate)
             //            .def("addCollection", &PxScene::addCollection)
-            .def("getNbActors", &PxScene::getNbActors)
+            .def("getNbActors",
+                 [](PxScene* scene, int flags) {
+                     return scene->getNbActors(PxActorTypeFlags(flags));
+                 })
             .def("getNbSoftBodies", &PxScene::getNbSoftBodies)
             .def("getNbParticleSystems", &PxScene::getNbParticleSystems)
             .def("getNbPBDParticleSystems", &PxScene::getNbPBDParticleSystems)
@@ -200,10 +206,10 @@ void bindScene(nb::module_& m) {
             .def("setUpdateMode", &PxSceneQuerySystemBase::setUpdateMode)
             .def("getUpdateMode", &PxSceneQuerySystemBase::getUpdateMode)
             .def("getStaticTimestamp", &PxSceneQuerySystemBase::getStaticTimestamp)
-            .def("flushUpdates", &PxSceneQuerySystemBase::flushUpdates)
-            .def("raycast", &PxSceneQuerySystemBase::raycast)
-            .def("sweep", &PxSceneQuerySystemBase::sweep)
-            .def("overlap", &PxSceneQuerySystemBase::overlap);
+            .def("flushUpdates", &PxSceneQuerySystemBase::flushUpdates);
+    //            .def("raycast", &PxSceneQuerySystemBase::raycast)
+    //            .def("sweep", &PxSceneQuerySystemBase::sweep)
+    //            .def("overlap", &PxSceneQuerySystemBase::overlap);
     nb::class_<PxSceneSQSystem, PxSceneQuerySystemBase>(m, "PxSceneSQSystem")
             .def("setSceneQueryUpdateMode", &PxSceneSQSystem::setSceneQueryUpdateMode)
             .def("getSceneQueryUpdateMode", &PxSceneSQSystem::getSceneQueryUpdateMode)
@@ -212,7 +218,7 @@ void bindScene(nb::module_& m) {
             .def("forceDynamicTreeRebuild", &PxSceneSQSystem::forceDynamicTreeRebuild)
             .def("getStaticStructure", &PxSceneSQSystem::getStaticStructure)
             .def("getDynamicStructure", &PxSceneSQSystem::getDynamicStructure)
-//            .def("sceneQueriesUpdate", &PxSceneSQSystem::sceneQueriesUpdate)
+            //            .def("sceneQueriesUpdate", &PxSceneSQSystem::sceneQueriesUpdate)
             .def("checkQueries", &PxSceneSQSystem::checkQueries)
             .def("fetchQueries", &PxSceneSQSystem::fetchQueries);
     nb::class_<PxSceneQuerySystem, PxSceneQuerySystemBase>(m, "PxSceneQuerySystem")
@@ -230,10 +236,19 @@ void bindScene(nb::module_& m) {
             //            .def("visualize", &PxSceneQuerySystem::visualize)
             .def("merge", &PxSceneQuerySystem::merge)
             .def("getHandle", &PxSceneQuerySystem::getHandle)
-            .def("sync", &PxSceneQuerySystem::sync)
-            .def("finalizeUpdates", &PxSceneQuerySystem::finalizeUpdates)
-            .def("prepareSceneQueryBuildStep", &PxSceneQuerySystem::prepareSceneQueryBuildStep)
-            .def("sceneQueryBuildStep", &PxSceneQuerySystem::sceneQueryBuildStep);
+            //            .def("sync", &PxSceneQuerySystem::sync)
+            .def("finalizeUpdates", &PxSceneQuerySystem::finalizeUpdates);
+    //            .def("prepareSceneQueryBuildStep", &PxSceneQuerySystem::prepareSceneQueryBuildStep)
+    //            .def("sceneQueryBuildStep", &PxSceneQuerySystem::sceneQueryBuildStep);
+
+    nb::class_<PxPruningStructure>(m, "PxPruningStructure")
+            .def("release", &PxPruningStructure::release)
+            .def("getNbRigidActors", &PxPruningStructure::getNbRigidActors);
+
+    nb::class_<PxCpuDispatcher>(m, "PxCpuDispatcher").def("getWorkerCount", &PxCpuDispatcher::getWorkerCount);
+    nb::class_<PxDefaultCpuDispatcher, PxCpuDispatcher>(m, "PxDefaultCpuDispatcher")
+            .def("setRunProfiled", &PxDefaultCpuDispatcher::setRunProfiled)
+            .def("getRunProfiled", &PxDefaultCpuDispatcher::getRunProfiled);
 
     class SimulationEventCallback : public PxSimulationEventCallback {
     public:

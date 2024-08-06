@@ -35,6 +35,8 @@ extern void bindRender(nb::module_& m);
 extern void bindFilter(nb::module_& m);
 extern void bindQuery(nb::module_& m);
 
+extern void bindCuda(nb::module_& m);
+
 NB_MODULE(py_physx_ext, m) {
     m.doc() = "python binding for PhysX";
 
@@ -61,4 +63,6 @@ NB_MODULE(py_physx_ext, m) {
     bindRender(m);
     bindFilter(m);
     bindQuery(m);
+
+    bindCuda(m);
 }

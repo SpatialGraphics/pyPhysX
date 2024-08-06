@@ -35,6 +35,6 @@ void bindConstraint(nb::module_& m) {
             .def("setBreakForce", &PxConstraint::setBreakForce)
             .def("getBreakForce", &PxConstraint::getBreakForce)
             .def("setMinResponseThreshold", &PxConstraint::setMinResponseThreshold)
-            .def("getMinResponseThreshold", &PxConstraint::getMinResponseThreshold)
-            .def("getExternalReference", &PxConstraint::getExternalReference);
+            .def("getMinResponseThreshold", &PxConstraint::getMinResponseThreshold);
+//            .def("getExternalReference", &PxConstraint::getExternalReference);
 }

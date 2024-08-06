@@ -29,4 +29,11 @@ void bindQuery(nb::module_& m) {
 
     nb::class_<PxGeomOverlapHit, PxQueryHit>(m, "PxGeomOverlapHit").def(nb::init<>());
     nb::class_<PxGeomSweepHit, PxQueryHit>(m, "PxGeomSweepHit").def(nb::init<>());
+
+    nb::class_<PxQueryFilterData>(m, "PxQueryFilterData").def(nb::init<>());
+    nb::class_<PxQueryCache>(m, "PxQueryCache")
+            .def(nb::init<>())
+            .def_rw("faceIndex", &PxQueryCache::faceIndex)
+            .def_rw("actor", &PxQueryCache::actor)
+            .def_rw("shape", &PxQueryCache::shape);
 }

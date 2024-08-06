@@ -44,6 +44,7 @@ set(BINDING_FILES
         src/py_render.cpp
         src/py_filter.cpp
         src/py_query.cpp
+        src/py_cuda.cpp
 )
 
 # We are now ready to compile the actual extension module
