@@ -109,7 +109,9 @@ void bindScene(nb::module_& m) {
             .def_rw("frictionOffsetThreshold", &PxSceneDesc::frictionOffsetThreshold)
             .def_rw("frictionCorrelationDistance", &PxSceneDesc::frictionCorrelationDistance)
             .def_rw("cpuDispatcher", &PxSceneDesc::cpuDispatcher)
+#ifdef SUPPORT_CUDA
             .def_rw("cudaContextManager", &PxSceneDesc::cudaContextManager)
+#endif
             .def_rw("solverBatchSize", &PxSceneDesc::solverBatchSize)
             .def_rw("solverArticulationBatchSize", &PxSceneDesc::solverArticulationBatchSize)
             .def_rw("nbContactDataBlocks", &PxSceneDesc::nbContactDataBlocks)
