@@ -15,12 +15,14 @@ extern void bindMath(nb::module_& m);
 extern void bindMaterial(nb::module_& m);
 extern void bindActor(nb::module_& m);
 extern void bindShape(nb::module_& m);
+extern void bindJoint(nb::module_& m);
 
 NB_MODULE(py_physx_ext, m) {
     m.doc() = "python binding for PhysX";
 
     bindMath(m);
     bindMaterial(m);
-    bindActor(m);
     bindShape(m);
+    bindActor(m);
+    bindJoint(m)
 }

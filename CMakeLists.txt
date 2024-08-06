@@ -25,6 +25,7 @@ set(BINDING_FILES
         src/py_material.cpp
         src/py_actor.cpp
         src/py_shape.cpp
+        src/py_joint.cpp
 )
 
 # We are now ready to compile the actual extension module
