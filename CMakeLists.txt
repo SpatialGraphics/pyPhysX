@@ -30,7 +30,13 @@ set(BINDING_FILES
         src/py_physics.cpp
         src/py_foundation.cpp
 
+        src/py_io.cpp
         src/py_aggregate.cpp
+        src/py_triangle_mesh.cpp
+        src/py_tetrahedron_mesh.cpp
+        src/py_soft_body_mesh.cpp
+        src/py_convex_mesh.cpp
+        src/py_height_field.cpp
 )
 
 # We are now ready to compile the actual extension module

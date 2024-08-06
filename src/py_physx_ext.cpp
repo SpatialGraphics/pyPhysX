@@ -20,7 +20,13 @@ extern void bindScene(nb::module_& m);
 extern void bindPhysics(nb::module_& m);
 extern void bindFoundation(nb::module_& m);
 
+extern void bindIO(nb::module_& m);
 extern void bindAggregate(nb::module_& m);
+extern void bindTriangleMesh(nb::module_& m);
+extern void bindTetrahedronMesh(nb::module_& m);
+extern void bindSoftBodyMesh(nb::module_& m);
+extern void bindConvexMesh(nb::module_& m);
+extern void bindHeightField(nb::module_& m);
 
 NB_MODULE(py_physx_ext, m) {
     m.doc() = "python binding for PhysX";
@@ -34,5 +40,11 @@ NB_MODULE(py_physx_ext, m) {
     bindPhysics(m);
     bindFoundation(m);
 
+    bindIO(m);
     bindAggregate(m);
+    bindTriangleMesh(m);
+    bindTetrahedronMesh(m);
+    bindSoftBodyMesh(m);
+    bindConvexMesh(m);
+    bindHeightField(m);
 }
