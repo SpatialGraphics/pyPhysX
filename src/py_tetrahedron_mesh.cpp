@@ -17,7 +17,10 @@ void bindTetrahedronMesh(nb::module_& m) {
             .def("getNbVertices", &PxTetrahedronMesh::getNbVertices)
             .def("getVertices", &PxTetrahedronMesh::getVertices)
             .def("getNbTetrahedrons", &PxTetrahedronMesh::getNbTetrahedrons)
-            .def("getTetrahedronMeshFlags", &PxTetrahedronMesh::getTetrahedronMeshFlags)
+            .def("getTetrahedronMeshFlags",
+                 [](PxTetrahedronMesh* mesh) {
+                     return mesh->getTetrahedronMeshFlags().operator uint32_t();
+                 })
             .def("getLocalBounds", &PxTetrahedronMesh::getLocalBounds)
             .def("release", &PxTetrahedronMesh::release);
 }

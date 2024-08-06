@@ -58,8 +58,14 @@ void bindShape(nb::module_& m) {
             .def("getMinTorsionalPatchRadius", &PxShape::getMinTorsionalPatchRadius)
             .def("getGPUIndex", &PxShape::getGPUIndex)
             .def("setFlag", &PxShape::setFlag)
-            .def("setFlags", &PxShape::setFlags)
-            .def("getFlags", &PxShape::getFlags)
+            .def("setFlags",
+                 [](PxShape* joint, int flags) {
+                     return joint->setFlags(PxShapeFlags(flags));
+                 })
+            .def("getFlags",
+                 [](PxShape* joint, int flags) {
+                     return joint->getFlags().operator uint32_t();
+                 })
             .def("isExclusive", &PxShape::isExclusive)
             .def("setName", &PxShape::setName)
             .def("getName", &PxShape::getName);
@@ -88,7 +94,10 @@ void bindShape(nb::module_& m) {
             .def("isValid", &PxPlaneGeometry::isValid);
 
     nb::class_<PxTriangleMeshGeometry, PxGeometry>(m, "PxTriangleMeshGeometry")
-            .def(nb::init<PxTriangleMesh*, const PxMeshScale&, PxMeshGeometryFlags>())
+            .def("__init__",
+                 [](PxTriangleMesh* mesh, const PxMeshScale& scaling, int flags) {
+                     return new PxTriangleMeshGeometry(mesh, scaling, PxMeshGeometryFlags(flags));
+                 })
             .def("isValid", &PxTriangleMeshGeometry::isValid);
 
     nb::class_<PxTetrahedronMeshGeometry, PxGeometry>(m, "PxTetrahedronMeshGeometry")

@@ -70,6 +70,14 @@ void bindActor(nb::module_& m) {
             .value("eFORCE_STATIC_KINE_NOTIFICATIONS", PxRigidBodyFlag::Enum::eFORCE_STATIC_KINE_NOTIFICATIONS)
             .value("eENABLE_GYROSCOPIC_FORCES", PxRigidBodyFlag::Enum::eENABLE_GYROSCOPIC_FORCES);
 
+    nb::enum_<PxRigidDynamicLockFlag::Enum>(m, "PxRigidDynamicLockFlag")
+            .value("eLOCK_LINEAR_X", PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_X)
+            .value("eLOCK_LINEAR_Y", PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Y)
+            .value("eLOCK_LINEAR_Z", PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_Z)
+            .value("eLOCK_ANGULAR_X", PxRigidDynamicLockFlag::Enum::eLOCK_ANGULAR_X)
+            .value("eLOCK_ANGULAR_Y", PxRigidDynamicLockFlag::Enum::eLOCK_ANGULAR_Y)
+            .value("eLOCK_ANGULAR_Z", PxRigidDynamicLockFlag::Enum::eLOCK_ANGULAR_Z);
+
     nb::class_<PxActor>(m, "PxActor")
             .def("release", &PxActor::release)
             .def("getType", &PxActor::getType)
@@ -151,9 +159,15 @@ void bindActor(nb::module_& m) {
             .def("getWakeCounter", &PxRigidDynamic::getWakeCounter)
             .def("wakeUp", &PxRigidDynamic::wakeUp)
             .def("putToSleep", &PxRigidDynamic::putToSleep)
-            .def("getRigidDynamicLockFlags", &PxRigidDynamic::getRigidDynamicLockFlags)
+            .def("setRigidDynamicLockFlags",
+                 [](PxRigidDynamic* joint, int flags) {
+                     return joint->setRigidDynamicLockFlags(PxRigidDynamicLockFlags(flags));
+                 })
             .def("setRigidDynamicLockFlag", &PxRigidDynamic::setRigidDynamicLockFlag)
-            .def("setRigidDynamicLockFlags", &PxRigidDynamic::setRigidDynamicLockFlags)
+            .def("getRigidDynamicLockFlags",
+                 [](PxRigidDynamic* joint, int flags) {
+                     return joint->getRigidDynamicLockFlags().operator uint32_t();
+                 })
             .def("getLinearVelocity", &PxRigidDynamic::getLinearVelocity)
             .def("setLinearVelocity", &PxRigidDynamic::setLinearVelocity)
             .def("getAngularVelocity", &PxRigidDynamic::getAngularVelocity)
@@ -283,5 +297,4 @@ void bindActor(nb::module_& m) {
             .def("raiseFlags", &PxParticleBuffer::raiseFlags)
             .def("release", &PxParticleBuffer::release)
             .def("getUniqueId", &PxParticleBuffer::getUniqueId);
-
 }

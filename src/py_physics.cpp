@@ -39,36 +39,46 @@ void bindPhysics(nb::module_& m) {
             .def("getNbScenes", &PxPhysics::getNbScenes)
             .def("createRigidStatic", &PxPhysics::createRigidStatic, nb::rv_policy::reference)
             .def("createRigidDynamic", &PxPhysics::createRigidDynamic, nb::rv_policy::reference)
-            .def("createShape",
-                 nb::overload_cast<const PxGeometry&, const PxMaterial&, bool, PxShapeFlags>(&PxPhysics::createShape),
-                 nb::rv_policy::reference)
-            .def("createShape",
-                 nb::overload_cast<const PxGeometry&, const PxFEMSoftBodyMaterial&, bool, PxShapeFlags>(
-                         &PxPhysics::createShape),
-                 nb::rv_policy::reference)
+            .def(
+                    "createShape",
+                    [](PxPhysics* physics, const PxGeometry& geometry, const PxMaterial& material,
+                       const int& shapeFlags) {
+                        return physics->createShape(geometry, material, PxShapeFlags(shapeFlags));
+                    },
+                    nb::rv_policy::reference)
+            .def(
+                    "createShape",
+                    [](PxPhysics* physics, const PxGeometry& geometry, const PxFEMSoftBodyMaterial& material,
+                       const int& shapeFlags) {
+                        return physics->createShape(geometry, material, PxShapeFlags(shapeFlags));
+                    },
+                    nb::rv_policy::reference)
             .def(
                     "createShape",
                     [](PxPhysics* physics, const PxGeometry& geometry, std::vector<PxMaterial*> materials,
-                       bool isExclusive, const PxShapeFlags& shapeFlags) {
-                        return physics->createShape(geometry, materials.data(), materials.size(), shapeFlags);
+                       bool isExclusive, const int& shapeFlags) {
+                        return physics->createShape(geometry, materials.data(), materials.size(),
+                                                    PxShapeFlags(shapeFlags));
                     },
                     nb::rv_policy::reference)
             .def(
                     "createShape",
                     [](PxPhysics* physics, const PxGeometry& geometry, std::vector<PxFEMSoftBodyMaterial*> materials,
-                       bool isExclusive, const PxShapeFlags& shapeFlags) {
-                        return physics->createShape(geometry, materials.data(), materials.size(), shapeFlags);
+                       bool isExclusive, const int& shapeFlags) {
+                        return physics->createShape(geometry, materials.data(), materials.size(),
+                                                    PxShapeFlags(shapeFlags));
                     },
                     nb::rv_policy::reference)
             .def(
                     "createShape",
                     [](PxPhysics* physics, const PxGeometry& geometry, std::vector<PxFEMClothMaterial*> materials,
-                       bool isExclusive, const PxShapeFlags& shapeFlags) {
-                        return physics->createShape(geometry, materials.data(), materials.size(), shapeFlags);
+                       bool isExclusive, const int& shapeFlags) {
+                        return physics->createShape(geometry, materials.data(), materials.size(),
+                                                    PxShapeFlags(shapeFlags));
                     },
                     nb::rv_policy::reference)
             .def("getNbShapes", &PxPhysics::getNbShapes)
-//            .def("createConstraint", &PxPhysics::createConstraint, nb::rv_policy::reference)
+            //            .def("createConstraint", &PxPhysics::createConstraint, nb::rv_policy::reference)
             .def("createArticulationReducedCoordinate", &PxPhysics::createArticulationReducedCoordinate,
                  nb::rv_policy::reference)
             //            .def("createFEMCloth", &PxPhysics::createFEMCloth, nb::rv_policy::reference)
