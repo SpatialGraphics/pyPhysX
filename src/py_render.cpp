@@ -14,14 +14,14 @@ using namespace physx;
 void bindRender(nb::module_& m) {
     nb::class_<PxRenderBuffer>(m, "PxRenderBuffer")
             .def("getNbPoints", &PxRenderBuffer::getNbPoints)
-            .def("addPoint", &PxRenderBuffer::addPoint)
+            .def("addPoint", &PxRenderBuffer::addPoint, "point"_a)
             .def("getNbLines", &PxRenderBuffer::getNbLines)
-            .def("addLine", &PxRenderBuffer::addLine)
+            .def("addLine", &PxRenderBuffer::addLine, "line"_a)
             .def("getNbTriangles", &PxRenderBuffer::getNbTriangles)
-            .def("addTriangle", &PxRenderBuffer::addTriangle)
-            .def("append", &PxRenderBuffer::append)
+            .def("addTriangle", &PxRenderBuffer::addTriangle, "triangle"_a)
+            .def("append", &PxRenderBuffer::append, "other"_a)
             .def("clear", &PxRenderBuffer::clear)
-            .def("shift", &PxRenderBuffer::shift)
+            .def("shift", &PxRenderBuffer::shift, "delta"_a)
             .def("empty", &PxRenderBuffer::empty);
 
     nb::class_<PxDebugPoint>(m, "PxDebugPoint")
