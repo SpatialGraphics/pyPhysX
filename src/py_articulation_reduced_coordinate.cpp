@@ -9,6 +9,8 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/eigen/dense.h>
 
+#include "py_utils.h"
+
 namespace nb = nanobind;
 using namespace nb::literals;
 using namespace physx;
@@ -42,10 +44,29 @@ void bindArticulationReducedCoordinate(nb::module_& m) {
             .value("eFIX_BASE", PxArticulationFlag::Enum::eFIX_BASE)
             .value("eDRIVE_LIMITS_ARE_FORCES", PxArticulationFlag::Enum::eDRIVE_LIMITS_ARE_FORCES)
             .value("eDISABLE_SELF_COLLISION", PxArticulationFlag::Enum::eDISABLE_SELF_COLLISION);
+    bindFlags<PxArticulationFlag::Enum, PxU8>(m, "PxArticulationFlags");
 
     nb::enum_<PxArticulationKinematicFlag::Enum>(m, "PxArticulationKinematicFlag")
             .value("ePOSITION", PxArticulationKinematicFlag::Enum::ePOSITION)
             .value("eVELOCITY", PxArticulationKinematicFlag::Enum::eVELOCITY);
+    bindFlags<PxArticulationKinematicFlag::Enum, PxU8>(m, "PxArticulationKinematicFlags");
+
+    nb::enum_<PxArticulationCacheFlag::Enum>(m, "PxArticulationCacheFlag")
+            .value("eVELOCITY", PxArticulationCacheFlag::Enum::eVELOCITY)
+            .value("eACCELERATION", PxArticulationCacheFlag::Enum::eACCELERATION)
+            .value("ePOSITION", PxArticulationCacheFlag::Enum::ePOSITION)
+            .value("eFORCE", PxArticulationCacheFlag::Enum::eFORCE)
+            .value("eLINK_VELOCITY", PxArticulationCacheFlag::Enum::eLINK_VELOCITY)
+            .value("eLINK_ACCELERATION", PxArticulationCacheFlag::Enum::eLINK_ACCELERATION)
+            .value("eROOT_TRANSFORM", PxArticulationCacheFlag::Enum::eROOT_TRANSFORM)
+            .value("eROOT_VELOCITIES", PxArticulationCacheFlag::Enum::eROOT_VELOCITIES)
+            .value("eLINK_INCOMING_JOINT_FORCE", PxArticulationCacheFlag::Enum::eLINK_INCOMING_JOINT_FORCE)
+            .value("eJOINT_TARGET_POSITIONS", PxArticulationCacheFlag::Enum::eJOINT_TARGET_POSITIONS)
+            .value("eJOINT_TARGET_VELOCITIES", PxArticulationCacheFlag::Enum::eJOINT_TARGET_VELOCITIES)
+            .value("eLINK_FORCE", PxArticulationCacheFlag::Enum::eLINK_FORCE)
+            .value("eLINK_TORQUE", PxArticulationCacheFlag::Enum::eLINK_TORQUE)
+            .value("eALL", PxArticulationCacheFlag::Enum::eALL);
+    bindFlags<PxArticulationCacheFlag::Enum>(m, "PxArticulationCacheFlags");
 
     nb::class_<PxArticulationReducedCoordinate>(m, "PxArticulationReducedCoordinate")
             .def("getScene", &PxArticulationReducedCoordinate::getScene, nb::rv_policy::reference)
@@ -72,33 +93,16 @@ void bindArticulationReducedCoordinate(nb::module_& m) {
             .def("getName", &PxArticulationReducedCoordinate::getName)
             .def("getWorldBounds", &PxArticulationReducedCoordinate::getWorldBounds)
             .def("getAggregate", &PxArticulationReducedCoordinate::getAggregate)
-            .def("setArticulationFlags",
-                 [](PxArticulationReducedCoordinate* articulation, int flags) {
-                     articulation->setArticulationFlags(PxArticulationFlags(flags));
-                 })
+            .def("setArticulationFlags", &PxArticulationReducedCoordinate::setArticulationFlags)
             .def("setArticulationFlag", &PxArticulationReducedCoordinate::setArticulationFlag)
-            .def("getArticulationFlags",
-                 [](PxArticulationReducedCoordinate* articulation) {
-                     return articulation->getArticulationFlags().operator uint32_t();
-                 })
+            .def("getArticulationFlags", &PxArticulationReducedCoordinate::getArticulationFlags)
             .def("getDofs", &PxArticulationReducedCoordinate::getDofs)
 
             .def("createCache", &PxArticulationReducedCoordinate::createCache, nb::rv_policy::reference)
             .def("getCacheDataSize", &PxArticulationReducedCoordinate::getCacheDataSize)
             .def("zeroCache", &PxArticulationReducedCoordinate::zeroCache)
-            .def(
-                    "applyCache",
-                    [](PxArticulationReducedCoordinate* articulation, PxArticulationCache& cache, const int flags,
-                       bool autowake) {
-                        articulation->applyCache(cache, PxArticulationCacheFlags(flags), autowake);
-                    },
-                    "cache"_a, "flags"_a, "autowake"_a = true)
-            .def(
-                    "copyInternalStateToCache",
-                    [](PxArticulationReducedCoordinate* articulation, PxArticulationCache& cache, const int flags) {
-                        articulation->copyInternalStateToCache(cache, PxArticulationCacheFlags(flags));
-                    },
-                    "cache"_a, "flags"_a)
+            .def("applyCache", &PxArticulationReducedCoordinate::applyCache)
+            .def("copyInternalStateToCache", &PxArticulationReducedCoordinate::copyInternalStateToCache)
             .def("packJointData", &PxArticulationReducedCoordinate::packJointData)
             .def("unpackJointData", &PxArticulationReducedCoordinate::unpackJointData)
             .def("commonInit", &PxArticulationReducedCoordinate::commonInit)
@@ -131,12 +135,7 @@ void bindArticulationReducedCoordinate(nb::module_& m) {
             .def("getNbFixedTendons", &PxArticulationReducedCoordinate::getNbFixedTendons)
             .def("createMimicJoint", &PxArticulationReducedCoordinate::createMimicJoint)
             .def("getNbMimicJoints", &PxArticulationReducedCoordinate::getNbMimicJoints)
-            .def(
-                    "updateKinematic",
-                    [](PxArticulationReducedCoordinate* articulation, int flags) {
-                        articulation->updateKinematic(PxArticulationKinematicFlags(flags));
-                    },
-                    "flags"_a)
+            .def("updateKinematic", &PxArticulationReducedCoordinate::updateKinematic)
             .def("getSolverResidual", &PxArticulationReducedCoordinate::getSolverResidual);
 
     nb::class_<PxArticulationJointReducedCoordinate>(m, "PxArticulationJointReducedCoordinate")

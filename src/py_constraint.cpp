@@ -6,7 +6,8 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
+
+#include "py_utils.h"
 
 namespace nb = nanobind;
 using namespace nb::literals;
@@ -24,17 +25,20 @@ void bindConstraint(nb::module_& m) {
             .value("eGPU_COMPATIBLE", PxConstraintFlag::Enum::eGPU_COMPATIBLE)
             .value("eALWAYS_UPDATE", PxConstraintFlag::Enum::eALWAYS_UPDATE)
             .value("eDISABLE_CONSTRAINT", PxConstraintFlag::Enum::eDISABLE_CONSTRAINT);
+    bindFlags<PxConstraintFlag::Enum, PxU16>(m, "PxConstraintFlags");
 
     nb::class_<PxConstraint>(m, "PxConstraint")
             .def("write", &PxConstraint::release)
             .def("getScene", &PxConstraint::getScene)
             .def("setActors", &PxConstraint::setActors)
             .def("markDirty", &PxConstraint::markDirty)
+            .def("setFlag", &PxConstraint::setFlag)
+            .def("setFlags", &PxConstraint::setFlags)
+            .def("getFlags", &PxConstraint::getFlags)
             .def("getForce", &PxConstraint::getForce)
             .def("isValid", &PxConstraint::isValid)
             .def("setBreakForce", &PxConstraint::setBreakForce)
             .def("getBreakForce", &PxConstraint::getBreakForce)
             .def("setMinResponseThreshold", &PxConstraint::setMinResponseThreshold)
             .def("getMinResponseThreshold", &PxConstraint::getMinResponseThreshold);
-//            .def("getExternalReference", &PxConstraint::getExternalReference);
 }

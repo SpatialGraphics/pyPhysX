@@ -15,27 +15,6 @@ using namespace nb::literals;
 using namespace physx;
 
 void bindActor(nb::module_& m) {
-    nb::enum_<PxParticleFlag::Enum>(m, "PxParticleFlag")
-            .value("eDISABLE_SELF_COLLISION", PxParticleFlag::Enum::eDISABLE_SELF_COLLISION)
-            .value("eDISABLE_RIGID_COLLISION", PxParticleFlag::Enum::eDISABLE_RIGID_COLLISION)
-            .value("eFULL_DIFFUSE_ADVECTION", PxParticleFlag::Enum::eFULL_DIFFUSE_ADVECTION)
-            .value("eENABLE_SPECULATIVE_CCD", PxParticleFlag::Enum::eENABLE_SPECULATIVE_CCD);
-    nb::enum_<PxParticleLockFlag::Enum>(m, "PxParticleLockFlag")
-            .value("eLOCK_X", PxParticleLockFlag::Enum::eLOCK_X)
-            .value("eLOCK_Y", PxParticleLockFlag::Enum::eLOCK_Y)
-            .value("eLOCK_Z", PxParticleLockFlag::Enum::eLOCK_Z);
-    nb::enum_<PxParticleBufferFlag::Enum>(m, "PxParticleBufferFlag")
-            .value("eNONE", PxParticleBufferFlag::Enum::eNONE)
-            .value("eUPDATE_POSITION", PxParticleBufferFlag::Enum::eUPDATE_POSITION)
-            .value("eUPDATE_VELOCITY", PxParticleBufferFlag::Enum::eUPDATE_VELOCITY)
-            .value("eUPDATE_PHASE", PxParticleBufferFlag::Enum::eUPDATE_PHASE)
-            .value("eUPDATE_RESTPOSITION", PxParticleBufferFlag::Enum::eUPDATE_RESTPOSITION)
-            .value("eUPDATE_CLOTH", PxParticleBufferFlag::Enum::eUPDATE_CLOTH)
-            .value("eUPDATE_RIGID", PxParticleBufferFlag::Enum::eUPDATE_RIGID)
-            .value("eUPDATE_DIFFUSE_PARAM", PxParticleBufferFlag::Enum::eUPDATE_DIFFUSE_PARAM)
-            .value("eUPDATE_ATTACHMENTS", PxParticleBufferFlag::Enum::eUPDATE_ATTACHMENTS)
-            .value("eALL", PxParticleBufferFlag::Enum::eALL);
-
     nb::enum_<PxForceMode::Enum>(m, "PxForceMode")
             .value("eFORCE", PxForceMode::Enum::eFORCE)
             .value("eIMPULSE", PxForceMode::Enum::eIMPULSE)
@@ -47,6 +26,7 @@ void bindActor(nb::module_& m) {
             .value("eDISABLE_GRAVITY", PxActorFlag::Enum::eDISABLE_GRAVITY)
             .value("eSEND_SLEEP_NOTIFIES", PxActorFlag::Enum::eSEND_SLEEP_NOTIFIES)
             .value("eDISABLE_SIMULATION", PxActorFlag::Enum::eDISABLE_SIMULATION);
+    bindFlags<PxActorFlag::Enum, PxU8>(m, "PxActorFlags");
 
     nb::enum_<PxActorType::Enum>(m, "PxActorType")
             .value("eRIGID_STATIC", PxActorType::Enum::eRIGID_STATIC)
@@ -70,6 +50,7 @@ void bindActor(nb::module_& m) {
             .value("eFORCE_KINE_KINE_NOTIFICATIONS", PxRigidBodyFlag::Enum::eFORCE_KINE_KINE_NOTIFICATIONS)
             .value("eFORCE_STATIC_KINE_NOTIFICATIONS", PxRigidBodyFlag::Enum::eFORCE_STATIC_KINE_NOTIFICATIONS)
             .value("eENABLE_GYROSCOPIC_FORCES", PxRigidBodyFlag::Enum::eENABLE_GYROSCOPIC_FORCES);
+    bindFlags<PxRigidBodyFlag::Enum, PxU16>(m, "PxRigidBodyFlags");
 
     nb::enum_<PxRigidDynamicLockFlag::Enum>(m, "PxRigidDynamicLockFlag")
             .value("eLOCK_LINEAR_X", PxRigidDynamicLockFlag::Enum::eLOCK_LINEAR_X)
@@ -88,16 +69,8 @@ void bindActor(nb::module_& m) {
             .def("getName", &PxActor::getName)
             .def("getWorldBounds", &PxActor::getWorldBounds, "inflation"_a = 1.01f)
             .def("setActorFlag", &PxActor::setActorFlag, "flag"_a, "value"_a)
-            .def(
-                    "setActorFlags",
-                    [](PxActor* actor, int flags) {
-                        actor->setActorFlags(PxActorFlags(flags));
-                    },
-                    "flags"_a)
-            .def("getActorFlags",
-                 [](PxActor* actor) {
-                     return actor->getActorFlags().operator uint32_t();
-                 })
+            .def("setActorFlags", &PxActor::setActorFlags, "flags"_a)
+            .def("getActorFlags", &PxActor::getActorFlags)
             .def("setDominanceGroup", &PxActor::setDominanceGroup, "dominanceGroup"_a)
             .def("getDominanceGroup", &PxActor::getDominanceGroup);
 
@@ -140,6 +113,8 @@ void bindActor(nb::module_& m) {
             .def("clearTorque", &PxRigidBody::clearTorque)
             .def("setForceAndTorque", &PxRigidBody::setForceAndTorque)
             .def("setRigidBodyFlag", &PxRigidBody::setRigidBodyFlag)
+            .def("setRigidBodyFlags", &PxRigidBody::setRigidBodyFlags)
+            .def("getRigidBodyFlags", &PxRigidBody::getRigidBodyFlags)
             .def("setMinCCDAdvanceCoefficient", &PxRigidBody::setMinCCDAdvanceCoefficient)
             .def("getMinCCDAdvanceCoefficient", &PxRigidBody::getMinCCDAdvanceCoefficient)
             .def("setMaxDepenetrationVelocity", &PxRigidBody::setMaxDepenetrationVelocity)
@@ -189,6 +164,8 @@ void bindActor(nb::module_& m) {
     //==================================================================================================================
     nb::class_<PxSoftBody, PxActor>(m, "PxSoftBody")
             .def("setSoftBodyFlag", &PxSoftBody::setSoftBodyFlag)
+            .def("setSoftBodyFlags", &PxSoftBody::setSoftBodyFlags)
+            .def("getSoftBodyFlags", &PxSoftBody::getSoftBodyFlag)
             .def("setParameter", &PxSoftBody::setParameter)
             .def("getParameter", &PxSoftBody::getParameter)
             .def("getPositionInvMassBufferD", &PxSoftBody::getPositionInvMassBufferD)
