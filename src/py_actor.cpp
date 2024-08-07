@@ -7,7 +7,8 @@
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/vector.h>
-#include <nanobind/stl/tuple.h>
+
+#include "py_utils.h"
 
 namespace nb = nanobind;
 using namespace nb::literals;
@@ -77,6 +78,7 @@ void bindActor(nb::module_& m) {
             .value("eLOCK_ANGULAR_X", PxRigidDynamicLockFlag::Enum::eLOCK_ANGULAR_X)
             .value("eLOCK_ANGULAR_Y", PxRigidDynamicLockFlag::Enum::eLOCK_ANGULAR_Y)
             .value("eLOCK_ANGULAR_Z", PxRigidDynamicLockFlag::Enum::eLOCK_ANGULAR_Z);
+    bindFlags<PxRigidDynamicLockFlag::Enum, PxU8>(m, "PxRigidDynamicLockFlags");
 
     nb::class_<PxActor>(m, "PxActor")
             .def("release", &PxActor::release)
@@ -159,15 +161,9 @@ void bindActor(nb::module_& m) {
             .def("getWakeCounter", &PxRigidDynamic::getWakeCounter)
             .def("wakeUp", &PxRigidDynamic::wakeUp)
             .def("putToSleep", &PxRigidDynamic::putToSleep)
-            .def("setRigidDynamicLockFlags",
-                 [](PxRigidDynamic* joint, int flags) {
-                     return joint->setRigidDynamicLockFlags(PxRigidDynamicLockFlags(flags));
-                 })
+            .def("setRigidDynamicLockFlags", &PxRigidDynamic::setRigidDynamicLockFlags)
             .def("setRigidDynamicLockFlag", &PxRigidDynamic::setRigidDynamicLockFlag)
-            .def("getRigidDynamicLockFlags",
-                 [](PxRigidDynamic* joint, int flags) {
-                     return joint->getRigidDynamicLockFlags().operator uint32_t();
-                 })
+            .def("getRigidDynamicLockFlags", &PxRigidDynamic::getRigidDynamicLockFlags)
             .def("getLinearVelocity", &PxRigidDynamic::getLinearVelocity)
             .def("setLinearVelocity", &PxRigidDynamic::setLinearVelocity)
             .def("getAngularVelocity", &PxRigidDynamic::getAngularVelocity)
@@ -199,15 +195,14 @@ void bindActor(nb::module_& m) {
             .def("getRestPositionBufferD", &PxSoftBody::getRestPositionBufferD)
             .def("getSimPositionInvMassBufferD", &PxSoftBody::getSimPositionInvMassBufferD)
             .def("getSimVelocityBufferD", &PxSoftBody::getSimVelocityBufferD)
-            .def("markDirty",
-                 [](PxSoftBody* body, int flags) {
-                     return body->markDirty(PxSoftBodyDataFlags(flags));
-                 })
+            .def("markDirty", &PxSoftBody::markDirty)
             .def("setKinematicTargetBufferD",
-                 [](PxSoftBody* body, const std::vector<PxVec4>& positions, int flags) {
-                     return body->setKinematicTargetBufferD(positions.data(), PxSoftBodyFlags(flags));
+                 [](PxSoftBody* body, const std::vector<PxVec4>& positions, const PxSoftBodyFlags& flags) {
+                     return body->setKinematicTargetBufferD(positions.data(), flags);
                  })
-            //            .def("getCudaContextManager", &PxSoftBody::getCudaContextManager)
+#ifdef SUPPORT_CUDA
+            .def("getCudaContextManager", &PxSoftBody::getCudaContextManager)
+#endif
             .def("setWakeCounter", &PxSoftBody::setWakeCounter)
             .def("getWakeCounter", &PxSoftBody::getWakeCounter)
             .def("isSleeping", &PxSoftBody::isSleeping)
@@ -247,60 +242,4 @@ void bindActor(nb::module_& m) {
             //            .def("removeClothAttachment", &PxSoftBody::removeClothAttachment)
             .def("getWorldBounds", &PxSoftBody::getWorldBounds)
             .def("getGpuSoftBodyIndex", &PxSoftBody::getGpuSoftBodyIndex);
-
-    //==================================================================================================================
-    nb::class_<PxPBDParticleSystem, PxActor>(m, "PxPBDParticleSystem")
-            .def("setSolverIterationCounts", &PxPBDParticleSystem::setSolverIterationCounts)
-            .def("getSolverIterationCounts", &PxPBDParticleSystem::getSolverIterationCounts)
-            .def("getSimulationFilterData", &PxPBDParticleSystem::getSimulationFilterData)
-            .def("setSimulationFilterData", &PxPBDParticleSystem::setSimulationFilterData)
-            .def("setParticleFlag", &PxPBDParticleSystem::setParticleFlag)
-            .def("setMaxDepenetrationVelocity", &PxPBDParticleSystem::setMaxDepenetrationVelocity)
-            .def("getMaxDepenetrationVelocity", &PxPBDParticleSystem::getMaxDepenetrationVelocity)
-            .def("setMaxVelocity", &PxPBDParticleSystem::setMaxVelocity)
-            .def("getMaxVelocity", &PxPBDParticleSystem::getMaxVelocity)
-            //            .def("getCudaContextManager", &PxPBDParticleSystem::getCudaContextManager)
-            .def("setRestOffset", &PxPBDParticleSystem::setRestOffset)
-            .def("getRestOffset", &PxPBDParticleSystem::getRestOffset)
-            .def("setContactOffset", &PxPBDParticleSystem::setContactOffset)
-            .def("getContactOffset", &PxPBDParticleSystem::getContactOffset)
-            .def("setParticleContactOffset", &PxPBDParticleSystem::setParticleContactOffset)
-            .def("getParticleContactOffset", &PxPBDParticleSystem::getParticleContactOffset)
-            .def("setSolidRestOffset", &PxPBDParticleSystem::setSolidRestOffset)
-            .def("getSolidRestOffset", &PxPBDParticleSystem::getSolidRestOffset)
-            .def("addRigidAttachment", &PxPBDParticleSystem::addRigidAttachment)
-            .def("removeRigidAttachment", &PxPBDParticleSystem::removeRigidAttachment)
-            .def("enableCCD", &PxPBDParticleSystem::enableCCD)
-            .def("setParticleLockFlag", &PxPBDParticleSystem::setParticleLockFlag)
-            .def("createPhase",
-                 [](PxPBDParticleSystem* system, PxPBDMaterial* material, int flags) {
-                     return system->createPhase(material, PxParticlePhaseFlags(flags));
-                 })
-            .def("getNbParticleMaterials", &PxPBDParticleSystem::getNbParticleMaterials)
-            .def("addParticleBuffer", &PxPBDParticleSystem::addParticleBuffer)
-            .def("removeParticleBuffer", &PxPBDParticleSystem::removeParticleBuffer)
-            .def("getGpuParticleSystemIndex", &PxPBDParticleSystem::getGpuParticleSystemIndex)
-            .def("setWind", &PxPBDParticleSystem::setWind)
-            .def("getWind", &PxPBDParticleSystem::getWind)
-            .def("setFluidBoundaryDensityScale", &PxPBDParticleSystem::setFluidBoundaryDensityScale)
-            .def("getFluidBoundaryDensityScale", &PxPBDParticleSystem::getFluidBoundaryDensityScale)
-            .def("setFluidRestOffset", &PxPBDParticleSystem::setFluidRestOffset)
-            .def("getFluidRestOffset", &PxPBDParticleSystem::getFluidRestOffset)
-            .def("setGridSizeX", &PxPBDParticleSystem::setGridSizeX)
-            .def("getGridSizeX", &PxPBDParticleSystem::getGridSizeX)
-            .def("setGridSizeY", &PxPBDParticleSystem::setGridSizeY)
-            .def("getGridSizeY", &PxPBDParticleSystem::getGridSizeY)
-            .def("setGridSizeZ", &PxPBDParticleSystem::setGridSizeZ)
-            .def("getGridSizeZ", &PxPBDParticleSystem::getGridSizeZ);
-    nb::class_<PxParticleBuffer>(m, "PxParticleBuffer")
-            .def("setNbActiveParticles", &PxParticleBuffer::setNbActiveParticles)
-            .def("getNbActiveParticles", &PxParticleBuffer::getNbActiveParticles)
-            .def("getMaxParticles", &PxParticleBuffer::getMaxParticles)
-            .def("getNbParticleVolumes", &PxParticleBuffer::getNbParticleVolumes)
-            .def("setNbParticleVolumes", &PxParticleBuffer::setNbParticleVolumes)
-            .def("getMaxParticleVolumes", &PxParticleBuffer::getMaxParticleVolumes)
-            .def("getFlatListStartIndex", &PxParticleBuffer::getFlatListStartIndex)
-            .def("raiseFlags", &PxParticleBuffer::raiseFlags)
-            .def("release", &PxParticleBuffer::release)
-            .def("getUniqueId", &PxParticleBuffer::getUniqueId);
 }

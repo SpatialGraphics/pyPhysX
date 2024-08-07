@@ -26,9 +26,13 @@ void bindQuery(nb::module_& m) {
             .def(nb::init<>())
             .def_rw("u", &PxGeomRaycastHit::u)
             .def_rw("v", &PxGeomRaycastHit::v);
+    nb::class_<PxRaycastHit, PxGeomRaycastHit>(m, "PxRaycastHit").def(nb::init<>());
 
     nb::class_<PxGeomOverlapHit, PxQueryHit>(m, "PxGeomOverlapHit").def(nb::init<>());
+    nb::class_<PxOverlapHit, PxGeomOverlapHit>(m, "PxOverlapHit").def(nb::init<>());
+
     nb::class_<PxGeomSweepHit, PxQueryHit>(m, "PxGeomSweepHit").def(nb::init<>());
+    nb::class_<PxSweepHit, PxGeomSweepHit>(m, "PxSweepHit").def(nb::init<>());
 
     nb::class_<PxQueryFilterData>(m, "PxQueryFilterData").def(nb::init<>());
     nb::class_<PxQueryCache>(m, "PxQueryCache")
@@ -36,4 +40,22 @@ void bindQuery(nb::module_& m) {
             .def_rw("faceIndex", &PxQueryCache::faceIndex)
             .def_rw("actor", &PxQueryCache::actor)
             .def_rw("shape", &PxQueryCache::shape);
+
+    nb::class_<PxSceneQueryExt>(m, "PxSceneQueryExt")
+            .def(nb::init<>())
+            .def_static("overlapAny", &PxSceneQueryExt::overlapAny)
+            .def_static("overlapMultiple", &PxSceneQueryExt::overlapMultiple)
+            .def_static("raycastAny", &PxSceneQueryExt::raycastAny)
+            .def_static("raycastMultiple", [](const PxScene& scene,
+                                              const PxVec3& origin, const PxVec3& unitDir, const PxReal distance,
+                                              PxSceneQueryFlags outputFlags,
+                                              PxRaycastHit* hitBuffer, PxU32 hitBufferSize, bool& blockingHit,
+                                              const PxSceneQueryFilterData& filterData = PxSceneQueryFilterData(),
+                                              PxSceneQueryFilterCallback* filterCall = NULL, const PxSceneQueryCache* cache = NULL){
+
+            })
+            .def_static("raycastSingle", &PxSceneQueryExt::raycastSingle)
+            .def_static("sweepAny", &PxSceneQueryExt::sweepAny)
+            .def_static("sweepMultiple", &PxSceneQueryExt::sweepMultiple)
+            .def_static("sweepSingle", &PxSceneQueryExt::sweepSingle);
 }

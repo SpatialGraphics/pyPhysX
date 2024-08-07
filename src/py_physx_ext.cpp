@@ -28,6 +28,7 @@ extern void bindSoftBodyMesh(nb::module_& m);
 extern void bindConvexMesh(nb::module_& m);
 extern void bindHeightField(nb::module_& m);
 extern void bindArticulationReducedCoordinate(nb::module_& m);
+extern void bindParticle(nb::module_& m);
 
 extern void bindController(nb::module_& m);
 extern void bindConstraint(nb::module_& m);
@@ -59,6 +60,7 @@ NB_MODULE(py_physx_ext, m) {
     bindConvexMesh(m);
     bindHeightField(m);
     bindArticulationReducedCoordinate(m);
+    bindParticle(m);
 
     bindController(m);
     bindConstraint(m);

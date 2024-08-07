@@ -43,6 +43,7 @@ set(BINDING_FILES
         src/py_convex_mesh.cpp
         src/py_height_field.cpp
         src/py_articulation_reduced_coordinate.cpp
+        src/py_particle.cpp
 
         src/py_controller.cpp
         src/py_constraint.cpp

@@ -6,7 +6,8 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
+
+#include "py_utils.h"
 
 namespace nb = nanobind;
 using namespace nb::literals;
@@ -28,6 +29,7 @@ void bindSoftBodyMesh(nb::module_& m) {
             .value("eDISPLAY_SIM_MESH", PxSoftBodyFlag::Enum::eDISPLAY_SIM_MESH)
             .value("eKINEMATIC", PxSoftBodyFlag::Enum::eKINEMATIC)
             .value("ePARTIALLY_KINEMATIC", PxSoftBodyFlag::Enum::ePARTIALLY_KINEMATIC);
+    bindFlags<PxSoftBodyFlag::Enum>(m, "PxSoftBodyFlags");
 
     nb::class_<PxFEMParameters>(m, "PxFEMParameters")
             .def(nb::init<>())
