@@ -37,6 +37,7 @@ void bindJoint(nb::module_& m) {
             .value("eMAX_DISTANCE_ENABLED", PxDistanceJointFlag::Enum::eMAX_DISTANCE_ENABLED)
             .value("eMIN_DISTANCE_ENABLED", PxDistanceJointFlag::Enum::eMIN_DISTANCE_ENABLED)
             .value("eSPRING_ENABLED", PxDistanceJointFlag::Enum::eSPRING_ENABLED);
+    bindFlags<PxDistanceJointFlag::Enum, PxU16>(m, "PxDistanceJointFlags");
 
     nb::enum_<PxJointActorIndex::Enum>(m, "PxJointActorIndex")
             .value("eACTOR0", PxJointActorIndex::Enum::eACTOR0)
@@ -44,14 +45,17 @@ void bindJoint(nb::module_& m) {
 
     nb::enum_<PxPrismaticJointFlag::Enum>(m, "PxPrismaticJointFlag")
             .value("eLIMIT_ENABLED", PxPrismaticJointFlag::Enum::eLIMIT_ENABLED);
+    bindFlags<PxPrismaticJointFlag::Enum, PxU16>(m, "PxPrismaticJointFlags");
 
     nb::enum_<PxRevoluteJointFlag::Enum>(m, "PxRevoluteJointFlag")
             .value("eLIMIT_ENABLED", PxRevoluteJointFlag::Enum::eLIMIT_ENABLED)
             .value("eDRIVE_ENABLED", PxRevoluteJointFlag::Enum::eDRIVE_ENABLED)
             .value("eDRIVE_FREESPIN", PxRevoluteJointFlag::Enum::eDRIVE_FREESPIN);
+    bindFlags<PxRevoluteJointFlag::Enum, PxU16>(m, "PxRevoluteJointFlags");
 
     nb::enum_<PxSphericalJointFlag::Enum>(m, "PxSphericalJointFlag")
             .value("eLIMIT_ENABLED", PxSphericalJointFlag::Enum::eLIMIT_ENABLED);
+    bindFlags<PxSphericalJointFlag::Enum, PxU16>(m, "PxSphericalJointFlags");
 
     nb::class_<PxJoint>(m, "PxJoint")
             .def("setActors", &PxJoint::setActors)
@@ -61,15 +65,9 @@ void bindJoint(nb::module_& m) {
             .def("getRelativeLinearVelocity", &PxJoint::getRelativeLinearVelocity)
             .def("getRelativeAngularVelocity", &PxJoint::getRelativeAngularVelocity)
             .def("setBreakForce", &PxJoint::setBreakForce)
-            .def("setConstraintFlags",
-                 [](PxJoint* joint, int flags) {
-                     joint->setConstraintFlags(PxConstraintFlags(flags));
-                 })
+            .def("setConstraintFlags", &PxJoint::setConstraintFlags)
             .def("setConstraintFlag", &PxJoint::setConstraintFlag)
-            .def("getConstraintFlags",
-                 [](PxJoint* joint) {
-                     return joint->getConstraintFlags().operator uint32_t();
-                 })
+            .def("getConstraintFlags", &PxJoint::getConstraintFlags)
             .def("setInvMassScale0", &PxJoint::setInvMassScale0)
             .def("getInvMassScale0", &PxJoint::getInvMassScale0)
             .def("setInvInertiaScale0", &PxJoint::setInvInertiaScale0)
@@ -91,14 +89,9 @@ void bindJoint(nb::module_& m) {
             .def("getVelocity", &PxPrismaticJoint::getVelocity)
             .def("setLimit", &PxPrismaticJoint::setLimit)
             .def("getLimit", &PxPrismaticJoint::getLimit)
-            .def("setPrismaticJointFlags",
-                 [](PxPrismaticJoint* joint, int flags) {
-                     return joint->setPrismaticJointFlags(PxPrismaticJointFlags(flags));
-                 })
+            .def("setPrismaticJointFlags", &PxPrismaticJoint::setPrismaticJointFlags)
             .def("setPrismaticJointFlag", &PxPrismaticJoint::setPrismaticJointFlag)
-            .def("getPrismaticJointFlags", [](PxPrismaticJoint* joint, int flags) {
-                return joint->getPrismaticJointFlags().operator uint32_t();
-            });
+            .def("getPrismaticJointFlags", &PxPrismaticJoint::getPrismaticJointFlags);
 
     nb::class_<PxDistanceJoint, PxJoint>(m, "PxDistanceJoint")
             .def("getDistance", &PxDistanceJoint::getDistance)
@@ -112,11 +105,9 @@ void bindJoint(nb::module_& m) {
             .def("getStiffness", &PxDistanceJoint::getStiffness)
             .def("setDamping", &PxDistanceJoint::setDamping)
             .def("getDamping", &PxDistanceJoint::getDamping)
-            .def("setDistanceJointFlags",
-                 [](PxDistanceJoint* joint, int flags) {
-                     joint->setDistanceJointFlags(PxDistanceJointFlags(flags));
-                 })
-            .def("setDistanceJointFlag", &PxDistanceJoint::setDistanceJointFlag);
+            .def("setDistanceJointFlags", &PxDistanceJoint::setDistanceJointFlags)
+            .def("setDistanceJointFlag", &PxDistanceJoint::setDistanceJointFlag)
+            .def("getDistanceJointFlags", &PxDistanceJoint::getDistanceJointFlags);
 
     nb::class_<PxGearJoint, PxJoint>(m, "PxGearJoint")
             //            .def("setHinges", &PxGearJoint::setHinges)
@@ -140,28 +131,18 @@ void bindJoint(nb::module_& m) {
             .def("getDriveForceLimit", &PxRevoluteJoint::getDriveForceLimit)
             .def("setDriveGearRatio", &PxRevoluteJoint::setDriveGearRatio)
             .def("getDriveGearRatio", &PxRevoluteJoint::getDriveGearRatio)
-            .def("setRevoluteJointFlags",
-                 [](PxRevoluteJoint* joint, int flags) {
-                     return joint->setRevoluteJointFlags(PxRevoluteJointFlags(flags));
-                 })
+            .def("setRevoluteJointFlags", &PxRevoluteJoint::setRevoluteJointFlags)
             .def("setRevoluteJointFlag", &PxRevoluteJoint::setRevoluteJointFlag)
-            .def("getRevoluteJointFlags", [](PxRevoluteJoint* joint, int flags) {
-                return joint->getRevoluteJointFlags().operator uint32_t();
-            });
+            .def("getRevoluteJointFlags", &PxRevoluteJoint::getRevoluteJointFlags);
 
     nb::class_<PxSphericalJoint, PxJoint>(m, "PxSphericalJoint")
             .def("getLimitCone", &PxSphericalJoint::getLimitCone)
             .def("setLimitCone", &PxSphericalJoint::setLimitCone)
             .def("getSwingYAngle", &PxSphericalJoint::getSwingYAngle)
             .def("getSwingZAngle", &PxSphericalJoint::getSwingZAngle)
-            .def("setSphericalJointFlags",
-                 [](PxSphericalJoint* joint, int flags) {
-                     return joint->setSphericalJointFlags(PxSphericalJointFlags(flags));
-                 })
+            .def("setSphericalJointFlags", &PxSphericalJoint::setSphericalJointFlags)
             .def("setSphericalJointFlag", &PxSphericalJoint::setSphericalJointFlag)
-            .def("getSphericalJointFlags", [](PxSphericalJoint* joint, int flags) {
-                return joint->getSphericalJointFlags().operator uint32_t();
-            });
+            .def("getSphericalJointFlags", &PxSphericalJoint::getSphericalJointFlags);
 
     nb::class_<PxD6Joint, PxJoint>(m, "PxD6Joint")
             .def("setMotion", &PxD6Joint::setMotion)

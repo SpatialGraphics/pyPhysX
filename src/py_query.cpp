@@ -46,14 +46,7 @@ void bindQuery(nb::module_& m) {
             .def_static("overlapAny", &PxSceneQueryExt::overlapAny)
             .def_static("overlapMultiple", &PxSceneQueryExt::overlapMultiple)
             .def_static("raycastAny", &PxSceneQueryExt::raycastAny)
-            .def_static("raycastMultiple", [](const PxScene& scene,
-                                              const PxVec3& origin, const PxVec3& unitDir, const PxReal distance,
-                                              PxSceneQueryFlags outputFlags,
-                                              PxRaycastHit* hitBuffer, PxU32 hitBufferSize, bool& blockingHit,
-                                              const PxSceneQueryFilterData& filterData = PxSceneQueryFilterData(),
-                                              PxSceneQueryFilterCallback* filterCall = NULL, const PxSceneQueryCache* cache = NULL){
-
-            })
+            .def_static("raycastMultiple",  &PxSceneQueryExt::raycastMultiple)
             .def_static("raycastSingle", &PxSceneQueryExt::raycastSingle)
             .def_static("sweepAny", &PxSceneQueryExt::sweepAny)
             .def_static("sweepMultiple", &PxSceneQueryExt::sweepMultiple)

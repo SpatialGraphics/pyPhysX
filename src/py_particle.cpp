@@ -107,4 +107,30 @@ void bindParticle(nb::module_& m) {
             .def("raiseFlags", &PxParticleBuffer::raiseFlags)
             .def("release", &PxParticleBuffer::release)
             .def("getUniqueId", &PxParticleBuffer::getUniqueId);
+
+    nb::class_<PxDiffuseParticleParams>(m, "PxDiffuseParticleParams")
+            .def("setToDefault", &PxDiffuseParticleParams::setToDefault)
+            .def_rw("threshold", &PxDiffuseParticleParams::threshold)
+            .def_rw("lifetime", &PxDiffuseParticleParams::lifetime)
+            .def_rw("airDrag", &PxDiffuseParticleParams::airDrag)
+            .def_rw("bubbleDrag", &PxDiffuseParticleParams::bubbleDrag)
+            .def_rw("buoyancy", &PxDiffuseParticleParams::buoyancy)
+            .def_rw("kineticEnergyWeight", &PxDiffuseParticleParams::kineticEnergyWeight)
+            .def_rw("pressureWeight", &PxDiffuseParticleParams::pressureWeight)
+            .def_rw("divergenceWeight", &PxDiffuseParticleParams::divergenceWeight)
+            .def_rw("collisionDecay", &PxDiffuseParticleParams::collisionDecay)
+            .def_rw("useAccurateVelocity", &PxDiffuseParticleParams::useAccurateVelocity);
+    nb::class_<PxParticleAndDiffuseBuffer, PxParticleBuffer>(m, "PxParticleAndDiffuseBuffer")
+            .def("setMaxActiveDiffuseParticles", &PxParticleAndDiffuseBuffer::setMaxActiveDiffuseParticles)
+            .def("getMaxDiffuseParticles", &PxParticleAndDiffuseBuffer::getMaxDiffuseParticles)
+            .def("setDiffuseParticleParams", &PxParticleAndDiffuseBuffer::setDiffuseParticleParams)
+            .def("getDiffuseParticleParams", &PxParticleAndDiffuseBuffer::getDiffuseParticleParams);
+
+    nb::class_<PxParticleClothBuffer, PxParticleBuffer>(m, "PxParticleClothBuffer")
+            .def("setNbTriangles", &PxParticleClothBuffer::setNbTriangles)
+            .def("getNbTriangles", &PxParticleClothBuffer::getNbTriangles)
+            .def("getNbSprings", &PxParticleClothBuffer::getNbSprings);
+    nb::class_<PxParticleRigidBuffer, PxParticleBuffer>(m, "PxParticleRigidBuffer")
+            .def("setNbRigids", &PxParticleRigidBuffer::setNbRigids)
+            .def("getNbRigids", &PxParticleRigidBuffer::getNbRigids);
 }
