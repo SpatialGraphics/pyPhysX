@@ -9,7 +9,7 @@ import pyPhysX as physx
 
 def main():
     def error_callback(code: physx.PxErrorCode, message: str, file: str, line: int):
-        print(str)
+        print(message)
 
     foundation = physx.PxCreateFoundation(physx.ErrorCallback(error_callback))
     engine = physx.PxCreatePhysics(foundation, physx.PxTolerancesScale())

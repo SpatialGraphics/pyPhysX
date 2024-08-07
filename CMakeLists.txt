@@ -50,6 +50,7 @@ set(BINDING_FILES
         src/py_render.cpp
         src/py_filter.cpp
         src/py_query.cpp
+        src/py_utils.cpp
 )
 
 set(CUDA_FILES

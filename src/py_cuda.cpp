@@ -14,6 +14,8 @@ using namespace nb::literals;
 using namespace physx;
 
 void bindCuda(nb::module_& m) {
+    m.def("PxSetPhysXGpuProfilerCallback", &PxSetPhysXGpuProfilerCallback);
+
     nb::class_<PxCudaContextManager>(m, "PxCudaContextManager")
             .def("acquireContext", &PxCudaContextManager::acquireContext)
             .def("releaseContext", &PxCudaContextManager::releaseContext)
@@ -45,4 +47,12 @@ void bindCuda(nb::module_& m) {
             .def("getDeviceName", &PxCudaContextManager::getDeviceName)
             .def("usingDedicatedGPU", &PxCudaContextManager::usingDedicatedGPU)
             .def("release", &PxCudaContextManager::release);
+
+    class ProfilerCallback : public PxProfilerCallback {
+    public:
+        void zoneEnd(void* profilerData, const char* eventName, bool detached, uint64_t contextId) override {}
+        void* zoneStart(const char* eventName, bool detached, uint64_t contextId) override { return nullptr; }
+    };
+    nb::class_<PxProfilerCallback> pxProfilerCallback(m, "PxProfilerCallback");
+    nb::class_<ProfilerCallback, PxProfilerCallback> profilerCallback(m, "ProfilerCallback");
 }

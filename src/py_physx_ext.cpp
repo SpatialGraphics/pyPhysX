@@ -5,7 +5,7 @@
 //  property of any third parties.
 
 #include <nanobind/nanobind.h>
-#include <PxMaterial.h>
+#include <PxPhysicsAPI.h>
 
 namespace nb = nanobind;
 using namespace nb::literals;
@@ -35,6 +35,7 @@ extern void bindConstraint(nb::module_& m);
 extern void bindRender(nb::module_& m);
 extern void bindFilter(nb::module_& m);
 extern void bindQuery(nb::module_& m);
+extern void bindUtils(nb::module_& m);
 
 #ifdef SUPPORT_CUDA
 extern void bindCuda(nb::module_& m);
@@ -67,6 +68,7 @@ NB_MODULE(py_physx_ext, m) {
     bindRender(m);
     bindFilter(m);
     bindQuery(m);
+    bindUtils(m);
 
 #ifdef SUPPORT_CUDA
     bindCuda(m);
