@@ -18,19 +18,23 @@ void bindIO(nb::module_& m) {
     });
     nb::class_<PxInputData, PxInputStream>(m, "PxInputData")
             .def("getLength", &PxInputData::getLength)
-            .def("seek", &PxInputData::seek)
+            .def("seek", &PxInputData::seek, "offset"_a)
             .def("tell", &PxInputData::tell);
-//    nb::class_<PxDefaultMemoryInputData, PxInputData>(m, "PxDefaultMemoryInputData")
-//            .def("getLength", &PxDefaultMemoryInputData::getLength)
-//            .def("seek", &PxDefaultMemoryInputData::seek)
-//            .def("tell", &PxDefaultMemoryInputData::tell);
-//    nb::class_<PxDefaultFileInputData, PxInputData>(m, "PxDefaultFileInputData").def(nb::init<const char*>());
+    //    nb::class_<PxDefaultMemoryInputData, PxInputData>(m, "PxDefaultMemoryInputData")
+    //            .def("getLength", &PxDefaultMemoryInputData::getLength)
+    //            .def("seek", &PxDefaultMemoryInputData::seek)
+    //            .def("tell", &PxDefaultMemoryInputData::tell);
+    //    nb::class_<PxDefaultFileInputData, PxInputData>(m, "PxDefaultFileInputData").def(nb::init<const char*>());
 
     nb::class_<PxOutputStream>(m, "PxOutputStream")
-            .def("write", [](PxOutputStream* stream, nb::ndarray<uint8_t> buffer) {
-                return stream->write(buffer.data(), buffer.nbytes());
-            });
-//    nb::class_<PxDefaultMemoryOutputStream, PxOutputStream>(m, "PxDefaultMemoryOutputStream")
-//            .def("getSize", &PxDefaultMemoryOutputStream::getSize);
-//    nb::class_<PxDefaultFileOutputStream, PxOutputStream>(m, "PxDefaultFileOutputStream").def(nb::init<const char*>());
+            .def(
+                    "write",
+                    [](PxOutputStream* stream, nb::ndarray<uint8_t> buffer) {
+                        return stream->write(buffer.data(), buffer.nbytes());
+                    },
+                    "buffer"_a);
+    //    nb::class_<PxDefaultMemoryOutputStream, PxOutputStream>(m, "PxDefaultMemoryOutputStream")
+    //            .def("getSize", &PxDefaultMemoryOutputStream::getSize);
+    //    nb::class_<PxDefaultFileOutputStream, PxOutputStream>(m, "PxDefaultFileOutputStream").def(nb::init<const
+    //    char*>());
 }

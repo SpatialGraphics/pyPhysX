@@ -6,6 +6,7 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/tuple.h>
 
 #include "py_utils.h"
 
@@ -76,19 +77,22 @@ void bindJoint(nb::module_& m) {
             .def("release", &PxJoint::release)
             .def("getScene", &PxJoint::getScene);
 
-    m.def("PxFixedJointCreate", &PxFixedJointCreate);
+    m.def("PxFixedJointCreate", &PxFixedJointCreate, "physics"_a, "actor0"_a, "localFrame0"_a, "actor1"_a,
+          "localFrame1"_a);
     nb::class_<PxFixedJoint, PxJoint> pxFixedJoint(m, "PxFixedJoint");
 
-    m.def("PxPrismaticJointCreate", &PxPrismaticJointCreate);
+    m.def("PxPrismaticJointCreate", &PxPrismaticJointCreate, "physics"_a, "actor0"_a, "localFrame0"_a, "actor1"_a,
+          "localFrame1"_a);
     nb::class_<PxPrismaticJoint, PxJoint>(m, "PxPrismaticJoint")
             .def("getPosition", &PxPrismaticJoint::getPosition)
             .def("getVelocity", &PxPrismaticJoint::getVelocity)
             .def_prop_rw("limit", &PxPrismaticJoint::getLimit, &PxPrismaticJoint::setLimit)
             .def_prop_rw("prismaticJointFlags", &PxPrismaticJoint::getPrismaticJointFlags,
                          &PxPrismaticJoint::setPrismaticJointFlags)
-            .def("setPrismaticJointFlag", &PxPrismaticJoint::setPrismaticJointFlag);
+            .def("setPrismaticJointFlag", &PxPrismaticJoint::setPrismaticJointFlag, "flag"_a, "value"_a);
 
-    m.def("PxDistanceJointCreate", &PxDistanceJointCreate);
+    m.def("PxDistanceJointCreate", &PxDistanceJointCreate, "physics"_a, "actor0"_a, "localFrame0"_a, "actor1"_a,
+          "localFrame1"_a);
     nb::class_<PxDistanceJoint, PxJoint>(m, "PxDistanceJoint")
             .def("getDistance", &PxDistanceJoint::getDistance)
             .def_prop_rw("minDistance", &PxDistanceJoint::getMinDistance, &PxDistanceJoint::setMinDistance)
@@ -98,20 +102,23 @@ void bindJoint(nb::module_& m) {
             .def_prop_rw("damping", &PxDistanceJoint::getDamping, &PxDistanceJoint::setDamping)
             .def_prop_rw("setDistanceJointFlags", &PxDistanceJoint::getDistanceJointFlags,
                          &PxDistanceJoint::setDistanceJointFlags)
-            .def("setDistanceJointFlag", &PxDistanceJoint::setDistanceJointFlag);
+            .def("setDistanceJointFlag", &PxDistanceJoint::setDistanceJointFlag, "flag"_a, "value"_a);
 
-    m.def("PxGearJointCreate", &PxGearJointCreate);
+    m.def("PxGearJointCreate", &PxGearJointCreate, "physics"_a, "actor0"_a, "localFrame0"_a, "actor1"_a,
+          "localFrame1"_a);
     nb::class_<PxGearJoint, PxJoint>(m, "PxGearJoint")
             //            .def("setHinges", &PxGearJoint::setHinges)
             .def_prop_rw("gearRatio", &PxGearJoint::getGearRatio, &PxGearJoint::setGearRatio);
 
-    m.def("PxRackAndPinionJointCreate", &PxRackAndPinionJointCreate);
+    m.def("PxRackAndPinionJointCreate", &PxRackAndPinionJointCreate, "physics"_a, "actor0"_a, "localFrame0"_a,
+          "actor1"_a, "localFrame1"_a);
     nb::class_<PxRackAndPinionJoint, PxJoint>(m, "PxRackAndPinionJoint")
             //            .def("setJoints", &PxRackAndPinionJoint::setJoints)
             .def_prop_rw("ratio", &PxRackAndPinionJoint::getRatio, &PxRackAndPinionJoint::setRatio)
-            .def("setData", &PxRackAndPinionJoint::setData);
+            .def("setData", &PxRackAndPinionJoint::setData, "nbRackTeeth"_a, "nbPinionTeeth"_a, "rackLength"_a);
 
-    m.def("PxRevoluteJointCreate", &PxRevoluteJointCreate);
+    m.def("PxRevoluteJointCreate", &PxRevoluteJointCreate, "physics"_a, "actor0"_a, "localFrame0"_a, "actor1"_a,
+          "localFrame1"_a);
     nb::class_<PxRevoluteJoint, PxJoint>(m, "PxRevoluteJoint")
             .def("getAngle", &PxRevoluteJoint::getAngle)
             .def("getVelocity", &PxRevoluteJoint::getVelocity)
@@ -121,21 +128,22 @@ void bindJoint(nb::module_& m) {
             .def_prop_rw("driveGearRatio", &PxRevoluteJoint::getDriveGearRatio, &PxRevoluteJoint::setDriveGearRatio)
             .def_prop_rw("revoluteJointFlags", &PxRevoluteJoint::getRevoluteJointFlags,
                          &PxRevoluteJoint::setRevoluteJointFlags)
-            .def("setRevoluteJointFlag", &PxRevoluteJoint::setRevoluteJointFlag);
+            .def("setRevoluteJointFlag", &PxRevoluteJoint::setRevoluteJointFlag, "flag"_a, "value"_a);
 
-    m.def("PxSphericalJointCreate", &PxSphericalJointCreate);
+    m.def("PxSphericalJointCreate", &PxSphericalJointCreate, "physics"_a, "actor0"_a, "localFrame0"_a, "actor1"_a,
+          "localFrame1"_a);
     nb::class_<PxSphericalJoint, PxJoint>(m, "PxSphericalJoint")
             .def_prop_rw("limitCone", &PxSphericalJoint::getLimitCone, &PxSphericalJoint::setLimitCone)
             .def("getSwingYAngle", &PxSphericalJoint::getSwingYAngle)
             .def("getSwingZAngle", &PxSphericalJoint::getSwingZAngle)
             .def_prop_rw("sphericalJointFlags", &PxSphericalJoint::getSphericalJointFlags,
                          &PxSphericalJoint::setSphericalJointFlags)
-            .def("setSphericalJointFlag", &PxSphericalJoint::setSphericalJointFlag);
+            .def("setSphericalJointFlag", &PxSphericalJoint::setSphericalJointFlag, "flag"_a, "value"_a);
 
-    m.def("PxD6JointCreate", &PxD6JointCreate);
+    m.def("PxD6JointCreate", &PxD6JointCreate, "physics"_a, "actor0"_a, "localFrame0"_a, "actor1"_a, "localFrame1"_a);
     nb::class_<PxD6Joint, PxJoint>(m, "PxD6Joint")
-            .def("setMotion", &PxD6Joint::setMotion)
-            .def("getMotion", &PxD6Joint::getMotion)
+            .def("setMotion", &PxD6Joint::setMotion, "axis"_a, "type"_a)
+            .def("getMotion", &PxD6Joint::getMotion, "axis"_a)
             .def("getTwistAngle", &PxD6Joint::getTwistAngle)
             .def("getSwingYAngle", &PxD6Joint::getSwingYAngle)
             .def("getSwingZAngle", &PxD6Joint::getSwingZAngle)
@@ -146,12 +154,16 @@ void bindJoint(nb::module_& m) {
             .def_prop_rw("twistLimit", &PxD6Joint::getTwistLimit, &PxD6Joint::setTwistLimit)
             .def_prop_rw("swingLimit", &PxD6Joint::getSwingLimit, &PxD6Joint::setSwingLimit)
             .def_prop_rw("pyramidSwingLimit", &PxD6Joint::getPyramidSwingLimit, &PxD6Joint::setPyramidSwingLimit)
-            .def("setDrive", &PxD6Joint::setDrive)
-            .def("getDrive", &PxD6Joint::getDrive)
-            .def("setDrivePosition", &PxD6Joint::setDrivePosition)
+            .def("setDrive", &PxD6Joint::setDrive, "index"_a, "drive"_a)
+            .def("getDrive", &PxD6Joint::getDrive, "index"_a)
+            .def("setDrivePosition", &PxD6Joint::setDrivePosition, "pose"_a, "autowake"_a = true)
             .def("getDrivePosition", &PxD6Joint::getDrivePosition)
-            .def("setDriveVelocity", &PxD6Joint::setDriveVelocity)
-            .def("getDriveVelocity", &PxD6Joint::getDriveVelocity);
+            .def("setDriveVelocity", &PxD6Joint::setDriveVelocity, "linear"_a, "angular"_a, "autowake"_a = true)
+            .def("getDriveVelocity", [](PxD6Joint* joint) {
+                std::tuple<PxVec3, PxVec3> result;
+                joint->getDriveVelocity(std::get<0>(result), std::get<1>(result));
+                return result;
+            });
     nb::class_<PxJointLimitParameters>(m, "PxJointLimitParameters")
             .def(nb::init<>())
             .def("isValid", &PxJointLimitParameters::isValid)

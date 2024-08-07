@@ -7,6 +7,7 @@
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/vector.h>
+#include <nanobind/stl/tuple.h>
 
 #include "py_utils.h"
 
@@ -50,11 +51,17 @@ void bindParticle(nb::module_& m) {
     bindFlags<PxParticleBufferFlag::Enum, PxU32>(m, "PxParticleBufferFlags");
 
     nb::class_<PxPBDParticleSystem, PxActor>(m, "PxPBDParticleSystem")
-            .def("setSolverIterationCounts", &PxPBDParticleSystem::setSolverIterationCounts)
-            .def("getSolverIterationCounts", &PxPBDParticleSystem::getSolverIterationCounts)
+            .def("setSolverIterationCounts", &PxPBDParticleSystem::setSolverIterationCounts, "minPositionIters"_a,
+                 "minVelocityIters"_a = 1)
+            .def("getSolverIterationCounts",
+                 [](PxPBDParticleSystem* body) {
+                     std::tuple<PxU32, PxU32> result;
+                     body->getSolverIterationCounts(std::get<0>(result), std::get<1>(result));
+                     return result;
+                 })
             .def_prop_rw("simulationFilterData", &PxPBDParticleSystem::getSimulationFilterData,
                          &PxPBDParticleSystem::setSimulationFilterData)
-            .def("setParticleFlag", &PxPBDParticleSystem::setParticleFlag)
+            .def("setParticleFlag", &PxPBDParticleSystem::setParticleFlag, "flag"_a, "val"_a)
             .def_prop_rw("particleFlags", &PxPBDParticleSystem::getParticleFlags,
                          &PxPBDParticleSystem::setParticleFlags)
             .def_prop_rw("maxDepenetrationVelocity", &PxPBDParticleSystem::getMaxDepenetrationVelocity,
@@ -70,16 +77,16 @@ void bindParticle(nb::module_& m) {
                          &PxPBDParticleSystem::setParticleContactOffset)
             .def_prop_rw("solidRestOffset", &PxPBDParticleSystem::getSolidRestOffset,
                          &PxPBDParticleSystem::setSolidRestOffset)
-            .def("addRigidAttachment", &PxPBDParticleSystem::addRigidAttachment)
-            .def("removeRigidAttachment", &PxPBDParticleSystem::removeRigidAttachment)
-            .def("enableCCD", &PxPBDParticleSystem::enableCCD)
-            .def("setParticleLockFlag", &PxPBDParticleSystem::setParticleLockFlag)
+            .def("addRigidAttachment", &PxPBDParticleSystem::addRigidAttachment, "actor"_a)
+            .def("removeRigidAttachment", &PxPBDParticleSystem::removeRigidAttachment, "actor"_a)
+            .def("enableCCD", &PxPBDParticleSystem::enableCCD, "enable"_a)
+            .def("setParticleLockFlag", &PxPBDParticleSystem::setParticleLockFlag, "flag"_a, "value"_a)
             .def_prop_rw("particleLockFlags", &PxPBDParticleSystem::getParticleLockFlags,
                          &PxPBDParticleSystem::setParticleLockFlags)
-            .def("createPhase", &PxPBDParticleSystem::createPhase)
+            .def("createPhase", &PxPBDParticleSystem::createPhase, "material"_a, "flags"_a)
             .def("getNbParticleMaterials", &PxPBDParticleSystem::getNbParticleMaterials)
-            .def("addParticleBuffer", &PxPBDParticleSystem::addParticleBuffer)
-            .def("removeParticleBuffer", &PxPBDParticleSystem::removeParticleBuffer)
+            .def("addParticleBuffer", &PxPBDParticleSystem::addParticleBuffer, "particleBuffer"_a)
+            .def("removeParticleBuffer", &PxPBDParticleSystem::removeParticleBuffer, "particleBuffer"_a)
             .def("getGpuParticleSystemIndex", &PxPBDParticleSystem::getGpuParticleSystemIndex)
             .def_prop_rw("wind", &PxPBDParticleSystem::getWind, &PxPBDParticleSystem::setWind)
             .def_prop_rw("fluidBoundaryDensityScale", &PxPBDParticleSystem::getFluidBoundaryDensityScale,
@@ -98,7 +105,7 @@ void bindParticle(nb::module_& m) {
             .def("getMaxParticles", &PxParticleBuffer::getMaxParticles)
             .def("getMaxParticleVolumes", &PxParticleBuffer::getMaxParticleVolumes)
             .def("getFlatListStartIndex", &PxParticleBuffer::getFlatListStartIndex)
-            .def("raiseFlags", &PxParticleBuffer::raiseFlags)
+            .def("raiseFlags", &PxParticleBuffer::raiseFlags, "flags"_a)
             .def("release", &PxParticleBuffer::release)
             .def("getUniqueId", &PxParticleBuffer::getUniqueId);
 
@@ -115,7 +122,8 @@ void bindParticle(nb::module_& m) {
             .def_rw("collisionDecay", &PxDiffuseParticleParams::collisionDecay)
             .def_rw("useAccurateVelocity", &PxDiffuseParticleParams::useAccurateVelocity);
     nb::class_<PxParticleAndDiffuseBuffer, PxParticleBuffer>(m, "PxParticleAndDiffuseBuffer")
-            .def("setMaxActiveDiffuseParticles", &PxParticleAndDiffuseBuffer::setMaxActiveDiffuseParticles)
+            .def("setMaxActiveDiffuseParticles", &PxParticleAndDiffuseBuffer::setMaxActiveDiffuseParticles,
+                 "maxActiveDiffuseParticles"_a)
             .def("getMaxDiffuseParticles", &PxParticleAndDiffuseBuffer::getMaxDiffuseParticles)
             .def_prop_rw("diffuseParticleParams", &PxParticleAndDiffuseBuffer::getDiffuseParticleParams,
                          &PxParticleAndDiffuseBuffer::setDiffuseParticleParams);

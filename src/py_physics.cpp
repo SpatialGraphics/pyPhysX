@@ -23,28 +23,35 @@ void bindPhysics(nb::module_& m) {
 
     nb::class_<PxPhysics>(m, "PxPhysics")
             .def("getFoundation", &PxPhysics::getFoundation)
-            .def("createAggregate", &PxPhysics::createAggregate, nb::rv_policy::reference)
+            .def("createAggregate", &PxPhysics::createAggregate, "maxActor"_a, "maxShape"_a, "filterHint"_a,
+                 nb::rv_policy::reference)
             .def("getTolerancesScale", &PxPhysics::getTolerancesScale, nb::rv_policy::reference)
-            .def("createTriangleMesh", &PxPhysics::createTriangleMesh, nb::rv_policy::reference)
+            .def("createTriangleMesh", &PxPhysics::createTriangleMesh, "stream"_a, nb::rv_policy::reference)
             .def("getNbTriangleMeshes", &PxPhysics::getNbTriangleMeshes)
-            .def("createTetrahedronMesh", &PxPhysics::createTetrahedronMesh, nb::rv_policy::reference)
-            .def("createSoftBodyMesh", &PxPhysics::createSoftBodyMesh, nb::rv_policy::reference)
+            .def("createTetrahedronMesh", &PxPhysics::createTetrahedronMesh, "stream"_a, nb::rv_policy::reference)
+            .def("createSoftBodyMesh", &PxPhysics::createSoftBodyMesh, "stream"_a, nb::rv_policy::reference)
             .def("getNbTetrahedronMeshes", &PxPhysics::getNbTetrahedronMeshes)
-            .def("createHeightField", &PxPhysics::createHeightField, nb::rv_policy::reference)
+            .def("createHeightField", &PxPhysics::createHeightField, "stream"_a, nb::rv_policy::reference)
             .def("getNbHeightFields", &PxPhysics::getNbHeightFields)
-            .def("createConvexMesh", &PxPhysics::createConvexMesh, nb::rv_policy::reference)
+            .def("createConvexMesh", &PxPhysics::createConvexMesh, "stream"_a, nb::rv_policy::reference)
             .def("getNbConvexMeshes", &PxPhysics::getNbConvexMeshes)
             .def("getNbBVHs", &PxPhysics::getNbBVHs)
-            .def("createScene", &PxPhysics::createScene, nb::rv_policy::reference)
+            .def("createScene", &PxPhysics::createScene, "sceneDesc"_a, nb::rv_policy::reference)
             .def("getNbScenes", &PxPhysics::getNbScenes)
-            .def("createRigidStatic", &PxPhysics::createRigidStatic, nb::rv_policy::reference)
-            .def("createRigidDynamic", &PxPhysics::createRigidDynamic, nb::rv_policy::reference)
+            .def("createRigidStatic", &PxPhysics::createRigidStatic, "pose"_a, nb::rv_policy::reference)
+            .def("createRigidDynamic", &PxPhysics::createRigidDynamic, "pose"_a, nb::rv_policy::reference)
             .def("createShape",
                  nb::overload_cast<const PxGeometry&, const PxMaterial&, bool, PxShapeFlags>(&PxPhysics::createShape),
+                 "geometry"_a, "material"_a, "isExclusive"_a = false,
+                 "shapeFlags"_a =
+                         PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE,
                  nb::rv_policy::reference)
             .def("createShape",
                  nb::overload_cast<const PxGeometry&, const PxFEMSoftBodyMaterial&, bool, PxShapeFlags>(
                          &PxPhysics::createShape),
+                 "geometry"_a, "material"_a, "isExclusive"_a = false,
+                 "shapeFlags"_a =
+                         PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE,
                  nb::rv_policy::reference)
             .def(
                     "createShape",
@@ -52,6 +59,9 @@ void bindPhysics(nb::module_& m) {
                        bool isExclusive, const PxShapeFlags& shapeFlags) {
                         return physics->createShape(geometry, materials.data(), materials.size(), shapeFlags);
                     },
+                    "geometry"_a, "materials"_a, "isExclusive"_a = false,
+                    "shapeFlags"_a = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE |
+                                     PxShapeFlag::eSIMULATION_SHAPE,
                     nb::rv_policy::reference)
             .def(
                     "createShape",
@@ -59,6 +69,9 @@ void bindPhysics(nb::module_& m) {
                        bool isExclusive, const PxShapeFlags& shapeFlags) {
                         return physics->createShape(geometry, materials.data(), materials.size(), shapeFlags);
                     },
+                    "geometry"_a, "materials"_a, "isExclusive"_a = false,
+                    "shapeFlags"_a = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE |
+                                     PxShapeFlag::eSIMULATION_SHAPE,
                     nb::rv_policy::reference)
             .def(
                     "createShape",
@@ -66,6 +79,9 @@ void bindPhysics(nb::module_& m) {
                        bool isExclusive, const PxShapeFlags& shapeFlags) {
                         return physics->createShape(geometry, materials.data(), materials.size(), shapeFlags);
                     },
+                    "geometry"_a, "materials"_a, "isExclusive"_a = false,
+                    "shapeFlags"_a = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE |
+                                     PxShapeFlag::eSIMULATION_SHAPE,
                     nb::rv_policy::reference)
             .def("getNbShapes", &PxPhysics::getNbShapes)
             //            .def("createConstraint", &PxPhysics::createConstraint, nb::rv_policy::reference)
@@ -81,12 +97,17 @@ void bindPhysics(nb::module_& m) {
             .def("createParticleClothBuffer", &PxPhysics::createParticleClothBuffer, nb::rv_policy::reference)
             .def("createParticleRigidBuffer", &PxPhysics::createParticleRigidBuffer, nb::rv_policy::reference)
 #endif
-            .def("createMaterial", &PxPhysics::createMaterial, nb::rv_policy::reference)
+            .def("createMaterial", &PxPhysics::createMaterial, "staticFriction"_a, "dynamicFriction"_a, "restitution"_a,
+                 nb::rv_policy::reference)
             .def("getNbMaterials", &PxPhysics::getNbMaterials)
-            .def("createFEMSoftBodyMaterial", &PxPhysics::createFEMSoftBodyMaterial, nb::rv_policy::reference)
+            .def("createFEMSoftBodyMaterial", &PxPhysics::createFEMSoftBodyMaterial, "youngs"_a, "poissons"_a,
+                 "dynamicFriction"_a, nb::rv_policy::reference)
             .def("getNbFEMSoftBodyMaterials", &PxPhysics::getNbFEMSoftBodyMaterials)
-            .def("createFEMClothMaterial", &PxPhysics::createFEMClothMaterial, nb::rv_policy::reference)
+            .def("createFEMClothMaterial", &PxPhysics::createFEMClothMaterial, "youngs"_a, "poissons"_a,
+                 "dynamicFriction"_a, "thickness"_a = 0.001f, nb::rv_policy::reference)
             .def("getNbFEMClothMaterials", &PxPhysics::getNbFEMClothMaterials)
-            .def("createPBDMaterial", &PxPhysics::createPBDMaterial, nb::rv_policy::reference)
+            .def("createPBDMaterial", &PxPhysics::createPBDMaterial, "friction"_a, "damping"_a, "adhesion"_a,
+                 "viscosity"_a, "vorticityConfinement"_a, "surfaceTension"_a, "cohesion"_a, "lift"_a, "drag"_a,
+                 "cflCoefficient"_a = 1.f, "gravityScale"_a = 1.f, nb::rv_policy::reference)
             .def("getNbPBDMaterials", &PxPhysics::getNbPBDMaterials);
 }
