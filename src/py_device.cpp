@@ -20,8 +20,6 @@
 namespace nb = nanobind;
 using namespace nb::literals;
 
-#ifdef SUPPORT_CUDA
-
 static std::array<uint32_t, 4> parsePCIString(const std::string& s) {
     if (s.length() == 12) {
         return {static_cast<uint32_t>(std::stoi(s.substr(0, 4), nullptr, 16)),
@@ -37,6 +35,7 @@ static std::array<uint32_t, 4> parsePCIString(const std::string& s) {
     throw std::runtime_error("invalid PCI string");
 }
 
+#ifdef SUPPORT_CUDA
 static std::vector<std::shared_ptr<Device>> cudaFindDevices() {
     std::vector<std::shared_ptr<Device>> res;
 
