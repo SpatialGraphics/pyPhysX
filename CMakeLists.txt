@@ -54,6 +54,8 @@ set(BINDING_FILES
         src/py_query.cpp
         src/py_utils.cpp
         src/py_cooking.cpp
+
+        src/py_device.cpp
 )
 
 set(CUDA_FILES
@@ -98,6 +100,12 @@ target_link_libraries(py_physx_ext PRIVATE
         physx5
         Eigen3::Eigen
 )
+
+if (CUDAToolkit_FOUND)
+    target_link_libraries(py_physx_ext PRIVATE
+            CUDA::cudart
+    )
+endif ()
 
 file(GLOB PY_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/pyPhysX/*.py" "${CMAKE_CURRENT_SOURCE_DIR}/src/pyPhysX/*.pyi")
 

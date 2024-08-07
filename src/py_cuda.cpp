@@ -6,12 +6,28 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
-#include <nanobind/stl/vector.h>
-#include <nanobind/stl/tuple.h>
+
+#include "py_cuda.h"
+#include <dlfcn.h>
+#include <cuda_runtime.h>
 
 namespace nb = nanobind;
 using namespace nb::literals;
 using namespace physx;
+
+CudaLib::CudaLib() {
+    libcuda = dlopen("libcuda.so", RTLD_LAZY);
+    cudaFree(nullptr);  // establish cuda context with runtime API
+    this->cuCtxGetCurrent = (decltype(::cuCtxGetCurrent)*)dlsym(libcuda, "cuCtxGetCurrent");
+}
+
+CudaLib& CudaLib::Get() {
+    static CudaLib lib;
+    if (!lib.libcuda) {
+        throw std::runtime_error("failed to load libcuda");
+    }
+    return lib;
+}
 
 void bindCuda(nb::module_& m) {
     m.def("PxSetPhysXGpuProfilerCallback", &PxSetPhysXGpuProfilerCallback);

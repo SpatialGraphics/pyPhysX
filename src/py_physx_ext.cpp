@@ -38,6 +38,7 @@ extern void bindQuery(nb::module_& m);
 extern void bindUtils(nb::module_& m);
 extern void bindCooking(nb::module_& m);
 
+extern void bindDevice(nb::module_& m);
 #ifdef SUPPORT_CUDA
 extern void bindCuda(nb::module_& m);
 #endif
@@ -72,6 +73,7 @@ NB_MODULE(py_physx_ext, m) {
     bindUtils(m);
     bindCooking(m);
 
+    bindDevice(m);
 #ifdef SUPPORT_CUDA
     bindCuda(m);
 #endif

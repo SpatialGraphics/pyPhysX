@@ -13,3 +13,11 @@ def test_enum():
     b = physx.PxRigidDynamicLockFlags(physx.PxRigidDynamicLockFlag.eLOCK_LINEAR_Y)
     assert (a | b).value() == 10
     assert (a & b).value() == 0
+
+
+def test_device():
+    cpu = physx.findDevice("cpu")
+    assert cpu.name == "cpu"
+
+    cuda = physx.findDevice("cuda")
+    assert cuda.isCuda() == True
