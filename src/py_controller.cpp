@@ -6,7 +6,6 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
 #include <nanobind/stl/function.h>
 
 #include "py_utils.h"
@@ -51,20 +50,21 @@ void bindController(nb::module_& m) {
             .def("release", &PxControllerManager::release)
             .def("getScene", &PxControllerManager::getScene, nb::rv_policy::reference)
             .def("getNbControllers", &PxControllerManager::getNbControllers)
-            .def("createController", &PxControllerManager::createController)
+            .def("createController", &PxControllerManager::createController, "desc"_a)
             .def("purgeControllers", &PxControllerManager::purgeControllers)
             .def("getRenderBuffer", &PxControllerManager::getRenderBuffer)
-            .def("setDebugRenderingFlags", &PxControllerManager::setDebugRenderingFlags)
+            .def("setDebugRenderingFlags", &PxControllerManager::setDebugRenderingFlags, "flags"_a)
             .def("getNbObstacleContexts", &PxControllerManager::getNbObstacleContexts)
-            .def("getObstacleContext", &PxControllerManager::getObstacleContext)
+            .def("getObstacleContext", &PxControllerManager::getObstacleContext, "index"_a)
             .def("createObstacleContext", &PxControllerManager::createObstacleContext)
-            .def("computeInteractions", &PxControllerManager::computeInteractions)
-            .def("setTessellation", &PxControllerManager::setTessellation)
-            .def("setOverlapRecoveryModule", &PxControllerManager::setOverlapRecoveryModule)
-            .def("setPreciseSweeps", &PxControllerManager::setPreciseSweeps)
+            .def("computeInteractions", &PxControllerManager::computeInteractions, "elapsedTime"_a,
+                 "cctFilterCb"_a.none())
+            .def("setTessellation", &PxControllerManager::setTessellation, "flag"_a, "maxEdgeLength"_a)
+            .def("setOverlapRecoveryModule", &PxControllerManager::setOverlapRecoveryModule, "flag"_a)
+            .def("setPreciseSweeps", &PxControllerManager::setPreciseSweeps, "flag"_a)
             .def("setPreventVerticalSlidingAgainstCeiling",
-                 &PxControllerManager::setPreventVerticalSlidingAgainstCeiling)
-            .def("shiftOrigin", &PxControllerManager::shiftOrigin);
+                 &PxControllerManager::setPreventVerticalSlidingAgainstCeiling, "flag"_a)
+            .def("shiftOrigin", &PxControllerManager::shiftOrigin, "shift"_a);
 
     nb::class_<PxControllerDesc>(m, "PxControllerDesc")
             .def("isValid", &PxControllerDesc::isValid)
@@ -87,6 +87,7 @@ void bindController(nb::module_& m) {
             .def_rw("clientID", &PxControllerDesc::clientID);
 
     nb::class_<PxCapsuleControllerDesc, PxControllerDesc>(m, "PxCapsuleControllerDesc")
+            .def(nb::init<>())
             .def("setToDefault", &PxCapsuleControllerDesc::setToDefault)
             .def("isValid", &PxCapsuleControllerDesc::isValid)
             .def_rw("radius", &PxCapsuleControllerDesc::radius)
@@ -94,6 +95,7 @@ void bindController(nb::module_& m) {
             .def_rw("climbingMode", &PxCapsuleControllerDesc::climbingMode);
 
     nb::class_<PxBoxControllerDesc, PxControllerDesc>(m, "PxBoxControllerDesc")
+            .def(nb::init<>())
             .def("setToDefault", &PxBoxControllerDesc::setToDefault)
             .def("isValid", &PxBoxControllerDesc::isValid)
             .def_rw("halfHeight", &PxBoxControllerDesc::halfHeight)
@@ -103,11 +105,7 @@ void bindController(nb::module_& m) {
     nb::class_<PxController>(m, "PxController")
             .def("getType", &PxController::getType)
             .def("release", &PxController::release)
-            .def("move",
-                 [](PxController* controller, const PxVec3& disp, PxF32 minDist, PxF32 elapsedTime,
-                    const PxControllerFilters& filters, const PxObstacleContext* obstacles) {
-                     return controller->move(disp, minDist, elapsedTime, filters, obstacles).operator uint32_t();
-                 })
+            .def("move", &PxController::move, "disp"_a, "minDist"_a, "elapsedTime"_a, "filters"_a, "obstacles"_a.none())
             .def_prop_rw("position", &PxController::getPosition, &PxController::setPosition)
             .def_prop_rw("footPosition", &PxController::getFootPosition, &PxController::setFootPosition)
             .def("getActor", &PxController::getActor)
@@ -118,9 +116,9 @@ void bindController(nb::module_& m) {
             .def_prop_rw("slopeLimit", &PxController::getSlopeLimit, &PxController::setSlopeLimit)
             .def("invalidateCache", &PxController::invalidateCache)
             .def("getScene", &PxController::getScene, nb::rv_policy::reference)
-            .def("getState", &PxController::getState)
-            .def("getStats", &PxController::getStats)
-            .def("invalidateCache", &PxController::resize);
+            .def("getState", &PxController::getState, "state"_a)
+            .def("getStats", &PxController::getStats, "stats"_a)
+            .def("invalidateCache", &PxController::resize, "height"_a);
 
     nb::class_<PxCapsuleController, PxController>(m, "PxCapsuleController")
             .def_prop_rw("radius", &PxCapsuleController::getRadius, &PxCapsuleController::setRadius)
@@ -134,6 +132,7 @@ void bindController(nb::module_& m) {
                          &PxBoxController::setHalfForwardExtent);
 
     nb::class_<PxControllerState>(m, "PxControllerState")
+            .def(nb::init<>())
             .def_rw("deltaXP", &PxControllerState::deltaXP)
             .def_rw("touchedShape", &PxControllerState::touchedShape)
             .def_rw("touchedActor", &PxControllerState::touchedActor)
@@ -144,6 +143,7 @@ void bindController(nb::module_& m) {
             .def_rw("isMovingUp", &PxControllerState::isMovingUp);
 
     nb::class_<PxControllerStats>(m, "PxControllerStats")
+            .def(nb::init<>())
             .def_rw("nbIterations", &PxControllerStats::nbIterations)
             .def_rw("nbFullUpdates", &PxControllerStats::nbFullUpdates)
             .def_rw("nbPartialUpdates", &PxControllerStats::nbPartialUpdates)
@@ -151,13 +151,13 @@ void bindController(nb::module_& m) {
 
     nb::class_<PxObstacleContext>(m, "PxObstacleContext")
             .def("release", &PxObstacleContext::release)
-            .def("getControllerManager", &PxObstacleContext::getControllerManager)
-            .def("addObstacle", &PxObstacleContext::addObstacle)
-            .def("removeObstacle", &PxObstacleContext::removeObstacle)
-            .def("updateObstacle", &PxObstacleContext::updateObstacle)
+            .def("getControllerManager", &PxObstacleContext::getControllerManager, nb::rv_policy::reference)
+            .def("addObstacle", &PxObstacleContext::addObstacle, "obstacle"_a)
+            .def("removeObstacle", &PxObstacleContext::removeObstacle, "handle"_a)
+            .def("updateObstacle", &PxObstacleContext::updateObstacle, "handle"_a, "obstacle"_a)
             .def("getNbObstacles", &PxObstacleContext::getNbObstacles)
-            .def("getObstacle", &PxObstacleContext::getObstacle)
-            .def("getObstacleByHandle", &PxObstacleContext::getObstacleByHandle);
+            .def("getObstacle", &PxObstacleContext::getObstacle, "i"_a)
+            .def("getObstacleByHandle", &PxObstacleContext::getObstacleByHandle, "handle"_a);
 
     nb::class_<PxObstacle>(m, "PxObstacle").def("getType", &PxObstacle::getType);
 
@@ -222,17 +222,21 @@ void bindController(nb::module_& m) {
                           const std::function<void(const PxControllerObstacleHit& hit)>&,
                           const std::function<void(const PxControllerShapeHit& hit)>&>());
     nb::class_<PxControllerHit>(m, "PxControllerHit")
+            .def(nb::init<>())
             .def_rw("controller", &PxControllerHit::controller)
             .def_rw("worldPos", &PxControllerHit::worldPos)
             .def_rw("worldNormal", &PxControllerHit::worldNormal)
             .def_rw("dir", &PxControllerHit::dir)
             .def_rw("length", &PxControllerHit::length);
     nb::class_<PxControllerShapeHit, PxControllerHit>(m, "PxControllerShapeHit")
+            .def(nb::init<>())
             .def_rw("shape", &PxControllerShapeHit::shape)
             .def_rw("actor", &PxControllerShapeHit::actor)
             .def_rw("triangleIndex", &PxControllerShapeHit::triangleIndex);
-    nb::class_<PxControllersHit, PxControllerHit>(m, "PxControllersHit").def_rw("other", &PxControllersHit::other);
-    nb::class_<PxControllerObstacleHit, PxControllerHit> pxControllerObstacleHit(m, "PxControllerObstacleHit");
+    nb::class_<PxControllersHit, PxControllerHit>(m, "PxControllersHit")
+            .def(nb::init<>())
+            .def_rw("other", &PxControllersHit::other);
+    nb::class_<PxControllerObstacleHit, PxControllerHit>(m, "PxControllerObstacleHit").def(nb::init<>());
 
     class ControllerFilterCallback : public PxControllerFilterCallback {
     public:
