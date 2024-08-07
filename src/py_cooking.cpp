@@ -179,32 +179,43 @@ void bindCooking(nb::module_& m) {
             .def("cookBVH", immediateCooking::cookBVH)
             .def("assembleSoftBodyMesh", immediateCooking::assembleSoftBodyMesh);
 
-    m.def("PxCookHeightField", &PxCookHeightField)
-            .def("PxCreateHeightField", nb::overload_cast<const physx::PxHeightFieldDesc&>(&PxCreateHeightField))
-            .def("PxCookConvexMesh", &PxCookConvexMesh)
+    m.def("PxCookHeightField", &PxCookHeightField, "desc"_a, "stream"_a)
+            .def("PxCreateHeightField", nb::overload_cast<const physx::PxHeightFieldDesc&>(&PxCreateHeightField),
+                 "desc"_a)
+            .def("PxCookConvexMesh", &PxCookConvexMesh, "params"_a, "desc"_a, "stream"_a,
+                 "condition"_a.none() = nb::none())
             .def("PxCreateConvexMesh",
-                 nb::overload_cast<const physx::PxCookingParams&, const physx::PxConvexMeshDesc&>(&PxCreateConvexMesh))
-            .def("PxValidateConvexMesh", &PxValidateConvexMesh)
+                 nb::overload_cast<const physx::PxCookingParams&, const physx::PxConvexMeshDesc&>(&PxCreateConvexMesh),
+                 "params"_a, "desc"_a)
+            .def("PxValidateConvexMesh", &PxValidateConvexMesh, "params"_a, "desc"_a)
             //            .def("PxComputeHullPolygons", &PxComputeHullPolygons)
-            .def("PxValidateTriangleMesh", &PxValidateTriangleMesh)
-            .def("PxCookTriangleMesh", &PxCookTriangleMesh)
+            .def("PxValidateTriangleMesh", &PxValidateTriangleMesh, "params"_a, "desc"_a)
+            .def("PxCookTriangleMesh", &PxCookTriangleMesh, "params"_a, "desc"_a, "stream"_a,
+                 "condition"_a.none() = nb::none())
             .def("PxCreateTriangleMesh",
                  nb::overload_cast<const physx::PxCookingParams&, const physx::PxTriangleMeshDesc&>(
-                         &PxCreateTriangleMesh))
-            .def("PxCookTetrahedronMesh", &PxCookTetrahedronMesh)
+                         &PxCreateTriangleMesh),
+                 "params"_a, "desc"_a)
+            .def("PxCookTetrahedronMesh", &PxCookTetrahedronMesh, "params"_a, "meshDesc"_a, "stream"_a)
             .def("PxCreateTetrahedronMesh",
                  nb::overload_cast<const physx::PxCookingParams&, const physx::PxTetrahedronMeshDesc&>(
-                         &PxCreateTetrahedronMesh))
-            .def("PxCookSoftBodyMesh", &PxCookSoftBodyMesh)
+                         &PxCreateTetrahedronMesh),
+                 "params"_a, "meshDesc"_a)
+            .def("PxCookSoftBodyMesh", &PxCookSoftBodyMesh, "params"_a, "simulationMeshDesc"_a, "collisionMeshDesc"_a,
+                 "softbodyDataDesc"_a, "stream"_a)
             .def("PxCreateSoftBodyMesh",
                  nb::overload_cast<const physx::PxCookingParams&, const physx::PxTetrahedronMeshDesc&,
                                    const physx::PxTetrahedronMeshDesc&, const physx::PxSoftBodySimulationDataDesc&>(
-                         &PxCreateSoftBodyMesh))
-            .def("PxComputeModelsMapping", &PxComputeModelsMapping)
-            .def("PxComputeCollisionData", &PxComputeCollisionData)
-            .def("PxComputeSimulationData", &PxComputeSimulationData)
-            .def("PxAssembleSoftBodyMesh", &PxAssembleSoftBodyMesh)
-            .def("PxAssembleSoftBodyMesh_Sim", &PxAssembleSoftBodyMesh_Sim);
+                         &PxCreateSoftBodyMesh),
+                 "params"_a, "simulationMeshDesc"_a, "collisionMeshDesc"_a, "softbodyDataDesc"_a)
+            .def("PxComputeModelsMapping", &PxComputeModelsMapping, "params"_a, "simulationMesh"_a, "collisionMesh"_a,
+                 "collisionData"_a, "vertexToTet"_a.none() = nb::none())
+            .def("PxComputeCollisionData", &PxComputeCollisionData, "params"_a, "collisionMeshDesc"_a)
+            .def("PxComputeSimulationData", &PxComputeSimulationData, "params"_a, "simulationMeshDesc"_a)
+            .def("PxAssembleSoftBodyMesh", &PxAssembleSoftBodyMesh, "simulationMesh"_a, "simulationData"_a,
+                 "collisionMesh"_a, "collisionData"_a, "mappingData"_a, "insertionCallback"_a)
+            .def("PxAssembleSoftBodyMesh_Sim", &PxAssembleSoftBodyMesh_Sim, "simulationMesh"_a, "collisionMesh"_a,
+                 "mappingData"_a, "insertionCallback"_a);
 
     class InsertionCallback : public PxInsertionCallback {
     public:
