@@ -89,13 +89,19 @@ void bindPhysics(nb::module_& m) {
                  nb::rv_policy::reference)
 #ifdef SUPPORT_CUDA
             //            .def("createFEMCloth", &PxPhysics::createFEMCloth, nb::rv_policy::reference)
-            .def("createSoftBody", &PxPhysics::createSoftBody, nb::rv_policy::reference)
+            .def("createSoftBody", &PxPhysics::createSoftBody, "cudaContextManager"_a, nb::rv_policy::reference)
             //            .def("createHairSystem", &PxPhysics::createHairSystem, nb::rv_policy::reference)
-            .def("createPBDParticleSystem", &PxPhysics::createPBDParticleSystem, nb::rv_policy::reference)
-            .def("createParticleBuffer", &PxPhysics::createParticleBuffer, nb::rv_policy::reference)
-            .def("createParticleAndDiffuseBuffer", &PxPhysics::createParticleAndDiffuseBuffer, nb::rv_policy::reference)
-            .def("createParticleClothBuffer", &PxPhysics::createParticleClothBuffer, nb::rv_policy::reference)
-            .def("createParticleRigidBuffer", &PxPhysics::createParticleRigidBuffer, nb::rv_policy::reference)
+            .def("createPBDParticleSystem", &PxPhysics::createPBDParticleSystem, "cudaContextManager"_a,
+                 "maxNeighborhood"_a = 96, "neighborhoodScale"_a = 1.01f, nb::rv_policy::reference)
+            .def("createParticleBuffer", &PxPhysics::createParticleBuffer, "maxParticles"_a, "maxVolumes"_a,
+                 "cudaContextManager"_a, nb::rv_policy::reference)
+            .def("createParticleAndDiffuseBuffer", &PxPhysics::createParticleAndDiffuseBuffer, "maxParticles"_a,
+                 "maxVolumes"_a, "maxDiffuseParticles"_a, "cudaContextManager"_a, nb::rv_policy::reference)
+            .def("createParticleClothBuffer", &PxPhysics::createParticleClothBuffer, "maxParticles"_a,
+                 "maxNumVolumes"_a, "maxNumCloths"_a, "maxNumTriangles"_a, "maxNumSprings"_a, "cudaContextManager"_a,
+                 nb::rv_policy::reference)
+            .def("createParticleRigidBuffer", &PxPhysics::createParticleRigidBuffer, "maxParticles"_a,
+                 "maxNumVolumes"_a, "maxNumRigids"_a, "cudaContextManager"_a, nb::rv_policy::reference)
 #endif
             .def("createMaterial", &PxPhysics::createMaterial, "staticFriction"_a, "dynamicFriction"_a, "restitution"_a,
                  nb::rv_policy::reference)
