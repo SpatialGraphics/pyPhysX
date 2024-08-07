@@ -20,6 +20,9 @@ class ControllerBehaviorCallback(PxControllerBehaviorCallback):
 class ControllerFilterCallback(PxControllerFilterCallback):
     def __init__(self, arg: Callable[[PxController, PxController], bool], /) -> None: ...
 
+class ErrorCallback(PxErrorCallback):
+    def __init__(self, arg: Callable[[PxErrorCode, str, str, int], None], /) -> None: ...
+
 class PxActor:
     def release(self) -> None: ...
 
@@ -2133,6 +2136,10 @@ class PxConvexMeshGeometryFlags:
 class PxCpuDispatcher:
     def getWorkerCount(self) -> int: ...
 
+def PxCreateFoundation(callback: ErrorCallback) -> PxFoundation: ...
+
+def PxCreatePhysics(foundation: PxFoundation, scale: PxTolerancesScale) -> PxPhysics: ...
+
 class PxCudaContextManager:
     def acquireContext(self) -> None: ...
 
@@ -2578,6 +2585,9 @@ class PxDistanceJointFlags:
 
 class PxEMPTY(enum.Enum):
     PxEmpty = 0
+
+class PxErrorCallback:
+    def reportError(self, arg0: PxErrorCode, arg1: str, arg2: str, arg3: int, /) -> None: ...
 
 class PxErrorCode(enum.Enum):
     eNO_ERROR = 0

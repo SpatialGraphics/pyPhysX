@@ -8,7 +8,7 @@
 #include <PxFEMClothMaterial.h>
 
 #include <nanobind/nanobind.h>
-#include <nanobind/stl/vector.h>
+#include <nanobind/stl/function.h>
 
 namespace nb = nanobind;
 using namespace nb::literals;
@@ -32,4 +32,27 @@ void bindFoundation(nb::module_& m) {
             .def_prop_rw("errorLevel", &PxFoundation::getErrorLevel, &PxFoundation::setErrorLevel)
             .def_prop_rw("reportAllocationNames", &PxFoundation::getReportAllocationNames,
                          &PxFoundation::setReportAllocationNames);
+
+    class ErrorCallback : public PxErrorCallback {
+    public:
+        explicit ErrorCallback(const std::function<void(PxErrorCode::Enum, const char*, const char*, int)>& c) : c(c) {}
+
+        void reportError(PxErrorCode::Enum code, const char* message, const char* file, int line) override {
+            c(code, message, file, line);
+        }
+
+    private:
+        std::function<void(PxErrorCode::Enum, const char*, const char*, int)> c;
+    };
+    nb::class_<PxErrorCallback>(m, "PxErrorCallback").def("reportError", &PxErrorCallback::reportError);
+    nb::class_<ErrorCallback, PxErrorCallback>(m, "ErrorCallback")
+            .def(nb::init<const std::function<void(PxErrorCode::Enum, const char*, const char*, int)>&>());
+
+    static PxDefaultAllocator gDefaultAllocatorCallback;
+    m.def(
+            "PxCreateFoundation",
+            [](ErrorCallback& callback) {
+                return PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, callback);
+            },
+            "callback"_a);
 }
