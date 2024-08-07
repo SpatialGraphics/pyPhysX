@@ -31,7 +31,7 @@ void bindFilter(nb::module_& m) {
         QueryFilterCallback(const std::function<PxQueryHitType::Enum(const PxFilterData& filterData,
                                                                      const PxShape* shape,
                                                                      const PxRigidActor* actor,
-                                                                     uint32_t& queryFlags)>& c1,
+                                                                     PxHitFlags& queryFlags)>& c1,
                             const std::function<PxQueryHitType::Enum(const PxFilterData& filterData,
                                                                      const PxQueryHit& hit,
                                                                      const PxShape* shape,
@@ -42,10 +42,7 @@ void bindFilter(nb::module_& m) {
                                        const PxShape* shape,
                                        const PxRigidActor* actor,
                                        PxHitFlags& queryFlags) override {
-            uint32_t flags;
-            auto result = c1(filterData, shape, actor, flags);
-            queryFlags = PxHitFlags(flags);
-            return result;
+            return c1(filterData, shape, actor, queryFlags);
         }
         PxQueryHitType::Enum postFilter(const PxFilterData& filterData,
                                         const PxQueryHit& hit,
@@ -55,8 +52,10 @@ void bindFilter(nb::module_& m) {
         }
 
     private:
-        std::function<PxQueryHitType::Enum(
-                const PxFilterData& filterData, const PxShape* shape, const PxRigidActor* actor, uint32_t& queryFlags)>
+        std::function<PxQueryHitType::Enum(const PxFilterData& filterData,
+                                           const PxShape* shape,
+                                           const PxRigidActor* actor,
+                                           PxHitFlags& queryFlags)>
                 c1;
         std::function<PxQueryHitType::Enum(
                 const PxFilterData& filterData, const PxQueryHit& hit, const PxShape* shape, const PxRigidActor* actor)>
@@ -66,7 +65,7 @@ void bindFilter(nb::module_& m) {
     nb::class_<QueryFilterCallback, PxQueryFilterCallback>(m, "QueryFilterCallback")
             .def(nb::init<
                     const std::function<PxQueryHitType::Enum(const PxFilterData& filterData, const PxShape* shape,
-                                                             const PxRigidActor* actor, uint32_t& queryFlags)>&,
+                                                             const PxRigidActor* actor, PxHitFlags& queryFlags)>&,
                     const std::function<PxQueryHitType::Enum(const PxFilterData& filterData, const PxQueryHit& hit,
                                                              const PxShape* shape, const PxRigidActor* actor)>&>());
 

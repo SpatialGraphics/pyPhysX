@@ -8,11 +8,17 @@
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/vector.h>
 
+#include "py_utils.h"
+
 namespace nb = nanobind;
 using namespace nb::literals;
 using namespace physx;
 
 void bindConvexMesh(nb::module_& m) {
+    nb::enum_<PxConvexMeshGeometryFlag::Enum>(m, "PxConvexMeshGeometryFlag")
+            .value("eTIGHT_BOUNDS", PxConvexMeshGeometryFlag::Enum::eTIGHT_BOUNDS);
+    bindFlags<PxConvexMeshGeometryFlag::Enum, PxU8>(m, "PxConvexMeshGeometryFlags");
+
     nb::class_<PxConvexMesh>(m, "PxConvexMesh")
             .def("getNbVertices", &PxConvexMesh::getNbVertices)
             .def("getVertices", &PxConvexMesh::getVertices)
@@ -33,10 +39,7 @@ void bindConvexMesh(nb::module_& m) {
             });
 
     nb::class_<PxConvexMeshGeometry, PxGeometry>(m, "PxConvexMeshGeometry")
-            .def("__init__",
-                 [](PxConvexMesh* mesh, const PxMeshScale& scaling, int flags) {
-                     return new PxConvexMeshGeometry(mesh, scaling, PxConvexMeshGeometryFlags(flags));
-                 })
+            .def(nb::init<PxConvexMesh*, const PxMeshScale&, PxConvexMeshGeometryFlags>())
             .def("isValid", &PxConvexMeshGeometry::isValid);
     nb::class_<PxMeshScale>(m, "PxMeshScale")
             .def(nb::init<>())
@@ -50,7 +53,4 @@ void bindConvexMesh(nb::module_& m) {
             .def("transform", &PxMeshScale::transform)
             .def("isValidForTriangleMesh", &PxMeshScale::isValidForTriangleMesh)
             .def("isValidForConvexMesh", &PxMeshScale::isValidForConvexMesh);
-
-    nb::enum_<PxConvexMeshGeometryFlag::Enum>(m, "PxConvexMeshGeometryFlag")
-            .value("eTIGHT_BOUNDS", PxConvexMeshGeometryFlag::Enum::eTIGHT_BOUNDS);
 }

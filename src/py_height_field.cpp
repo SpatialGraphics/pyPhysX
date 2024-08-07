@@ -6,19 +6,20 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
-#include <nanobind/ndarray.h>
+
+#include "py_utils.h"
 
 namespace nb = nanobind;
 using namespace nb::literals;
 using namespace physx;
 
 void bindHeightField(nb::module_& m) {
+    nb::enum_<PxHeightFieldFlag::Enum>(m, "PxHeightFieldFlag")
+            .value("eSIMULATION_SHAPE", PxHeightFieldFlag::Enum::eNO_BOUNDARY_EDGES);
+    bindFlags<PxHeightFieldFlag::Enum, PxU16>(m, "PxHeightFieldFlags");
+
     nb::class_<PxHeightFieldGeometry, PxGeometry>(m, "PxHeightFieldGeometry")
-            .def("__init__",
-                 [](PxHeightField* hf, int flags, PxReal heightScale_, PxReal rowScale_, PxReal columnScale_) {
-                     return new PxHeightFieldGeometry(hf, PxMeshGeometryFlags(flags), heightScale_, rowScale_,
-                                                      columnScale_);
-                 })
+            .def(nb::init<PxHeightField*, PxMeshGeometryFlags, PxReal, PxReal, PxReal>())
             .def("isValid", &PxHeightFieldGeometry::isValid);
 
     nb::class_<PxHeightField>(m, "PxHeightField")
@@ -29,10 +30,7 @@ void bindHeightField(nb::module_& m) {
             .def("getFormat", &PxHeightField::getFormat)
             .def("getSampleStride", &PxHeightField::getSampleStride)
             .def("getConvexEdgeThreshold", &PxHeightField::getConvexEdgeThreshold)
-            .def("getFlags",
-                 [](PxHeightField* field) {
-                     return field->getFlags().operator uint32_t();
-                 })
+            .def("getFlags", &PxHeightField::getFlags)
             .def("getHeight", &PxHeightField::getHeight)
             .def("getTriangleMaterialIndex", &PxHeightField::getTriangleMaterialIndex)
             .def("getTriangleNormal", &PxHeightField::getTriangleNormal)

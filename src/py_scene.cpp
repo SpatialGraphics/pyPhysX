@@ -9,6 +9,8 @@
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/vector.h>
 
+#include "py_utils.h"
+
 namespace nb = nanobind;
 using namespace nb::literals;
 using namespace physx;
@@ -26,6 +28,11 @@ void bindScene(nb::module_& m) {
             .value("ePABP", PxBroadPhaseType::Enum::ePABP)
             .value("eGPU", PxBroadPhaseType::Enum::eGPU);
 
+    nb::enum_<PxActorTypeFlag::Enum>(m, "PxActorTypeFlag")
+            .value("eRIGID_STATIC", PxActorTypeFlag::Enum::eRIGID_STATIC)
+            .value("eRIGID_DYNAMIC", PxActorTypeFlag::Enum::eRIGID_DYNAMIC);
+    bindFlags<PxActorTypeFlag::Enum, PxU16>(m, "PxActorTypeFlags");
+
     nb::enum_<PxHitFlag::Enum>(m, "PxHitFlag")
             .value("ePOSITION", PxHitFlag::Enum::ePOSITION)
             .value("eNORMAL", PxHitFlag::Enum::eNORMAL)
@@ -39,6 +46,7 @@ void bindScene(nb::module_& m) {
             .value("eMTD", PxHitFlag::Enum::eMTD)
             .value("eFACE_INDEX", PxHitFlag::Enum::eFACE_INDEX)
             .value("eDEFAULT", PxHitFlag::Enum::eDEFAULT);
+    bindFlags<PxHitFlag::Enum, PxU16>(m, "PxHitFlags");
 
     nb::enum_<PxQueryFlag::Enum>(m, "PxQueryFlag")
             .value("eSTATIC", PxQueryFlag::Enum::eSTATIC)
@@ -49,6 +57,7 @@ void bindScene(nb::module_& m) {
             .value("eNO_BLOCK", PxQueryFlag::Enum::eNO_BLOCK)
             .value("eBATCH_QUERY_LEGACY_BEHAVIOUR", PxQueryFlag::Enum::eBATCH_QUERY_LEGACY_BEHAVIOUR)
             .value("eDISABLE_HARDCODED_FILTER", PxQueryFlag::Enum::eDISABLE_HARDCODED_FILTER);
+    bindFlags<PxQueryFlag::Enum, PxU16>(m, "PxQueryFlags");
 
     nb::enum_<PxQueryHitType::Enum>(m, "PxQueryHitType")
             .value("eNONE", PxQueryHitType::Enum::eNONE)
@@ -86,6 +95,7 @@ void bindScene(nb::module_& m) {
             .value("eENABLE_DIRECT_GPU_API", PxSceneFlag::Enum::eENABLE_DIRECT_GPU_API)
             .value("eENABLE_BODY_ACCELERATIONS", PxSceneFlag::Enum::eENABLE_BODY_ACCELERATIONS)
             .value("eENABLE_SOLVER_RESIDUAL_REPORTING", PxSceneFlag::Enum::eENABLE_SOLVER_RESIDUAL_REPORTING);
+    bindFlags<PxSceneFlag::Enum, PxU32>(m, "PxSceneFlags");
 
     nb::class_<PxSceneDesc>(m, "PxSceneDesc")
             .def(nb::init<PxTolerancesScale>())
@@ -160,10 +170,7 @@ void bindScene(nb::module_& m) {
     nb::class_<PxScene>(m, "PxScene")
             .def("release", &PxScene::release)
             .def("setFlag", &PxScene::setFlag)
-            .def("getFlags",
-                 [](PxScene* scene) {
-                     return scene->getFlags().operator uint32_t();
-                 })
+            .def("getFlags", &PxScene::getFlags)
             .def("setLimits", &PxScene::setLimits)
             .def("getLimits", &PxScene::getLimits)
             .def("getPhysics", &PxScene::getPhysics)
@@ -188,10 +195,7 @@ void bindScene(nb::module_& m) {
             .def("addAggregate", &PxScene::addAggregate)
             .def("removeAggregate", &PxScene::removeAggregate)
             //            .def("addCollection", &PxScene::addCollection)
-            .def("getNbActors",
-                 [](PxScene* scene, int flags) {
-                     return scene->getNbActors(PxActorTypeFlags(flags));
-                 })
+            .def("getNbActors", &PxScene::getNbActors)
             .def("getNbSoftBodies", &PxScene::getNbSoftBodies)
             .def("getNbParticleSystems", &PxScene::getNbParticleSystems)
             .def("getNbPBDParticleSystems", &PxScene::getNbPBDParticleSystems)

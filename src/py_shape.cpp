@@ -7,6 +7,8 @@
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
 
+#include "py_utils.h"
+
 namespace nb = nanobind;
 using namespace nb::literals;
 using namespace physx;
@@ -30,6 +32,12 @@ void bindShape(nb::module_& m) {
             .value("eSCENE_QUERY_SHAPE", PxShapeFlag::Enum::eSCENE_QUERY_SHAPE)
             .value("eTRIGGER_SHAPE", PxShapeFlag::Enum::eTRIGGER_SHAPE)
             .value("eVISUALIZATION", PxShapeFlag::Enum::eVISUALIZATION);
+    bindFlags<PxShapeFlag::Enum, PxU8>(m, "PxShapeFlags");
+
+    nb::enum_<PxMeshGeometryFlag::Enum>(m, "PxMeshGeometryFlag")
+            .value("eTIGHT_BOUNDS", PxMeshGeometryFlag::Enum::eTIGHT_BOUNDS)
+            .value("eDOUBLE_SIDED", PxMeshGeometryFlag::Enum::eDOUBLE_SIDED);
+    bindFlags<PxMeshGeometryFlag::Enum, PxU8>(m, "PxMeshGeometryFlags");
 
     nb::class_<PxShape>(m, "PxShape")
             .def("release", &PxShape::release)
@@ -58,14 +66,8 @@ void bindShape(nb::module_& m) {
             .def("getMinTorsionalPatchRadius", &PxShape::getMinTorsionalPatchRadius)
             .def("getGPUIndex", &PxShape::getGPUIndex)
             .def("setFlag", &PxShape::setFlag)
-            .def("setFlags",
-                 [](PxShape* joint, int flags) {
-                     return joint->setFlags(PxShapeFlags(flags));
-                 })
-            .def("getFlags",
-                 [](PxShape* joint, int flags) {
-                     return joint->getFlags().operator uint32_t();
-                 })
+            .def("setFlags", &PxShape::setFlags)
+            .def("getFlags", &PxShape::getFlags)
             .def("isExclusive", &PxShape::isExclusive)
             .def("setName", &PxShape::setName)
             .def("getName", &PxShape::getName);
@@ -94,10 +96,7 @@ void bindShape(nb::module_& m) {
             .def("isValid", &PxPlaneGeometry::isValid);
 
     nb::class_<PxTriangleMeshGeometry, PxGeometry>(m, "PxTriangleMeshGeometry")
-            .def("__init__",
-                 [](PxTriangleMesh* mesh, const PxMeshScale& scaling, int flags) {
-                     return new PxTriangleMeshGeometry(mesh, scaling, PxMeshGeometryFlags(flags));
-                 })
+            .def(nb::init<PxTriangleMesh*, const PxMeshScale&, PxMeshGeometryFlags>())
             .def("isValid", &PxTriangleMeshGeometry::isValid);
 
     nb::class_<PxTetrahedronMeshGeometry, PxGeometry>(m, "PxTetrahedronMeshGeometry")

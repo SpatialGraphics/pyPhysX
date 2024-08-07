@@ -6,8 +6,8 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
-#include <nanobind/stl/array.h>
-#include <nanobind/stl/tuple.h>
+
+#include "py_utils.h"
 
 namespace nb = nanobind;
 using namespace nb::literals;

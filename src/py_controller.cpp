@@ -9,6 +9,8 @@
 #include <nanobind/ndarray.h>
 #include <nanobind/stl/function.h>
 
+#include "py_utils.h"
+
 namespace nb = nanobind;
 using namespace nb::literals;
 using namespace physx;
@@ -29,6 +31,21 @@ void bindController(nb::module_& m) {
             .value("eCOLLISION_SIDES", PxControllerCollisionFlag::Enum::eCOLLISION_SIDES)
             .value("eCOLLISION_UP", PxControllerCollisionFlag::Enum::eCOLLISION_UP)
             .value("eCOLLISION_DOWN", PxControllerCollisionFlag::Enum::eCOLLISION_DOWN);
+    bindFlags<PxControllerCollisionFlag::Enum, PxU8>(m, "PxControllerCollisionFlags");
+
+    nb::enum_<PxControllerBehaviorFlag::Enum>(m, "PxControllerBehaviorFlag")
+            .value("eCCT_CAN_RIDE_ON_OBJECT", PxControllerBehaviorFlag::Enum::eCCT_CAN_RIDE_ON_OBJECT)
+            .value("eCCT_SLIDE", PxControllerBehaviorFlag::Enum::eCCT_SLIDE)
+            .value("eCCT_USER_DEFINED_RIDE", PxControllerBehaviorFlag::Enum::eCCT_USER_DEFINED_RIDE);
+    bindFlags<PxControllerBehaviorFlag::Enum, PxU8>(m, "PxControllerBehaviorFlags");
+
+    nb::enum_<PxControllerDebugRenderFlag::Enum>(m, "PxControllerDebugRenderFlag")
+            .value("eTEMPORAL_BV", PxControllerDebugRenderFlag::Enum::eTEMPORAL_BV)
+            .value("eCACHED_BV", PxControllerDebugRenderFlag::Enum::eCACHED_BV)
+            .value("eOBSTACLES", PxControllerDebugRenderFlag::Enum::eOBSTACLES)
+            .value("eNONE", PxControllerDebugRenderFlag::Enum::eNONE)
+            .value("eALL", PxControllerDebugRenderFlag::Enum::eALL);
+    bindFlags<PxControllerDebugRenderFlag::Enum, PxU32>(m, "PxControllerDebugRenderFlags");
 
     nb::class_<PxControllerManager>(m, "PxControllerManager")
             .def("release", &PxControllerManager::release)
@@ -37,12 +54,7 @@ void bindController(nb::module_& m) {
             .def("createController", &PxControllerManager::createController)
             .def("purgeControllers", &PxControllerManager::purgeControllers)
             .def("getRenderBuffer", &PxControllerManager::getRenderBuffer)
-            .def(
-                    "setDebugRenderingFlags",
-                    [](PxControllerManager* manager, int flags) {
-                        manager->setDebugRenderingFlags(PxControllerDebugRenderFlags(flags));
-                    },
-                    "flags"_a)
+            .def("setDebugRenderingFlags", &PxControllerManager::setDebugRenderingFlags)
             .def("getNbObstacleContexts", &PxControllerManager::getNbObstacleContexts)
             .def("getObstacleContext", &PxControllerManager::getObstacleContext)
             .def("createObstacleContext", &PxControllerManager::createObstacleContext)
@@ -172,33 +184,31 @@ void bindController(nb::module_& m) {
 
     class ControllerBehaviorCallback : public PxControllerBehaviorCallback {
     public:
-        ControllerBehaviorCallback(const std::function<int(const PxController& controller)>& c1,
-                                   const std::function<int(const PxObstacle& obstacle)>& c2,
-                                   const std::function<int(const PxShape& shape, const PxActor& actor)>& c3)
+        ControllerBehaviorCallback(
+                const std::function<PxControllerBehaviorFlags(const PxController& controller)>& c1,
+                const std::function<PxControllerBehaviorFlags(const PxObstacle& obstacle)>& c2,
+                const std::function<PxControllerBehaviorFlags(const PxShape& shape, const PxActor& actor)>& c3)
             : c1{c1}, c2{c2}, c3{c3} {}
 
-        PxControllerBehaviorFlags getBehaviorFlags(const PxController& controller) override {
-            return PxControllerBehaviorFlags(c1(controller));
-        }
+        PxControllerBehaviorFlags getBehaviorFlags(const PxController& controller) override { return c1(controller); }
 
-        PxControllerBehaviorFlags getBehaviorFlags(const PxObstacle& obstacle) override {
-            return PxControllerBehaviorFlags(c2(obstacle));
-        }
+        PxControllerBehaviorFlags getBehaviorFlags(const PxObstacle& obstacle) override { return c2(obstacle); }
 
         PxControllerBehaviorFlags getBehaviorFlags(const PxShape& shape, const PxActor& actor) override {
-            return PxControllerBehaviorFlags(c3(shape, actor));
+            return c3(shape, actor);
         }
 
     private:
-        std::function<int(const PxController& controller)> c1;
-        std::function<int(const PxObstacle& obstacle)> c2;
-        std::function<int(const PxShape& shape, const PxActor& actor)> c3;
+        std::function<PxControllerBehaviorFlags(const PxController& controller)> c1;
+        std::function<PxControllerBehaviorFlags(const PxObstacle& obstacle)> c2;
+        std::function<PxControllerBehaviorFlags(const PxShape& shape, const PxActor& actor)> c3;
     };
     nb::class_<PxControllerBehaviorCallback> pxControllerBehaviorCallback(m, "PxControllerBehaviorCallback");
     nb::class_<ControllerBehaviorCallback, PxControllerBehaviorCallback>(m, "ControllerBehaviorCallback")
-            .def(nb::init<const std::function<int(const PxController& controller)>&,
-                          const std::function<int(const PxObstacle& obstacle)>&,
-                          const std::function<int(const PxShape& shape, const PxActor& actor)>&>());
+            .def(nb::init<
+                    const std::function<PxControllerBehaviorFlags(const PxController& controller)>&,
+                    const std::function<PxControllerBehaviorFlags(const PxObstacle& obstacle)>&,
+                    const std::function<PxControllerBehaviorFlags(const PxShape& shape, const PxActor& actor)>&>());
 
     class UserControllerHitReport : public PxUserControllerHitReport {
     public:
