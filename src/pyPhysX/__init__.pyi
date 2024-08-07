@@ -23,6 +23,9 @@ class ControllerFilterCallback(PxControllerFilterCallback):
 class ErrorCallback(PxErrorCallback):
     def __init__(self, arg: Callable[[PxErrorCode, str, str, int], None], /) -> None: ...
 
+class InsertionCallback(PxInsertionCallback):
+    pass
+
 class ProfilerCallback(PxProfilerCallback):
     pass
 
@@ -1018,8 +1021,59 @@ class PxArticulationTendonLimit:
     @highLimit.setter
     def highLimit(self, arg: float, /) -> None: ...
 
+def PxAssembleSoftBodyMesh(arg0: PxTetrahedronMeshData, arg1: PxSoftBodySimulationData, arg2: PxTetrahedronMeshData, arg3: PxSoftBodyCollisionData, arg4: PxCollisionMeshMappingData, arg5: PxInsertionCallback, /) -> PxSoftBodyMesh: ...
+
+def PxAssembleSoftBodyMesh_Sim(arg0: PxSimulationTetrahedronMeshData, arg1: PxCollisionTetrahedronMeshData, arg2: PxCollisionMeshMappingData, arg3: PxInsertionCallback, /) -> PxSoftBodyMesh: ...
+
+class PxBVHBuildStrategy(enum.Enum):
+    eFAST = 0
+
+    eDEFAULT = 1
+
+    eSAH = 2
+
+class PxBVHDesc:
+    def __init__(self) -> None: ...
+
+    def isValid(self) -> bool: ...
+
+    def setToDefault(self) -> None: ...
+
+    @property
+    def bounds(self) -> PxBoundedData: ...
+
+    @bounds.setter
+    def bounds(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def enlargement(self) -> float: ...
+
+    @enlargement.setter
+    def enlargement(self, arg: float, /) -> None: ...
+
+    @property
+    def numPrimsPerLeaf(self) -> int: ...
+
+    @numPrimsPerLeaf.setter
+    def numPrimsPerLeaf(self, arg: int, /) -> None: ...
+
+    @property
+    def buildStrategy(self) -> PxBVHBuildStrategy: ...
+
+    @buildStrategy.setter
+    def buildStrategy(self, arg: PxBVHBuildStrategy, /) -> None: ...
+
 class PxBaseMaterial:
     def isKindOf(self, arg: str, /) -> bool: ...
+
+class PxBoundedData(PxStridedData):
+    def __init__(self) -> None: ...
+
+    @property
+    def count(self) -> int: ...
+
+    @count.setter
+    def count(self, arg: int, /) -> None: ...
 
 class PxBounds3:
     @overload
@@ -1287,6 +1341,12 @@ class PxCapsuleObstacle(PxObstacle):
     @mRadius.setter
     def mRadius(self, arg: float, /) -> None: ...
 
+class PxCollisionMeshMappingData:
+    def release(self) -> None: ...
+
+class PxCollisionTetrahedronMeshData:
+    def release(self) -> None: ...
+
 class PxCombineMode(enum.Enum):
     eAVERAGE = 0
 
@@ -1295,6 +1355,12 @@ class PxCombineMode(enum.Enum):
     eMULTIPLY = 2
 
     eMAX = 3
+
+def PxComputeCollisionData(arg0: PxCookingParams, arg1: PxTetrahedronMeshDesc, /) -> PxCollisionTetrahedronMeshData: ...
+
+def PxComputeModelsMapping(arg0: PxCookingParams, arg1: PxTetrahedronMeshData, arg2: PxTetrahedronMeshData, arg3: PxSoftBodyCollisionData, arg4: PxBoundedData, /) -> PxCollisionMeshMappingData: ...
+
+def PxComputeSimulationData(arg0: PxCookingParams, arg1: PxTetrahedronMeshDesc, /) -> PxSimulationTetrahedronMeshData: ...
 
 class PxConeLimitedConstraint:
     def __init__(self) -> None: ...
@@ -2039,6 +2105,91 @@ class PxControllersHit(PxControllerHit):
     @other.setter
     def other(self, arg: PxController, /) -> None: ...
 
+class PxConvexFlag(enum.Enum):
+    e16_BIT_INDICES = 1
+
+    eCOMPUTE_CONVEX = 2
+
+    eCHECK_ZERO_AREA_TRIANGLES = 4
+
+    eQUANTIZE_INPUT = 8
+
+    eDISABLE_MESH_VALIDATION = 16
+
+    ePLANE_SHIFTING = 32
+
+    eFAST_INERTIA_COMPUTATION = 64
+
+    eSHIFT_VERTICES = 256
+
+class PxConvexFlags:
+    @overload
+    def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, arg: PxConvexFlag, /) -> None: ...
+
+    @overload
+    def __init__(self, arg: int, /) -> None: ...
+
+    @overload
+    def __ne__(self, arg: PxConvexFlags, /) -> bool: ...
+
+    @overload
+    def __ne__(self, arg: PxConvexFlag, /) -> bool: ...
+
+    @overload
+    def __eq__(self, arg: PxConvexFlags, /) -> bool: ...
+
+    @overload
+    def __eq__(self, arg: PxConvexFlag, /) -> bool: ...
+
+    @overload
+    def __or__(self, arg: PxConvexFlags, /) -> PxConvexFlags: ...
+
+    @overload
+    def __or__(self, arg: PxConvexFlag, /) -> PxConvexFlags: ...
+
+    @overload
+    def __ior__(self, arg: PxConvexFlags, /) -> None: ...
+
+    @overload
+    def __ior__(self, arg: PxConvexFlag, /) -> None: ...
+
+    @overload
+    def __and__(self, arg: PxConvexFlags, /) -> PxConvexFlags: ...
+
+    @overload
+    def __and__(self, arg: PxConvexFlag, /) -> PxConvexFlags: ...
+
+    @overload
+    def __iand__(self, arg: PxConvexFlags, /) -> None: ...
+
+    @overload
+    def __iand__(self, arg: PxConvexFlag, /) -> None: ...
+
+    @overload
+    def __xor__(self, arg: PxConvexFlags, /) -> PxConvexFlags: ...
+
+    @overload
+    def __xor__(self, arg: PxConvexFlag, /) -> PxConvexFlags: ...
+
+    @overload
+    def __ixor__(self, arg: PxConvexFlags, /) -> None: ...
+
+    @overload
+    def __ixor__(self, arg: PxConvexFlag, /) -> None: ...
+
+    def __invert__(self) -> PxConvexFlags: ...
+
+    def value(self) -> int: ...
+
+    def clear(self, arg: PxConvexFlag, /) -> None: ...
+
+    def isSet(self, arg: PxConvexFlag, /) -> bool: ...
+
+    def setAll(self, arg: PxConvexFlag, /) -> PxConvexFlags: ...
+
 class PxConvexMesh:
     def getNbVertices(self) -> int: ...
 
@@ -2059,6 +2210,73 @@ class PxConvexMesh:
     def getSDF(self) -> float: ...
 
     def isGpuCompatible(self) -> bool: ...
+
+class PxConvexMeshCookingResult(enum.Enum):
+    eSUCCESS = 0
+
+    eZERO_AREA_TEST_FAILED = 1
+
+    ePOLYGONS_LIMIT_REACHED = 2
+
+    eFAILURE = 3
+
+    eNON_GPU_COMPATIBLE = 4
+
+class PxConvexMeshCookingType(enum.Enum):
+    eQUICKHULL = 0
+
+class PxConvexMeshDesc:
+    def __init__(self) -> None: ...
+
+    def isValid(self) -> bool: ...
+
+    @property
+    def points(self) -> PxBoundedData: ...
+
+    @points.setter
+    def points(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def polygons(self) -> PxBoundedData: ...
+
+    @polygons.setter
+    def polygons(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def indices(self) -> PxBoundedData: ...
+
+    @indices.setter
+    def indices(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def flags(self) -> PxConvexFlags: ...
+
+    @flags.setter
+    def flags(self, arg: PxConvexFlags, /) -> None: ...
+
+    @property
+    def vertexLimit(self) -> int: ...
+
+    @vertexLimit.setter
+    def vertexLimit(self, arg: int, /) -> None: ...
+
+    @property
+    def polygonLimit(self) -> int: ...
+
+    @polygonLimit.setter
+    def polygonLimit(self, arg: int, /) -> None: ...
+
+    @property
+    def quantizedCount(self) -> int: ...
+
+    @quantizedCount.setter
+    def quantizedCount(self, arg: int, /) -> None: ...
+
+    @property
+    def sdfDesc(self) -> PxSDFDesc: ...
+
+    @sdfDesc.setter
+    def sdfDesc(self, arg: PxSDFDesc, /) -> None: ...
 
 class PxConvexMeshGeometry(PxGeometry):
     def __init__(self, arg0: PxConvexMesh, arg1: PxMeshScale, arg2: PxConvexMeshGeometryFlags, /) -> None: ...
@@ -2136,6 +2354,103 @@ class PxConvexMeshGeometryFlags:
 
     def setAll(self, arg: PxConvexMeshGeometryFlag, /) -> PxConvexMeshGeometryFlags: ...
 
+def PxCookConvexMesh(arg0: PxCookingParams, arg1: PxConvexMeshDesc, arg2: PxOutputStream, arg3: PxConvexMeshCookingResult, /) -> bool: ...
+
+def PxCookHeightField(arg0: PxHeightFieldDesc, arg1: PxOutputStream, /) -> bool: ...
+
+def PxCookSoftBodyMesh(arg0: PxCookingParams, arg1: PxTetrahedronMeshDesc, arg2: PxTetrahedronMeshDesc, arg3: PxSoftBodySimulationDataDesc, arg4: PxOutputStream, /) -> bool: ...
+
+def PxCookTetrahedronMesh(arg0: PxCookingParams, arg1: PxTetrahedronMeshDesc, arg2: PxOutputStream, /) -> bool: ...
+
+def PxCookTriangleMesh(arg0: PxCookingParams, arg1: PxTriangleMeshDesc, arg2: PxOutputStream, arg3: PxTriangleMeshCookingResult, /) -> bool: ...
+
+class PxCookingParams:
+    def __init__(self, arg: PxTolerancesScale, /) -> None: ...
+
+    @property
+    def areaTestEpsilon(self) -> float: ...
+
+    @areaTestEpsilon.setter
+    def areaTestEpsilon(self, arg: float, /) -> None: ...
+
+    @property
+    def planeTolerance(self) -> float: ...
+
+    @planeTolerance.setter
+    def planeTolerance(self, arg: float, /) -> None: ...
+
+    @property
+    def convexMeshCookingType(self) -> PxConvexMeshCookingType: ...
+
+    @convexMeshCookingType.setter
+    def convexMeshCookingType(self, arg: PxConvexMeshCookingType, /) -> None: ...
+
+    @property
+    def suppressTriangleMeshRemapTable(self) -> bool: ...
+
+    @suppressTriangleMeshRemapTable.setter
+    def suppressTriangleMeshRemapTable(self, arg: bool, /) -> None: ...
+
+    @property
+    def buildTriangleAdjacencies(self) -> bool: ...
+
+    @buildTriangleAdjacencies.setter
+    def buildTriangleAdjacencies(self, arg: bool, /) -> None: ...
+
+    @property
+    def buildGPUData(self) -> bool: ...
+
+    @buildGPUData.setter
+    def buildGPUData(self, arg: bool, /) -> None: ...
+
+    @property
+    def scale(self) -> PxTolerancesScale: ...
+
+    @scale.setter
+    def scale(self, arg: PxTolerancesScale, /) -> None: ...
+
+    @property
+    def meshPreprocessParams(self) -> PxMeshPreprocessingFlags: ...
+
+    @meshPreprocessParams.setter
+    def meshPreprocessParams(self, arg: PxMeshPreprocessingFlags, /) -> None: ...
+
+    @property
+    def meshWeldTolerance(self) -> float: ...
+
+    @meshWeldTolerance.setter
+    def meshWeldTolerance(self, arg: float, /) -> None: ...
+
+    @property
+    def meshAreaMinLimit(self) -> float: ...
+
+    @meshAreaMinLimit.setter
+    def meshAreaMinLimit(self, arg: float, /) -> None: ...
+
+    @property
+    def meshEdgeLengthMaxLimit(self) -> float: ...
+
+    @meshEdgeLengthMaxLimit.setter
+    def meshEdgeLengthMaxLimit(self, arg: float, /) -> None: ...
+
+    @property
+    def midphaseDesc(self) -> PxMidphaseDesc: ...
+
+    @midphaseDesc.setter
+    def midphaseDesc(self, arg: PxMidphaseDesc, /) -> None: ...
+
+    @property
+    def gaussMapLimit(self) -> int: ...
+
+    @gaussMapLimit.setter
+    def gaussMapLimit(self, arg: int, /) -> None: ...
+
+    @property
+    def maxWeightRatioInTet(self) -> float: ...
+
+    @maxWeightRatioInTet.setter
+    def maxWeightRatioInTet(self, arg: float, /) -> None: ...
+
 class PxCounterFrequencyToTensOfNanos:
     def __init__(self, inNum: int, inDenom: int) -> None: ...
 
@@ -2156,9 +2471,19 @@ class PxCounterFrequencyToTensOfNanos:
 class PxCpuDispatcher:
     def getWorkerCount(self) -> int: ...
 
+def PxCreateConvexMesh(arg0: PxCookingParams, arg1: PxConvexMeshDesc, /) -> PxConvexMesh: ...
+
 def PxCreateFoundation(callback: ErrorCallback) -> PxFoundation: ...
 
+def PxCreateHeightField(arg: PxHeightFieldDesc, /) -> PxHeightField: ...
+
 def PxCreatePhysics(foundation: PxFoundation, scale: PxTolerancesScale) -> PxPhysics: ...
+
+def PxCreateSoftBodyMesh(arg0: PxCookingParams, arg1: PxTetrahedronMeshDesc, arg2: PxTetrahedronMeshDesc, arg3: PxSoftBodySimulationDataDesc, /) -> PxSoftBodyMesh: ...
+
+def PxCreateTetrahedronMesh(arg0: PxCookingParams, arg1: PxTetrahedronMeshDesc, /) -> PxTetrahedronMesh: ...
+
+def PxCreateTriangleMesh(arg0: PxCookingParams, arg1: PxTriangleMeshDesc, /) -> PxTriangleMesh: ...
 
 class PxCudaContextManager:
     def acquireContext(self) -> None: ...
@@ -2484,6 +2809,27 @@ class PxDiffuseParticleParams:
 
     @useAccurateVelocity.setter
     def useAccurateVelocity(self, arg: bool, /) -> None: ...
+
+class PxDim3:
+    def __init__(self) -> None: ...
+
+    @property
+    def x(self) -> int: ...
+
+    @x.setter
+    def x(self, arg: int, /) -> None: ...
+
+    @property
+    def y(self) -> int: ...
+
+    @y.setter
+    def y(self, arg: int, /) -> None: ...
+
+    @property
+    def z(self) -> int: ...
+
+    @z.setter
+    def z(self, arg: int, /) -> None: ...
 
 class PxDistanceJoint(PxJoint):
     def getDistance(self) -> float: ...
@@ -3194,6 +3540,8 @@ class PxHullPolygon:
 class PxIDENTITY(enum.Enum):
     PxIdentity = 0
 
+def PxInitExtensions(arg: PxPhysics, /) -> bool: ...
+
 class PxInputData(PxInputStream):
     def getLength(self) -> int: ...
 
@@ -3203,6 +3551,9 @@ class PxInputData(PxInputStream):
 
 class PxInputStream:
     def write(self, arg: Annotated[ArrayLike, dict(dtype='uint8')], /) -> int: ...
+
+class PxInsertionCallback:
+    pass
 
 class PxJoint:
     def setActors(self, arg0: PxRigidActor, arg1: PxRigidActor, /) -> None: ...
@@ -3596,6 +3947,79 @@ class PxMaterial(PxBaseMaterial):
     @dampingCombineMode.setter
     def dampingCombineMode(self, arg: PxCombineMode, /) -> None: ...
 
+class PxMeshFlag(enum.Enum):
+    eFLIPNORMALS = 1
+
+    e16_BIT_INDICES = 2
+
+class PxMeshFlags:
+    @overload
+    def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, arg: PxMeshFlag, /) -> None: ...
+
+    @overload
+    def __init__(self, arg: int, /) -> None: ...
+
+    @overload
+    def __ne__(self, arg: PxMeshFlags, /) -> bool: ...
+
+    @overload
+    def __ne__(self, arg: PxMeshFlag, /) -> bool: ...
+
+    @overload
+    def __eq__(self, arg: PxMeshFlags, /) -> bool: ...
+
+    @overload
+    def __eq__(self, arg: PxMeshFlag, /) -> bool: ...
+
+    @overload
+    def __or__(self, arg: PxMeshFlags, /) -> PxMeshFlags: ...
+
+    @overload
+    def __or__(self, arg: PxMeshFlag, /) -> PxMeshFlags: ...
+
+    @overload
+    def __ior__(self, arg: PxMeshFlags, /) -> None: ...
+
+    @overload
+    def __ior__(self, arg: PxMeshFlag, /) -> None: ...
+
+    @overload
+    def __and__(self, arg: PxMeshFlags, /) -> PxMeshFlags: ...
+
+    @overload
+    def __and__(self, arg: PxMeshFlag, /) -> PxMeshFlags: ...
+
+    @overload
+    def __iand__(self, arg: PxMeshFlags, /) -> None: ...
+
+    @overload
+    def __iand__(self, arg: PxMeshFlag, /) -> None: ...
+
+    @overload
+    def __xor__(self, arg: PxMeshFlags, /) -> PxMeshFlags: ...
+
+    @overload
+    def __xor__(self, arg: PxMeshFlag, /) -> PxMeshFlags: ...
+
+    @overload
+    def __ixor__(self, arg: PxMeshFlags, /) -> None: ...
+
+    @overload
+    def __ixor__(self, arg: PxMeshFlag, /) -> None: ...
+
+    def __invert__(self) -> PxMeshFlags: ...
+
+    def value(self) -> int: ...
+
+    def clear(self, arg: PxMeshFlag, /) -> None: ...
+
+    def isSet(self, arg: PxMeshFlag, /) -> bool: ...
+
+    def setAll(self, arg: PxMeshFlag, /) -> PxMeshFlags: ...
+
 class PxMeshGeometryFlag(enum.Enum):
     eTIGHT_BOUNDS = 1
 
@@ -3669,6 +4093,92 @@ class PxMeshGeometryFlags:
 
     def setAll(self, arg: PxMeshGeometryFlag, /) -> PxMeshGeometryFlags: ...
 
+class PxMeshMidPhase(enum.Enum):
+    eBVH33 = 0
+
+    eBVH34 = 1
+
+class PxMeshPreprocessingFlag(enum.Enum):
+    eWELD_VERTICES = 1
+
+    eDISABLE_CLEAN_MESH = 2
+
+    eDISABLE_ACTIVE_EDGES_PRECOMPUTE = 4
+
+    eFORCE_32BIT_INDICES = 8
+
+    eENABLE_VERT_MAPPING = 16
+
+    eENABLE_INERTIA = 32
+
+class PxMeshPreprocessingFlags:
+    @overload
+    def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, arg: PxMeshPreprocessingFlag, /) -> None: ...
+
+    @overload
+    def __init__(self, arg: int, /) -> None: ...
+
+    @overload
+    def __ne__(self, arg: PxMeshPreprocessingFlags, /) -> bool: ...
+
+    @overload
+    def __ne__(self, arg: PxMeshPreprocessingFlag, /) -> bool: ...
+
+    @overload
+    def __eq__(self, arg: PxMeshPreprocessingFlags, /) -> bool: ...
+
+    @overload
+    def __eq__(self, arg: PxMeshPreprocessingFlag, /) -> bool: ...
+
+    @overload
+    def __or__(self, arg: PxMeshPreprocessingFlags, /) -> PxMeshPreprocessingFlags: ...
+
+    @overload
+    def __or__(self, arg: PxMeshPreprocessingFlag, /) -> PxMeshPreprocessingFlags: ...
+
+    @overload
+    def __ior__(self, arg: PxMeshPreprocessingFlags, /) -> None: ...
+
+    @overload
+    def __ior__(self, arg: PxMeshPreprocessingFlag, /) -> None: ...
+
+    @overload
+    def __and__(self, arg: PxMeshPreprocessingFlags, /) -> PxMeshPreprocessingFlags: ...
+
+    @overload
+    def __and__(self, arg: PxMeshPreprocessingFlag, /) -> PxMeshPreprocessingFlags: ...
+
+    @overload
+    def __iand__(self, arg: PxMeshPreprocessingFlags, /) -> None: ...
+
+    @overload
+    def __iand__(self, arg: PxMeshPreprocessingFlag, /) -> None: ...
+
+    @overload
+    def __xor__(self, arg: PxMeshPreprocessingFlags, /) -> PxMeshPreprocessingFlags: ...
+
+    @overload
+    def __xor__(self, arg: PxMeshPreprocessingFlag, /) -> PxMeshPreprocessingFlags: ...
+
+    @overload
+    def __ixor__(self, arg: PxMeshPreprocessingFlags, /) -> None: ...
+
+    @overload
+    def __ixor__(self, arg: PxMeshPreprocessingFlag, /) -> None: ...
+
+    def __invert__(self) -> PxMeshPreprocessingFlags: ...
+
+    def value(self) -> int: ...
+
+    def clear(self, arg: PxMeshPreprocessingFlag, /) -> None: ...
+
+    def isSet(self, arg: PxMeshPreprocessingFlag, /) -> bool: ...
+
+    def setAll(self, arg: PxMeshPreprocessingFlag, /) -> PxMeshPreprocessingFlags: ...
+
 class PxMeshScale:
     @overload
     def __init__(self) -> None: ...
@@ -3695,6 +4205,13 @@ class PxMeshScale:
     def isValidForTriangleMesh(self) -> bool: ...
 
     def isValidForConvexMesh(self) -> bool: ...
+
+class PxMidphaseDesc:
+    def __init__(self) -> None: ...
+
+    def isValid(self) -> bool: ...
+
+    def getType(self) -> PxMeshMidPhase: ...
 
 class PxObstacle:
     def getType(self) -> PxGeometryType: ...
@@ -5266,6 +5783,110 @@ class PxRigidDynamicLockFlags:
 class PxRigidStatic(PxRigidActor):
     pass
 
+class PxSDFBuilder:
+    def release(self) -> None: ...
+
+class PxSDFDesc:
+    def __init__(self) -> None: ...
+
+    def isValid(self) -> bool: ...
+
+    @property
+    def sdf(self) -> PxBoundedData: ...
+
+    @sdf.setter
+    def sdf(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def dims(self) -> PxDim3: ...
+
+    @dims.setter
+    def dims(self, arg: PxDim3, /) -> None: ...
+
+    @property
+    def meshLower(self) -> PxVec3: ...
+
+    @meshLower.setter
+    def meshLower(self, arg: PxVec3, /) -> None: ...
+
+    @property
+    def spacing(self) -> float: ...
+
+    @spacing.setter
+    def spacing(self, arg: float, /) -> None: ...
+
+    @property
+    def subgridSize(self) -> int: ...
+
+    @subgridSize.setter
+    def subgridSize(self, arg: int, /) -> None: ...
+
+    @property
+    def bitsPerSubgridPixel(self) -> PxSdfBitsPerSubgridPixel: ...
+
+    @bitsPerSubgridPixel.setter
+    def bitsPerSubgridPixel(self, arg: PxSdfBitsPerSubgridPixel, /) -> None: ...
+
+    @property
+    def sdfSubgrids3DTexBlockDim(self) -> PxDim3: ...
+
+    @sdfSubgrids3DTexBlockDim.setter
+    def sdfSubgrids3DTexBlockDim(self, arg: PxDim3, /) -> None: ...
+
+    @property
+    def sdfSubgrids(self) -> PxBoundedData: ...
+
+    @sdfSubgrids.setter
+    def sdfSubgrids(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def sdfStartSlots(self) -> PxBoundedData: ...
+
+    @sdfStartSlots.setter
+    def sdfStartSlots(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def subgridsMinSdfValue(self) -> float: ...
+
+    @subgridsMinSdfValue.setter
+    def subgridsMinSdfValue(self, arg: float, /) -> None: ...
+
+    @property
+    def subgridsMaxSdfValue(self) -> float: ...
+
+    @subgridsMaxSdfValue.setter
+    def subgridsMaxSdfValue(self, arg: float, /) -> None: ...
+
+    @property
+    def sdfBounds(self) -> PxBounds3: ...
+
+    @sdfBounds.setter
+    def sdfBounds(self, arg: PxBounds3, /) -> None: ...
+
+    @property
+    def narrowBandThicknessRelativeToSdfBoundsDiagonal(self) -> float: ...
+
+    @narrowBandThicknessRelativeToSdfBoundsDiagonal.setter
+    def narrowBandThicknessRelativeToSdfBoundsDiagonal(self, arg: float, /) -> None: ...
+
+    @property
+    def numThreadsForSdfConstruction(self) -> int: ...
+
+    @numThreadsForSdfConstruction.setter
+    def numThreadsForSdfConstruction(self, arg: int, /) -> None: ...
+
+    @property
+    def baseMesh(self) -> PxSimpleTriangleMesh: ...
+
+    @baseMesh.setter
+    def baseMesh(self, arg: PxSimpleTriangleMesh, /) -> None: ...
+
+    @property
+    def sdfBuilder(self) -> PxSDFBuilder: ...
+
+    @sdfBuilder.setter
+    def sdfBuilder(self, arg: PxSDFBuilder, /) -> None: ...
+
 class PxScene:
     def release(self) -> None: ...
 
@@ -5801,6 +6422,13 @@ class PxSceneSQSystem(PxSceneQuerySystemBase):
 
     def fetchQueries(self, block: bool = False) -> bool: ...
 
+class PxSdfBitsPerSubgridPixel(enum.Enum):
+    e8_BIT_PER_PIXEL = 1
+
+    e16_BIT_PER_PIXEL = 2
+
+    e32_BIT_PER_PIXEL = 4
+
 def PxSetPhysXGpuProfilerCallback(arg: PxProfilerCallback, /) -> None: ...
 
 class PxShape:
@@ -5957,11 +6585,39 @@ class PxShapeFlags:
 
     def setAll(self, arg: PxShapeFlag, /) -> PxShapeFlags: ...
 
+class PxSimpleTriangleMesh:
+    def __init__(self) -> None: ...
+
+    def isValid(self) -> bool: ...
+
+    def setToDefault(self) -> None: ...
+
+    @property
+    def points(self) -> PxBoundedData: ...
+
+    @points.setter
+    def points(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def triangles(self) -> PxBoundedData: ...
+
+    @triangles.setter
+    def triangles(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def flags(self) -> PxMeshFlags: ...
+
+    @flags.setter
+    def flags(self, arg: PxMeshFlags, /) -> None: ...
+
 class PxSimulationEventCallback:
     pass
 
 class PxSimulationFilterCallback:
     pass
+
+class PxSimulationTetrahedronMeshData:
+    def release(self) -> None: ...
 
 class PxSoftBody(PxActor):
     def setSoftBodyFlag(self, flag: PxSoftBodyFlag, val: bool) -> None: ...
@@ -6062,6 +6718,9 @@ class PxSoftBody(PxActor):
 
 class PxSoftBodyAuxData:
     def release(self) -> None: ...
+
+class PxSoftBodyCollisionData:
+    def __init__(self) -> None: ...
 
 class PxSoftBodyDataFlag(enum.Enum):
     eNONE = 0
@@ -6231,6 +6890,20 @@ class PxSoftBodyMesh:
 
     @overload
     def getCollisionMesh(self) -> PxTetrahedronMesh: ...
+
+class PxSoftBodySimulationData:
+    def __init__(self) -> None: ...
+
+class PxSoftBodySimulationDataDesc:
+    def __init__(self) -> None: ...
+
+    def isValid(self) -> bool: ...
+
+    @property
+    def vertexToTet(self) -> PxBoundedData: ...
+
+    @vertexToTet.setter
+    def vertexToTet(self, arg: PxBoundedData, /) -> None: ...
 
 class PxSolverType(enum.Enum):
     ePGS = 0
@@ -6403,6 +7076,38 @@ class PxTetrahedronMesh:
     def getLocalBounds(self) -> PxBounds3: ...
 
     def release(self) -> None: ...
+
+class PxTetrahedronMeshData:
+    def __init__(self) -> None: ...
+
+class PxTetrahedronMeshDesc:
+    def __init__(self) -> None: ...
+
+    def isValid(self) -> bool: ...
+
+    @property
+    def points(self) -> PxBoundedData: ...
+
+    @points.setter
+    def points(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def tetrahedrons(self) -> PxBoundedData: ...
+
+    @tetrahedrons.setter
+    def tetrahedrons(self, arg: PxBoundedData, /) -> None: ...
+
+    @property
+    def flags(self) -> PxMeshFlags: ...
+
+    @flags.setter
+    def flags(self, arg: PxMeshFlags, /) -> None: ...
+
+    @property
+    def tetsPerElement(self) -> int: ...
+
+    @tetsPerElement.setter
+    def tetsPerElement(self, arg: int, /) -> None: ...
 
 class PxTetrahedronMeshFlag(enum.Enum):
     e16_BIT_INDICES = 2
@@ -6596,6 +7301,26 @@ class PxTriangleMesh:
 
     def getMassInformation(self) -> tuple[float, PxMat33, PxVec3]: ...
 
+class PxTriangleMeshCookingResult(enum.Enum):
+    eSUCCESS = 0
+
+    eLARGE_TRIANGLE = 1
+
+    eEMPTY_MESH = 2
+
+    eFAILURE = 3
+
+class PxTriangleMeshDesc(PxSimpleTriangleMesh):
+    def __init__(self) -> None: ...
+
+    def isValid(self) -> bool: ...
+
+    @property
+    def sdfDesc(self) -> PxSDFDesc: ...
+
+    @sdfDesc.setter
+    def sdfDesc(self, arg: PxSDFDesc, /) -> None: ...
+
 class PxTriangleMeshFlag(enum.Enum):
     e16_BIT_INDICES = 2
 
@@ -6678,6 +7403,10 @@ class PxTriangleMeshGeometry(PxGeometry):
 
 class PxUserControllerHitReport:
     pass
+
+def PxValidateConvexMesh(arg0: PxCookingParams, arg1: PxConvexMeshDesc, /) -> bool: ...
+
+def PxValidateTriangleMesh(arg0: PxCookingParams, arg1: PxTriangleMeshDesc, /) -> bool: ...
 
 class PxVec3:
     @overload
@@ -6951,3 +7680,13 @@ class SimulationFilterCallback(PxSimulationFilterCallback):
 
 class UserControllerHitReport(PxUserControllerHitReport):
     def __init__(self, arg0: Callable[[PxControllersHit], None], arg1: Callable[[PxControllerObstacleHit], None], arg2: Callable[[PxControllerShapeHit], None], /) -> None: ...
+
+def assembleSoftBodyMesh(arg0: PxTetrahedronMeshData, arg1: PxSoftBodySimulationData, arg2: PxTetrahedronMeshData, arg3: PxSoftBodyCollisionData, arg4: PxCollisionMeshMappingData, arg5: PxInsertionCallback, /) -> PxSoftBodyMesh: ...
+
+def cookBVH(arg0: PxBVHDesc, arg1: PxOutputStream, /) -> bool: ...
+
+def cookConvexMesh(arg0: PxCookingParams, arg1: PxConvexMeshDesc, arg2: PxOutputStream, arg3: PxConvexMeshCookingResult, /) -> bool: ...
+
+def cookHeightField(arg0: PxHeightFieldDesc, arg1: PxOutputStream, /) -> bool: ...
+
+def cookTriangleMesh(arg0: PxCookingParams, arg1: PxTriangleMeshDesc, arg2: PxOutputStream, arg3: PxTriangleMeshCookingResult, /) -> bool: ...

@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.15...3.26)
 
-project(pyPhysX LANGUAGES CXX)
-
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_C_COMPILER clang)
+
+project(pyPhysX LANGUAGES CXX)
 
 add_subdirectory(third_party)
 
@@ -42,7 +44,7 @@ set(BINDING_FILES
         src/py_soft_body_mesh.cpp
         src/py_convex_mesh.cpp
         src/py_height_field.cpp
-        src/py_articulation_reduced_coordinate.cpp
+        src/py_articulation.cpp
         src/py_particle.cpp
 
         src/py_controller.cpp
@@ -51,6 +53,7 @@ set(BINDING_FILES
         src/py_filter.cpp
         src/py_query.cpp
         src/py_utils.cpp
+        src/py_cooking.cpp
 )
 
 set(CUDA_FILES

@@ -18,12 +18,15 @@ if (UNIX)
             libPhysXVehicle2_static_64.a
             libPhysXVehicle_static_64.a
     )
-    target_include_directories(physx5 SYSTEM INTERFACE $<BUILD_INTERFACE:${physx5_SOURCE_DIR}/include>)
+    target_include_directories(physx5 INTERFACE
+            ${physx5_SOURCE_DIR}/include
+            ${physx5_SOURCE_DIR}/source
+    )
 endif ()
 
 if (WIN32)
-    target_include_directories(physx5 SYSTEM INTERFACE $<BUILD_INTERFACE:${physx5_SOURCE_DIR}/include>)
-    target_link_directories(physx5 INTERFACE $<BUILD_INTERFACE:${physx5_SOURCE_DIR}/bin/win.x86_64.vc143.mt/release>)
+    target_include_directories(physx5 SYSTEM INTERFACE ${physx5_SOURCE_DIR}/include)
+    target_link_directories(physx5 INTERFACE ${physx5_SOURCE_DIR}/bin/win.x86_64.vc143.mt/release)
     target_link_libraries(physx5 INTERFACE
             PhysXVehicle2_static_64.lib PhysXExtensions_static_64.lib
             PhysXVehicle_static_64.lib PhysX_static_64.lib PhysXPvdSDK_static_64.lib

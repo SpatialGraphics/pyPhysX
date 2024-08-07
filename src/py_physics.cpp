@@ -22,11 +22,14 @@ void bindPhysics(nb::module_& m) {
             .def_rw("speed", &PxTolerancesScale::speed);
 
     m.def(
-            "PxCreatePhysics",
-            [](PxFoundation& foundation, const PxTolerancesScale& scale) {
-                return PxCreatePhysics(PX_PHYSICS_VERSION, foundation, scale);
-            },
-            "foundation"_a, "scale"_a, nb::rv_policy::reference);
+             "PxCreatePhysics",
+             [](PxFoundation& foundation, const PxTolerancesScale& scale) {
+                 return PxCreatePhysics(PX_PHYSICS_VERSION, foundation, scale);
+             },
+             "foundation"_a, "scale"_a, nb::rv_policy::reference)
+            .def("PxInitExtensions", [](physx::PxPhysics& physics) {
+                return PxInitExtensions(physics, nullptr);
+            });
     nb::class_<PxPhysics>(m, "PxPhysics")
             .def("getFoundation", &PxPhysics::getFoundation)
             .def("createAggregate", &PxPhysics::createAggregate, "maxActor"_a, "maxShape"_a, "filterHint"_a,

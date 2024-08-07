@@ -55,6 +55,4 @@ void bindHeightField(nb::module_& m) {
             .def("tessFlag", &PxHeightFieldSample::tessFlag)
             .def("setTessFlag", &PxHeightFieldSample::setTessFlag)
             .def("clearTessFlag", &PxHeightFieldSample::clearTessFlag);
-
-    nb::class_<PxStridedData> pxStridedData(m, "PxStridedData");
 }
