@@ -112,3 +112,4 @@ file(GLOB PY_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/pyPhysX/*.py" "${CMAKE_CURRE
 # Install directive for scikit-build-core
 install(TARGETS py_physx_ext LIBRARY DESTINATION pyPhysX)
 install(FILES ${PY_FILES} DESTINATION pyPhysX)
+install(FILES ${PHYSX_GPU_LIBRARY} DESTINATION pyPhysX)

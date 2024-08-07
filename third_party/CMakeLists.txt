@@ -22,6 +22,8 @@ if (UNIX)
             ${physx5_SOURCE_DIR}/include
             ${physx5_SOURCE_DIR}/source
     )
+
+    set(PHYSX_GPU_LIBRARY ${physx5_SOURCE_DIR}/bin/linux.clang/release/libPhysXGpu_64.so PARENT_SCOPE)
 endif ()
 
 if (WIN32)

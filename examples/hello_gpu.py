@@ -7,11 +7,7 @@
 import pyPhysX as physx
 from utils import PhysxSceneConfig
 
-import ctypes
-
-ctypes.CDLL("libcuda.so", ctypes.RTLD_GLOBAL)
-ctypes.CDLL("/home/yangfengzzz/Desktop/pyPhysX/third_party/physx/physx/bin/linux.clang/release/libPhysXGpu_64.so",
-            ctypes.RTLD_LOCAL)
+physx.enable_gpu()
 
 
 def main():
