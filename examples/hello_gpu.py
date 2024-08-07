@@ -7,6 +7,12 @@
 import pyPhysX as physx
 from utils import PhysxSceneConfig
 
+import ctypes
+
+ctypes.CDLL("libcuda.so", ctypes.RTLD_GLOBAL)
+ctypes.CDLL("/home/yangfengzzz/Desktop/pyPhysX/third_party/physx/physx/bin/linux.clang/release/libPhysXGpu_64.so",
+            ctypes.RTLD_LOCAL)
+
 
 def main():
     def error_callback(code: physx.PxErrorCode, message: str, file: str, line: int):
@@ -39,11 +45,11 @@ def main():
         scene_flags |= physx.PxSceneFlag.eENABLE_PCM
     scene_desc.flags = scene_flags
     scene_desc.cpuDispatcher = physx.PxDefaultCpuDispatcherCreate(scene_config.cpuWorkers)
-    # scene_desc.cudaContextManager = mEngine->getCudaContextManager(device->cudaId)
-    # scene = engine.createScene(scene_desc)
 
     gpu = physx.findDevice("cuda")
     cuda_context_manager = physx.PxCreateCudaContextManager(foundation, gpu)
+    scene_desc.cudaContextManager = cuda_context_manager
+    scene = engine.createScene(scene_desc)
 
 
 if __name__ == '__main__':

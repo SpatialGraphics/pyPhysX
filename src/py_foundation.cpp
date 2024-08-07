@@ -35,6 +35,8 @@ void bindFoundation(nb::module_& m) {
 
     class ErrorCallback : public PxErrorCallback {
     public:
+        ~ErrorCallback() override = default;
+
         explicit ErrorCallback(const std::function<void(PxErrorCode::Enum, const char*, const char*, int)>& c) : c(c) {}
 
         void reportError(PxErrorCode::Enum code, const char* message, const char* file, int line) override {
@@ -49,10 +51,11 @@ void bindFoundation(nb::module_& m) {
             .def(nb::init<const std::function<void(PxErrorCode::Enum, const char*, const char*, int)>&>());
 
     static PxDefaultAllocator gDefaultAllocatorCallback;
+    static PxDefaultErrorCallback defaultErrorCallback; // todo
     m.def(
             "PxCreateFoundation",
             [](ErrorCallback& callback) {
-                return PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, callback);
+                return PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, defaultErrorCallback);
             },
             "callback"_a, nb::rv_policy::reference);
 }

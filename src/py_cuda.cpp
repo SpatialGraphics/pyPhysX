@@ -51,9 +51,9 @@ void bindCuda(nb::module_& m) {
                         }
                         cudaContextManagerDesc.ctx = &context;
 
-                        return PxCreateCudaContextManager(foundation, cudaContextManagerDesc, PxGetProfilerCallback());
+                        return PxCreateCudaContextManager(foundation, cudaContextManagerDesc);
                     },
-                    "foundation"_a, "device"_a);
+                    "foundation"_a, "device"_a, nb::rv_policy::reference);
 
     nb::class_<PxCudaContextManager>(m, "PxCudaContextManager")
             .def("acquireContext", &PxCudaContextManager::acquireContext)
