@@ -20,4 +20,5 @@ def test_device():
     assert cpu.name == "cpu"
 
     cuda = physx.findDevice("cuda")
-    assert cuda.isCuda() == True
+    print(cuda.name)
+    assert cuda.isCuda() is True

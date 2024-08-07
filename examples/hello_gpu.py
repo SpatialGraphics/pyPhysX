@@ -39,9 +39,11 @@ def main():
         scene_flags |= physx.PxSceneFlag.eENABLE_PCM
     scene_desc.flags = scene_flags
     scene_desc.cpuDispatcher = physx.PxDefaultCpuDispatcherCreate(scene_config.cpuWorkers)
-    scene_desc.cudaContextManager = mEngine->getCudaContextManager(device->cudaId)
+    # scene_desc.cudaContextManager = mEngine->getCudaContextManager(device->cudaId)
+    # scene = engine.createScene(scene_desc)
 
-    scene = engine.createScene(scene_desc)
+    gpu = physx.findDevice("cuda")
+    cuda_context_manager = physx.PxCreateCudaContextManager(foundation, gpu)
 
 
 if __name__ == '__main__':

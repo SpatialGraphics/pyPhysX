@@ -6,7 +6,9 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/shared_ptr.h>
 
+#include "py_device.h"
 #include "py_cuda.h"
 #include <dlfcn.h>
 #include <cuda_runtime.h>
@@ -30,7 +32,28 @@ CudaLib& CudaLib::Get() {
 }
 
 void bindCuda(nb::module_& m) {
-    m.def("PxSetPhysXGpuProfilerCallback", &PxSetPhysXGpuProfilerCallback);
+    m.def("PxSetPhysXGpuProfilerCallback", &PxSetPhysXGpuProfilerCallback)
+            .def(
+                    "PxCreateCudaContextManager",
+                    [](physx::PxFoundation& foundation, std::shared_ptr<Device>& device) {
+                        PxCudaContextManagerDesc cudaContextManagerDesc;
+                        CUcontext context{};
+
+                        checkCudaErrors(cudaSetDevice(device->cudaId));
+
+                        // NOTE: context initialization seems inconsistent across cuda versions
+                        // cudaFree(0) is guaranteed to establish context
+                        checkCudaErrors(cudaFree(nullptr));
+
+                        checkCudaDriverErrors(CudaLib::Get().cuCtxGetCurrent(&context));
+                        if (!context) {
+                            throw std::runtime_error("failed to get CUDA context.");
+                        }
+                        cudaContextManagerDesc.ctx = &context;
+
+                        return PxCreateCudaContextManager(foundation, cudaContextManagerDesc, PxGetProfilerCallback());
+                    },
+                    "foundation"_a, "device"_a);
 
     nb::class_<PxCudaContextManager>(m, "PxCudaContextManager")
             .def("acquireContext", &PxCudaContextManager::acquireContext)
