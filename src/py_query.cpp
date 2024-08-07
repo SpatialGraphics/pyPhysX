@@ -44,26 +44,28 @@ void bindQuery(nb::module_& m) {
     nb::class_<PxSceneQueryExt>(m, "PxSceneQueryExt")
             .def(nb::init<>())
             .def_static("overlapAny", &PxSceneQueryExt::overlapAny, "scene"_a, "geometry"_a, "pose"_a, "hit"_a,
-                        "filterData"_a = PxSceneQueryFilterData(), "filterCall"_a.none())
+                        "filterData"_a = PxSceneQueryFilterData(), "filterCall"_a.none() = nb::none())
             .def_static("overlapMultiple", &PxSceneQueryExt::overlapMultiple, "scene"_a, "geometry"_a, "pose"_a,
                         "hitBuffer"_a, "hitBufferSize"_a, "filterData"_a = PxSceneQueryFilterData(),
-                        "filterCall"_a.none())
+                        "filterCall"_a.none() = nb::none())
             .def_static("raycastAny", &PxSceneQueryExt::raycastAny, "scene"_a, "origin"_a, "unitDir"_a, "distance"_a,
-                        "hit"_a, "filterData"_a = PxSceneQueryFilterData(), "filterCall"_a.none(), "cache"_a.none())
+                        "hit"_a, "filterData"_a = PxSceneQueryFilterData(), "filterCall"_a.none() = nb::none(),
+                        "cache"_a.none() = nb::none())
             .def_static("raycastMultiple", &PxSceneQueryExt::raycastMultiple, "scene"_a, "origin"_a, "unitDir"_a,
                         "distance"_a, "outputFlags"_a, "hitBuffer"_a, "hitBufferSize"_a, "blockingHit"_a,
-                        "filterData"_a = PxSceneQueryFilterData(), "filterCall"_a.none(), "cache"_a.none())
+                        "filterData"_a = PxSceneQueryFilterData(), "filterCall"_a.none() = nb::none(),
+                        "cache"_a.none() = nb::none())
             .def_static("raycastSingle", &PxSceneQueryExt::raycastSingle, "scene"_a, "origin"_a, "unitDir"_a,
                         "distance"_a, "outputFlags"_a, "hit"_a, "filterData"_a = PxSceneQueryFilterData(),
-                        "filterCall"_a.none(), "cache"_a.none())
+                        "filterCall"_a.none() = nb::none(), "cache"_a.none() = nb::none())
             .def_static("sweepAny", &PxSceneQueryExt::sweepAny, "scene"_a, "geometry"_a, "pose"_a, "unitDir"_a,
                         "distance"_a, "queryFlags"_a, "hit"_a, "filterData"_a = PxSceneQueryFilterData(),
-                        "filterCall"_a.none(), "cache"_a.none(), "inflation"_a = 0.0f)
+                        "filterCall"_a.none() = nb::none(), "cache"_a.none() = nb::none(), "inflation"_a = 0.0f)
             .def_static("sweepMultiple", &PxSceneQueryExt::sweepMultiple, "scene"_a, "geometry"_a, "pose"_a,
                         "unitDir"_a, "distance"_a, "outputFlags"_a, "hitBuffer"_a, "hitBufferSize"_a, "blockingHit"_a,
-                        "filterData"_a = PxSceneQueryFilterData(), "filterCall"_a.none(), "cache"_a.none(),
-                        "inflation"_a = 0.0f)
+                        "filterData"_a = PxSceneQueryFilterData(), "filterCall"_a.none() = nb::none(),
+                        "cache"_a.none() = nb::none(), "inflation"_a = 0.0f)
             .def_static("sweepSingle", &PxSceneQueryExt::sweepSingle, "scene"_a, "geometry"_a, "pose"_a, "unitDir"_a,
                         "distance"_a, "outputFlags"_a, "hit"_a, "filterData"_a = PxSceneQueryFilterData(),
-                        "filterCall"_a.none(), "cache"_a.none(), "inflation"_a = 0.0f);
+                        "filterCall"_a.none() = nb::none(), "cache"_a.none() = nb::none(), "inflation"_a = 0.0f);
 }
