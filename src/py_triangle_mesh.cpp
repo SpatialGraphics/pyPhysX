@@ -6,6 +6,7 @@
 
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/tuple.h>
 
 #include "py_utils.h"
 
@@ -28,10 +29,19 @@ void bindTriangleMesh(nb::module_& m) {
             .def("getNbTriangles", &PxTriangleMesh::getNbTriangles)
             .def("getTriangleMeshFlags", &PxTriangleMesh::getTriangleMeshFlags)
             .def("release", &PxTriangleMesh::release)
-            .def("getTriangleMaterialIndex", &PxTriangleMesh::getTriangleMaterialIndex)
+            .def("getTriangleMaterialIndex", &PxTriangleMesh::getTriangleMaterialIndex, "triangleIndex"_a)
             .def("getLocalBounds", &PxTriangleMesh::getLocalBounds)
-            .def("getSDFDimensions", &PxTriangleMesh::getSDFDimensions)
+            .def("getSDFDimensions",
+                 [](PxTriangleMesh* mesh) {
+                     std::tuple<PxU32, PxU32, PxU32> result;
+                     mesh->getSDFDimensions(std::get<0>(result), std::get<1>(result), std::get<2>(result));
+                     return result;
+                 })
             .def_prop_rw("preferSDFProjection", &PxTriangleMesh::getPreferSDFProjection,
-                         &PxTriangleMesh::setPreferSDFProjection)
-            .def("getMassInformation", &PxTriangleMesh::getMassInformation);
+                         &PxTriangleMesh::setPreferSDFProjection, "preferProjection"_a)
+            .def("getMassInformation", [](PxTriangleMesh* mesh) {
+                std::tuple<PxReal, PxMat33, PxVec3> result;
+                mesh->getMassInformation(std::get<0>(result), std::get<1>(result), std::get<2>(result));
+                return result;
+            });
 }

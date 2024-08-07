@@ -169,35 +169,39 @@ void bindScene(nb::module_& m) {
 
     nb::class_<PxScene>(m, "PxScene")
             .def("release", &PxScene::release)
-            .def("setFlag", &PxScene::setFlag)
+            .def("setFlag", &PxScene::setFlag, "flag"_a, "value"_a)
             .def("getFlags", &PxScene::getFlags)
-            .def("setLimits", &PxScene::setLimits)
-            .def("getLimits", &PxScene::getLimits)
-            .def("getPhysics", &PxScene::getPhysics)
+            .def_prop_rw("limits", &PxScene::getLimits, &PxScene::setLimits)
+            .def("getPhysics", &PxScene::getPhysics, nb::rv_policy::reference)
             .def("getTimestamp", &PxScene::getTimestamp)
-            .def("setName", &PxScene::setName)
-            .def("getName", &PxScene::getName)
-            .def("addArticulation", &PxScene::addArticulation)
-            .def("removeArticulation", &PxScene::removeArticulation)
-            .def("addActor",
-                 [](PxScene* scene, PxActor& actor) {
-                     return scene->addActor(actor);
-                 })
-            .def("addActors",
-                 [](PxScene* scene, std::vector<PxActor*> actors) {
-                     scene->addActors(actors.data(), actors.size());
-                 })
-            .def("removeActor", &PxScene::removeActor)
-            .def("removeActors",
-                 [](PxScene* scene, std::vector<PxActor*> actors, bool wakeOnLostTouch) {
-                     scene->removeActors(actors.data(), actors.size(), wakeOnLostTouch);
-                 })
-            .def("addAggregate", &PxScene::addAggregate)
-            .def("removeAggregate", &PxScene::removeAggregate)
+            .def_prop_rw("name", &PxScene::getName, &PxScene::setName)
+            .def("addArticulation", &PxScene::addArticulation, "articulation"_a)
+            .def("removeArticulation", &PxScene::removeArticulation, "articulation"_a, "wakeOnLostTouch"_a = true)
+            .def(
+                    "addActor",
+                    [](PxScene* scene, PxActor& actor) {
+                        return scene->addActor(actor);
+                    },
+                    "actor"_a)
+            .def(
+                    "addActors",
+                    [](PxScene* scene, std::vector<PxActor*> actors) {
+                        scene->addActors(actors.data(), actors.size());
+                    },
+                    "actors"_a)
+            .def("removeActor", &PxScene::removeActor, "actor"_a, "wakeOnLostTouch"_a = true)
+            .def(
+                    "removeActors",
+                    [](PxScene* scene, std::vector<PxActor*> actors, bool wakeOnLostTouch) {
+                        scene->removeActors(actors.data(), actors.size(), wakeOnLostTouch);
+                    },
+                    "actors"_a, "wakeOnLostTouch"_a = true)
+            .def("addAggregate", &PxScene::addAggregate, "aggregate"_a)
+            .def("removeAggregate", &PxScene::removeAggregate, "aggregate"_a, "wakeOnLostTouch"_a = true)
             //            .def("addCollection", &PxScene::addCollection)
             .def("getNbActors", &PxScene::getNbActors)
             .def("getNbSoftBodies", &PxScene::getNbSoftBodies)
-            .def("getNbParticleSystems", &PxScene::getNbParticleSystems)
+            .def("getNbParticleSystems", &PxScene::getNbParticleSystems, "type"_a)
             .def("getNbPBDParticleSystems", &PxScene::getNbPBDParticleSystems)
             .def("getNbFEMCloths", &PxScene::getNbFEMCloths)
             .def("getNbHairSystems", &PxScene::getNbHairSystems)
@@ -206,42 +210,43 @@ void bindScene(nb::module_& m) {
             .def("getNbAggregates", &PxScene::getNbAggregates);
 
     nb::class_<PxSceneQuerySystemBase>(m, "PxSceneQuerySystemBase")
-            .def("setDynamicTreeRebuildRateHint", &PxSceneQuerySystemBase::setDynamicTreeRebuildRateHint)
-            .def("getDynamicTreeRebuildRateHint", &PxSceneQuerySystemBase::getDynamicTreeRebuildRateHint)
-            .def("forceRebuildDynamicTree", &PxSceneQuerySystemBase::forceRebuildDynamicTree)
-            .def("setUpdateMode", &PxSceneQuerySystemBase::setUpdateMode)
-            .def("getUpdateMode", &PxSceneQuerySystemBase::getUpdateMode)
+            .def_prop_rw("dynamicTreeRebuildRateHint", &PxSceneQuerySystemBase::getDynamicTreeRebuildRateHint,
+                         &PxSceneQuerySystemBase::setDynamicTreeRebuildRateHint)
+            .def("forceRebuildDynamicTree", &PxSceneQuerySystemBase::forceRebuildDynamicTree, "prunerIndex"_a)
+            .def_prop_rw("updateMode", &PxSceneQuerySystemBase::getUpdateMode, &PxSceneQuerySystemBase::setUpdateMode)
             .def("getStaticTimestamp", &PxSceneQuerySystemBase::getStaticTimestamp)
             .def("flushUpdates", &PxSceneQuerySystemBase::flushUpdates);
     //            .def("raycast", &PxSceneQuerySystemBase::raycast)
     //            .def("sweep", &PxSceneQuerySystemBase::sweep)
     //            .def("overlap", &PxSceneQuerySystemBase::overlap);
     nb::class_<PxSceneSQSystem, PxSceneQuerySystemBase>(m, "PxSceneSQSystem")
-            .def("setSceneQueryUpdateMode", &PxSceneSQSystem::setSceneQueryUpdateMode)
-            .def("getSceneQueryUpdateMode", &PxSceneSQSystem::getSceneQueryUpdateMode)
+            .def_prop_rw("sceneQueryUpdateMode", &PxSceneSQSystem::getSceneQueryUpdateMode,
+                         &PxSceneSQSystem::setSceneQueryUpdateMode)
             .def("getSceneQueryStaticTimestamp", &PxSceneSQSystem::getSceneQueryStaticTimestamp)
             .def("flushQueryUpdates", &PxSceneSQSystem::flushQueryUpdates)
-            .def("forceDynamicTreeRebuild", &PxSceneSQSystem::forceDynamicTreeRebuild)
+            .def("forceDynamicTreeRebuild", &PxSceneSQSystem::forceDynamicTreeRebuild, "rebuildStaticStructure"_a,
+                 "rebuildDynamicStructure"_a)
             .def("getStaticStructure", &PxSceneSQSystem::getStaticStructure)
             .def("getDynamicStructure", &PxSceneSQSystem::getDynamicStructure)
             //            .def("sceneQueriesUpdate", &PxSceneSQSystem::sceneQueriesUpdate)
-            .def("checkQueries", &PxSceneSQSystem::checkQueries)
-            .def("fetchQueries", &PxSceneSQSystem::fetchQueries);
+            .def("checkQueries", &PxSceneSQSystem::checkQueries, "block"_a = false)
+            .def("fetchQueries", &PxSceneSQSystem::fetchQueries, "block"_a = false);
     nb::class_<PxSceneQuerySystem, PxSceneQuerySystemBase>(m, "PxSceneQuerySystem")
             .def("release", &PxSceneQuerySystem::release)
             .def("acquireReference", &PxSceneQuerySystem::acquireReference)
-            .def("preallocate", &PxSceneQuerySystem::preallocate)
+            .def("preallocate", &PxSceneQuerySystem::preallocate, "prunerIndex"_a, "nbShapes"_a)
             .def("flushMemory", &PxSceneQuerySystem::flushMemory)
-            .def("addSQShape", &PxSceneQuerySystem::addSQShape)
-            .def("removeSQShape", &PxSceneQuerySystem::removeSQShape)
-            .def("updateSQShape", &PxSceneQuerySystem::updateSQShape)
+            .def("addSQShape", &PxSceneQuerySystem::addSQShape, "actor"_a, "shape"_a, "bounds"_a, "transform"_a,
+                 "compoundHandle"_a.none() = nb::none(), "hasPruningStructure"_a = false)
+            .def("removeSQShape", &PxSceneQuerySystem::removeSQShape, "actor"_a, "shape"_a)
+            .def("updateSQShape", &PxSceneQuerySystem::updateSQShape, "actor"_a, "shape"_a, "transform"_a)
             //            .def("addSQCompound", &PxSceneQuerySystem::addSQCompound)
-            .def("removeSQCompound", &PxSceneQuerySystem::removeSQCompound)
-            .def("updateSQCompound", &PxSceneQuerySystem::updateSQCompound)
-            .def("shiftOrigin", &PxSceneQuerySystem::shiftOrigin)
+            .def("removeSQCompound", &PxSceneQuerySystem::removeSQCompound, "compoundHandle"_a)
+            .def("updateSQCompound", &PxSceneQuerySystem::updateSQCompound, "compoundHandle"_a, "compoundTransform"_a)
+            .def("shiftOrigin", &PxSceneQuerySystem::shiftOrigin, "shift"_a)
             //            .def("visualize", &PxSceneQuerySystem::visualize)
-            .def("merge", &PxSceneQuerySystem::merge)
-            .def("getHandle", &PxSceneQuerySystem::getHandle)
+            .def("merge", &PxSceneQuerySystem::merge, "pruningStructure"_a)
+            .def("getHandle", &PxSceneQuerySystem::getHandle, "actor"_a, "shape"_a, "prunerIndex"_a)
             //            .def("sync", &PxSceneQuerySystem::sync)
             .def("finalizeUpdates", &PxSceneQuerySystem::finalizeUpdates);
     //            .def("prepareSceneQueryBuildStep", &PxSceneQuerySystem::prepareSceneQueryBuildStep)
@@ -253,8 +258,8 @@ void bindScene(nb::module_& m) {
 
     nb::class_<PxCpuDispatcher>(m, "PxCpuDispatcher").def("getWorkerCount", &PxCpuDispatcher::getWorkerCount);
     nb::class_<PxDefaultCpuDispatcher, PxCpuDispatcher>(m, "PxDefaultCpuDispatcher")
-            .def("setRunProfiled", &PxDefaultCpuDispatcher::setRunProfiled)
-            .def("getRunProfiled", &PxDefaultCpuDispatcher::getRunProfiled);
+            .def_prop_rw("runProfiled", &PxDefaultCpuDispatcher::getRunProfiled,
+                         &PxDefaultCpuDispatcher::setRunProfiled);
 
     class SimulationEventCallback : public PxSimulationEventCallback {
     public:
