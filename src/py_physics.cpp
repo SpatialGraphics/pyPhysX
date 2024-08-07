@@ -71,14 +71,16 @@ void bindPhysics(nb::module_& m) {
             //            .def("createConstraint", &PxPhysics::createConstraint, nb::rv_policy::reference)
             .def("createArticulationReducedCoordinate", &PxPhysics::createArticulationReducedCoordinate,
                  nb::rv_policy::reference)
-//            .def("createFEMCloth", &PxPhysics::createFEMCloth, nb::rv_policy::reference)
+#ifdef SUPPORT_CUDA
+            //            .def("createFEMCloth", &PxPhysics::createFEMCloth, nb::rv_policy::reference)
             .def("createSoftBody", &PxPhysics::createSoftBody, nb::rv_policy::reference)
-//            .def("createHairSystem", &PxPhysics::createHairSystem, nb::rv_policy::reference)
+            //            .def("createHairSystem", &PxPhysics::createHairSystem, nb::rv_policy::reference)
             .def("createPBDParticleSystem", &PxPhysics::createPBDParticleSystem, nb::rv_policy::reference)
             .def("createParticleBuffer", &PxPhysics::createParticleBuffer, nb::rv_policy::reference)
             .def("createParticleAndDiffuseBuffer", &PxPhysics::createParticleAndDiffuseBuffer, nb::rv_policy::reference)
             .def("createParticleClothBuffer", &PxPhysics::createParticleClothBuffer, nb::rv_policy::reference)
             .def("createParticleRigidBuffer", &PxPhysics::createParticleRigidBuffer, nb::rv_policy::reference)
+#endif
             .def("createMaterial", &PxPhysics::createMaterial, nb::rv_policy::reference)
             .def("getNbMaterials", &PxPhysics::getNbMaterials)
             .def("createFEMSoftBodyMaterial", &PxPhysics::createFEMSoftBodyMaterial, nb::rv_policy::reference)
