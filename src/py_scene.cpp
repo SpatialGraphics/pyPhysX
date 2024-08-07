@@ -198,6 +198,7 @@ void bindScene(nb::module_& m) {
             .def_rw("bounceThresholdVelocity", &PxSceneDesc::bounceThresholdVelocity)
             .def_rw("frictionOffsetThreshold", &PxSceneDesc::frictionOffsetThreshold)
             .def_rw("frictionCorrelationDistance", &PxSceneDesc::frictionCorrelationDistance)
+            .def_rw("flags", &PxSceneDesc::flags)
             .def_rw("cpuDispatcher", &PxSceneDesc::cpuDispatcher)
 #ifdef SUPPORT_CUDA
             .def_rw("cudaContextManager", &PxSceneDesc::cudaContextManager)

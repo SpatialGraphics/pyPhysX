@@ -47,11 +47,11 @@ void bindFlags(nb::module_& m, const char* name) {
                  })
             .def("__ior__",
                  [](PxFlags<enumtype, storagetype>& lv, PxFlags<enumtype, storagetype>& rv) {
-                     lv |= rv;
+                     return lv |= rv;
                  })
             .def("__ior__",
                  [](PxFlags<enumtype, storagetype>& lv, enumtype& rv) {
-                     lv |= rv;
+                     return lv |= rv;
                  })
             .def("__and__",
                  [](PxFlags<enumtype, storagetype>& lv, PxFlags<enumtype, storagetype>& rv) {
@@ -63,11 +63,11 @@ void bindFlags(nb::module_& m, const char* name) {
                  })
             .def("__iand__",
                  [](PxFlags<enumtype, storagetype>& lv, PxFlags<enumtype, storagetype>& rv) {
-                     lv &= rv;
+                     return lv &= rv;
                  })
             .def("__iand__",
                  [](PxFlags<enumtype, storagetype>& lv, enumtype& rv) {
-                     lv &= rv;
+                     return lv &= rv;
                  })
             .def("__xor__",
                  [](PxFlags<enumtype, storagetype>& lv, PxFlags<enumtype, storagetype>& rv) {
@@ -79,11 +79,11 @@ void bindFlags(nb::module_& m, const char* name) {
                  })
             .def("__ixor__",
                  [](PxFlags<enumtype, storagetype>& lv, PxFlags<enumtype, storagetype>& rv) {
-                     lv ^= rv;
+                     return lv ^= rv;
                  })
             .def("__ixor__",
                  [](PxFlags<enumtype, storagetype>& lv, enumtype& rv) {
-                     lv ^= rv;
+                     return lv ^= rv;
                  })
             .def("__invert__",
                  [](PxFlags<enumtype, storagetype>& lv) {
