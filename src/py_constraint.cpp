@@ -29,15 +29,25 @@ void bindConstraint(nb::module_& m) {
 
     nb::class_<PxConstraint>(m, "PxConstraint")
             .def("write", &PxConstraint::release)
-            .def("getScene", &PxConstraint::getScene)
-            .def("setActors", &PxConstraint::setActors)
+            .def("getScene", &PxConstraint::getScene, nb::rv_policy::reference)
+            .def("setActors", &PxConstraint::setActors, "actor0"_a, "actor1"_a)
             .def("markDirty", &PxConstraint::markDirty)
-            .def("setFlag", &PxConstraint::setFlag)
+            .def("setFlag", &PxConstraint::setFlag, "flag"_a, "value"_a)
             .def_prop_rw("flags", &PxConstraint::getFlags, &PxConstraint::setFlags)
-            .def("getForce", &PxConstraint::getForce)
+            .def("getForce",
+                 [](PxConstraint* constraint) {
+                     std::tuple<PxVec3, PxVec3> result;
+                     constraint->getForce(std::get<0>(result), std::get<1>(result));
+                     return result;
+                 })
             .def("isValid", &PxConstraint::isValid)
-            .def("setBreakForce", &PxConstraint::setBreakForce)
-            .def("getBreakForce", &PxConstraint::getBreakForce)
+            .def("setBreakForce", &PxConstraint::setBreakForce, "linear"_a, "angular"_a)
+            .def("getBreakForce",
+                 [](PxConstraint* constraint) {
+                     std::tuple<PxReal, PxReal> result;
+                     constraint->getBreakForce(std::get<0>(result), std::get<1>(result));
+                     return result;
+                 })
             .def_prop_rw("minResponseThreshold", &PxConstraint::getMinResponseThreshold,
                          &PxConstraint::setMinResponseThreshold);
 }
