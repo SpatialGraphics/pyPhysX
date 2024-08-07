@@ -31,7 +31,7 @@ void bindTriangleMesh(nb::module_& m) {
             .def("getTriangleMaterialIndex", &PxTriangleMesh::getTriangleMaterialIndex)
             .def("getLocalBounds", &PxTriangleMesh::getLocalBounds)
             .def("getSDFDimensions", &PxTriangleMesh::getSDFDimensions)
-            .def("setPreferSDFProjection", &PxTriangleMesh::setPreferSDFProjection)
-            .def("getPreferSDFProjection", &PxTriangleMesh::getPreferSDFProjection)
+            .def_prop_rw("preferSDFProjection", &PxTriangleMesh::getPreferSDFProjection,
+                         &PxTriangleMesh::setPreferSDFProjection)
             .def("getMassInformation", &PxTriangleMesh::getMassInformation);
 }

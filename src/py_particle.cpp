@@ -52,56 +52,50 @@ void bindParticle(nb::module_& m) {
     nb::class_<PxPBDParticleSystem, PxActor>(m, "PxPBDParticleSystem")
             .def("setSolverIterationCounts", &PxPBDParticleSystem::setSolverIterationCounts)
             .def("getSolverIterationCounts", &PxPBDParticleSystem::getSolverIterationCounts)
-            .def("getSimulationFilterData", &PxPBDParticleSystem::getSimulationFilterData)
-            .def("setSimulationFilterData", &PxPBDParticleSystem::setSimulationFilterData)
+            .def_prop_rw("simulationFilterData", &PxPBDParticleSystem::getSimulationFilterData,
+                         &PxPBDParticleSystem::setSimulationFilterData)
             .def("setParticleFlag", &PxPBDParticleSystem::setParticleFlag)
-            .def("setParticleFlags", &PxPBDParticleSystem::setParticleFlags)
-            .def("getParticleFlags", &PxPBDParticleSystem::getParticleFlags)
-            .def("setMaxDepenetrationVelocity", &PxPBDParticleSystem::setMaxDepenetrationVelocity)
-            .def("getMaxDepenetrationVelocity", &PxPBDParticleSystem::getMaxDepenetrationVelocity)
-            .def("setMaxVelocity", &PxPBDParticleSystem::setMaxVelocity)
-            .def("getMaxVelocity", &PxPBDParticleSystem::getMaxVelocity)
+            .def_prop_rw("particleFlags", &PxPBDParticleSystem::getParticleFlags,
+                         &PxPBDParticleSystem::setParticleFlags)
+            .def_prop_rw("maxDepenetrationVelocity", &PxPBDParticleSystem::getMaxDepenetrationVelocity,
+                         &PxPBDParticleSystem::setMaxDepenetrationVelocity)
+            .def_prop_rw("maxVelocity", &PxPBDParticleSystem::getMaxVelocity, &PxPBDParticleSystem::setMaxVelocity)
 #ifdef SUPPORT_CUDA
             .def("getCudaContextManager", &PxPBDParticleSystem::getCudaContextManager)
 #endif
-            .def("setRestOffset", &PxPBDParticleSystem::setRestOffset)
-            .def("getRestOffset", &PxPBDParticleSystem::getRestOffset)
-            .def("setContactOffset", &PxPBDParticleSystem::setContactOffset)
-            .def("getContactOffset", &PxPBDParticleSystem::getContactOffset)
-            .def("setParticleContactOffset", &PxPBDParticleSystem::setParticleContactOffset)
-            .def("getParticleContactOffset", &PxPBDParticleSystem::getParticleContactOffset)
-            .def("setSolidRestOffset", &PxPBDParticleSystem::setSolidRestOffset)
-            .def("getSolidRestOffset", &PxPBDParticleSystem::getSolidRestOffset)
+            .def_prop_rw("restOffset", &PxPBDParticleSystem::getRestOffset, &PxPBDParticleSystem::setRestOffset)
+            .def_prop_rw("contactOffset", &PxPBDParticleSystem::getContactOffset,
+                         &PxPBDParticleSystem::setContactOffset)
+            .def_prop_rw("particleContactOffset", &PxPBDParticleSystem::getParticleContactOffset,
+                         &PxPBDParticleSystem::setParticleContactOffset)
+            .def_prop_rw("solidRestOffset", &PxPBDParticleSystem::getSolidRestOffset,
+                         &PxPBDParticleSystem::setSolidRestOffset)
             .def("addRigidAttachment", &PxPBDParticleSystem::addRigidAttachment)
             .def("removeRigidAttachment", &PxPBDParticleSystem::removeRigidAttachment)
             .def("enableCCD", &PxPBDParticleSystem::enableCCD)
             .def("setParticleLockFlag", &PxPBDParticleSystem::setParticleLockFlag)
-            .def("setParticleLockFlags", &PxPBDParticleSystem::setParticleLockFlags)
-            .def("getParticleLockFlags", &PxPBDParticleSystem::getParticleLockFlags)
+            .def_prop_rw("particleLockFlags", &PxPBDParticleSystem::getParticleLockFlags,
+                         &PxPBDParticleSystem::setParticleLockFlags)
             .def("createPhase", &PxPBDParticleSystem::createPhase)
             .def("getNbParticleMaterials", &PxPBDParticleSystem::getNbParticleMaterials)
             .def("addParticleBuffer", &PxPBDParticleSystem::addParticleBuffer)
             .def("removeParticleBuffer", &PxPBDParticleSystem::removeParticleBuffer)
             .def("getGpuParticleSystemIndex", &PxPBDParticleSystem::getGpuParticleSystemIndex)
-            .def("setWind", &PxPBDParticleSystem::setWind)
-            .def("getWind", &PxPBDParticleSystem::getWind)
-            .def("setFluidBoundaryDensityScale", &PxPBDParticleSystem::setFluidBoundaryDensityScale)
-            .def("getFluidBoundaryDensityScale", &PxPBDParticleSystem::getFluidBoundaryDensityScale)
-            .def("setFluidRestOffset", &PxPBDParticleSystem::setFluidRestOffset)
-            .def("getFluidRestOffset", &PxPBDParticleSystem::getFluidRestOffset)
-            .def("setGridSizeX", &PxPBDParticleSystem::setGridSizeX)
-            .def("getGridSizeX", &PxPBDParticleSystem::getGridSizeX)
-            .def("setGridSizeY", &PxPBDParticleSystem::setGridSizeY)
-            .def("getGridSizeY", &PxPBDParticleSystem::getGridSizeY)
-            .def("setGridSizeZ", &PxPBDParticleSystem::setGridSizeZ)
-            .def("getGridSizeZ", &PxPBDParticleSystem::getGridSizeZ);
+            .def_prop_rw("wind", &PxPBDParticleSystem::getWind, &PxPBDParticleSystem::setWind)
+            .def_prop_rw("fluidBoundaryDensityScale", &PxPBDParticleSystem::getFluidBoundaryDensityScale,
+                         &PxPBDParticleSystem::setFluidBoundaryDensityScale)
+            .def_prop_rw("fluidRestOffset", &PxPBDParticleSystem::getFluidRestOffset,
+                         &PxPBDParticleSystem::setFluidRestOffset)
+            .def_prop_rw("gridSizeX", &PxPBDParticleSystem::getGridSizeX, &PxPBDParticleSystem::setGridSizeX)
+            .def_prop_rw("gridSizeY", &PxPBDParticleSystem::getGridSizeY, &PxPBDParticleSystem::setGridSizeY)
+            .def_prop_rw("gridSizeZ", &PxPBDParticleSystem::getGridSizeZ, &PxPBDParticleSystem::setGridSizeZ);
 
     nb::class_<PxParticleBuffer>(m, "PxParticleBuffer")
-            .def("setNbActiveParticles", &PxParticleBuffer::setNbActiveParticles)
-            .def("getNbActiveParticles", &PxParticleBuffer::getNbActiveParticles)
+            .def_prop_rw("nbActiveParticles", &PxParticleBuffer::getNbActiveParticles,
+                         &PxParticleBuffer::setNbActiveParticles)
+            .def_prop_rw("nbParticleVolumes", &PxParticleBuffer::getNbParticleVolumes,
+                         &PxParticleBuffer::setNbParticleVolumes)
             .def("getMaxParticles", &PxParticleBuffer::getMaxParticles)
-            .def("getNbParticleVolumes", &PxParticleBuffer::getNbParticleVolumes)
-            .def("setNbParticleVolumes", &PxParticleBuffer::setNbParticleVolumes)
             .def("getMaxParticleVolumes", &PxParticleBuffer::getMaxParticleVolumes)
             .def("getFlatListStartIndex", &PxParticleBuffer::getFlatListStartIndex)
             .def("raiseFlags", &PxParticleBuffer::raiseFlags)
@@ -123,14 +117,12 @@ void bindParticle(nb::module_& m) {
     nb::class_<PxParticleAndDiffuseBuffer, PxParticleBuffer>(m, "PxParticleAndDiffuseBuffer")
             .def("setMaxActiveDiffuseParticles", &PxParticleAndDiffuseBuffer::setMaxActiveDiffuseParticles)
             .def("getMaxDiffuseParticles", &PxParticleAndDiffuseBuffer::getMaxDiffuseParticles)
-            .def("setDiffuseParticleParams", &PxParticleAndDiffuseBuffer::setDiffuseParticleParams)
-            .def("getDiffuseParticleParams", &PxParticleAndDiffuseBuffer::getDiffuseParticleParams);
+            .def_prop_rw("diffuseParticleParams", &PxParticleAndDiffuseBuffer::getDiffuseParticleParams,
+                         &PxParticleAndDiffuseBuffer::setDiffuseParticleParams);
 
     nb::class_<PxParticleClothBuffer, PxParticleBuffer>(m, "PxParticleClothBuffer")
-            .def("setNbTriangles", &PxParticleClothBuffer::setNbTriangles)
-            .def("getNbTriangles", &PxParticleClothBuffer::getNbTriangles)
+            .def_prop_rw("nbTriangles", &PxParticleClothBuffer::getNbTriangles, &PxParticleClothBuffer::setNbTriangles)
             .def("getNbSprings", &PxParticleClothBuffer::getNbSprings);
     nb::class_<PxParticleRigidBuffer, PxParticleBuffer>(m, "PxParticleRigidBuffer")
-            .def("setNbRigids", &PxParticleRigidBuffer::setNbRigids)
-            .def("getNbRigids", &PxParticleRigidBuffer::getNbRigids);
+            .def_prop_rw("nbRigids", &PxParticleRigidBuffer::getNbRigids, &PxParticleRigidBuffer::setNbRigids);
 }

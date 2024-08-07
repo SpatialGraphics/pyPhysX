@@ -33,12 +33,11 @@ void bindConstraint(nb::module_& m) {
             .def("setActors", &PxConstraint::setActors)
             .def("markDirty", &PxConstraint::markDirty)
             .def("setFlag", &PxConstraint::setFlag)
-            .def("setFlags", &PxConstraint::setFlags)
-            .def("getFlags", &PxConstraint::getFlags)
+            .def_prop_rw("flags", &PxConstraint::getFlags, &PxConstraint::setFlags)
             .def("getForce", &PxConstraint::getForce)
             .def("isValid", &PxConstraint::isValid)
             .def("setBreakForce", &PxConstraint::setBreakForce)
             .def("getBreakForce", &PxConstraint::getBreakForce)
-            .def("setMinResponseThreshold", &PxConstraint::setMinResponseThreshold)
-            .def("getMinResponseThreshold", &PxConstraint::getMinResponseThreshold);
+            .def_prop_rw("minResponseThreshold", &PxConstraint::getMinResponseThreshold,
+                         &PxConstraint::setMinResponseThreshold);
 }

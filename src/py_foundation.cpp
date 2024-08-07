@@ -29,8 +29,7 @@ void bindFoundation(nb::module_& m) {
 
     nb::class_<PxFoundation>(m, "PxFoundation")
             .def("release", &PxFoundation::release)
-            .def("setErrorLevel", &PxFoundation::setErrorLevel)
-            .def("getErrorLevel", &PxFoundation::getErrorLevel)
-            .def("getReportAllocationNames", &PxFoundation::getReportAllocationNames)
-            .def("setReportAllocationNames", &PxFoundation::setReportAllocationNames);
+            .def_prop_rw("errorLevel", &PxFoundation::getErrorLevel, &PxFoundation::setErrorLevel)
+            .def_prop_rw("reportAllocationNames", &PxFoundation::getReportAllocationNames,
+                         &PxFoundation::setReportAllocationNames);
 }

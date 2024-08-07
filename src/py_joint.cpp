@@ -65,102 +65,87 @@ void bindJoint(nb::module_& m) {
             .def("getRelativeLinearVelocity", &PxJoint::getRelativeLinearVelocity)
             .def("getRelativeAngularVelocity", &PxJoint::getRelativeAngularVelocity)
             .def("setBreakForce", &PxJoint::setBreakForce)
-            .def("setConstraintFlags", &PxJoint::setConstraintFlags)
+            .def_prop_rw("constraintFlags", &PxJoint::getConstraintFlags, &PxJoint::setConstraintFlags)
             .def("setConstraintFlag", &PxJoint::setConstraintFlag)
-            .def("getConstraintFlags", &PxJoint::getConstraintFlags)
-            .def("setInvMassScale0", &PxJoint::setInvMassScale0)
-            .def("getInvMassScale0", &PxJoint::getInvMassScale0)
-            .def("setInvInertiaScale0", &PxJoint::setInvInertiaScale0)
-            .def("getInvInertiaScale0", &PxJoint::getInvInertiaScale0)
-            .def("setInvMassScale1", &PxJoint::setInvMassScale1)
-            .def("getInvMassScale1", &PxJoint::getInvMassScale1)
-            .def("setInvInertiaScale1", &PxJoint::setInvInertiaScale1)
-            .def("getInvInertiaScale1", &PxJoint::getInvInertiaScale1)
+            .def_prop_rw("invMassScale0", &PxJoint::getInvMassScale0, &PxJoint::setInvMassScale0)
+            .def_prop_rw("invInertiaScale0", &PxJoint::getInvInertiaScale0, &PxJoint::setInvInertiaScale0)
+            .def_prop_rw("invMassScale1", &PxJoint::getInvMassScale1, &PxJoint::setInvMassScale1)
+            .def_prop_rw("invInertiaScale1", &PxJoint::getInvInertiaScale1, &PxJoint::setInvInertiaScale1)
             .def("getConstraint", &PxJoint::getConstraint)
-            .def("setName", &PxJoint::setName)
-            .def("getName", &PxJoint::getName)
+            .def_prop_rw("name", &PxJoint::getName, &PxJoint::setName)
             .def("release", &PxJoint::release)
             .def("getScene", &PxJoint::getScene);
 
+    m.def("PxFixedJointCreate", &PxFixedJointCreate);
     nb::class_<PxFixedJoint, PxJoint> pxFixedJoint(m, "PxFixedJoint");
 
+    m.def("PxPrismaticJointCreate", &PxPrismaticJointCreate);
     nb::class_<PxPrismaticJoint, PxJoint>(m, "PxPrismaticJoint")
             .def("getPosition", &PxPrismaticJoint::getPosition)
             .def("getVelocity", &PxPrismaticJoint::getVelocity)
-            .def("setLimit", &PxPrismaticJoint::setLimit)
-            .def("getLimit", &PxPrismaticJoint::getLimit)
-            .def("setPrismaticJointFlags", &PxPrismaticJoint::setPrismaticJointFlags)
-            .def("setPrismaticJointFlag", &PxPrismaticJoint::setPrismaticJointFlag)
-            .def("getPrismaticJointFlags", &PxPrismaticJoint::getPrismaticJointFlags);
+            .def_prop_rw("limit", &PxPrismaticJoint::getLimit, &PxPrismaticJoint::setLimit)
+            .def_prop_rw("prismaticJointFlags", &PxPrismaticJoint::getPrismaticJointFlags,
+                         &PxPrismaticJoint::setPrismaticJointFlags)
+            .def("setPrismaticJointFlag", &PxPrismaticJoint::setPrismaticJointFlag);
 
+    m.def("PxDistanceJointCreate", &PxDistanceJointCreate);
     nb::class_<PxDistanceJoint, PxJoint>(m, "PxDistanceJoint")
             .def("getDistance", &PxDistanceJoint::getDistance)
-            .def("setMinDistance", &PxDistanceJoint::setMinDistance)
-            .def("getMinDistance", &PxDistanceJoint::getMinDistance)
-            .def("setMaxDistance", &PxDistanceJoint::setMaxDistance)
-            .def("getMaxDistance", &PxDistanceJoint::getMaxDistance)
-            .def("setTolerance", &PxDistanceJoint::setTolerance)
-            .def("getTolerance", &PxDistanceJoint::getTolerance)
-            .def("setStiffness", &PxDistanceJoint::setStiffness)
-            .def("getStiffness", &PxDistanceJoint::getStiffness)
-            .def("setDamping", &PxDistanceJoint::setDamping)
-            .def("getDamping", &PxDistanceJoint::getDamping)
-            .def("setDistanceJointFlags", &PxDistanceJoint::setDistanceJointFlags)
-            .def("setDistanceJointFlag", &PxDistanceJoint::setDistanceJointFlag)
-            .def("getDistanceJointFlags", &PxDistanceJoint::getDistanceJointFlags);
+            .def_prop_rw("minDistance", &PxDistanceJoint::getMinDistance, &PxDistanceJoint::setMinDistance)
+            .def_prop_rw("maxDistance", &PxDistanceJoint::getMaxDistance, &PxDistanceJoint::setMaxDistance)
+            .def_prop_rw("tolerance", &PxDistanceJoint::getTolerance, &PxDistanceJoint::setTolerance)
+            .def_prop_rw("stiffness", &PxDistanceJoint::getStiffness, &PxDistanceJoint::setStiffness)
+            .def_prop_rw("damping", &PxDistanceJoint::getDamping, &PxDistanceJoint::setDamping)
+            .def_prop_rw("setDistanceJointFlags", &PxDistanceJoint::getDistanceJointFlags,
+                         &PxDistanceJoint::setDistanceJointFlags)
+            .def("setDistanceJointFlag", &PxDistanceJoint::setDistanceJointFlag);
 
+    m.def("PxGearJointCreate", &PxGearJointCreate);
     nb::class_<PxGearJoint, PxJoint>(m, "PxGearJoint")
             //            .def("setHinges", &PxGearJoint::setHinges)
-            .def("setGearRatio", &PxGearJoint::setGearRatio)
-            .def("getGearRatio", &PxGearJoint::getGearRatio);
+            .def_prop_rw("gearRatio", &PxGearJoint::getGearRatio, &PxGearJoint::setGearRatio);
 
+    m.def("PxRackAndPinionJointCreate", &PxRackAndPinionJointCreate);
     nb::class_<PxRackAndPinionJoint, PxJoint>(m, "PxRackAndPinionJoint")
             //            .def("setJoints", &PxRackAndPinionJoint::setJoints)
-            .def("setRatio", &PxRackAndPinionJoint::setRatio)
-            .def("getRatio", &PxRackAndPinionJoint::getRatio)
+            .def_prop_rw("ratio", &PxRackAndPinionJoint::getRatio, &PxRackAndPinionJoint::setRatio)
             .def("setData", &PxRackAndPinionJoint::setData);
 
+    m.def("PxRevoluteJointCreate", &PxRevoluteJointCreate);
     nb::class_<PxRevoluteJoint, PxJoint>(m, "PxRevoluteJoint")
             .def("getAngle", &PxRevoluteJoint::getAngle)
             .def("getVelocity", &PxRevoluteJoint::getVelocity)
-            .def("setLimit", &PxRevoluteJoint::setLimit)
-            .def("getLimit", &PxRevoluteJoint::getLimit)
-            .def("setDriveVelocity", &PxRevoluteJoint::setDriveVelocity)
-            .def("getDriveVelocity", &PxRevoluteJoint::getDriveVelocity)
-            .def("setDriveForceLimit", &PxRevoluteJoint::setDriveForceLimit)
-            .def("getDriveForceLimit", &PxRevoluteJoint::getDriveForceLimit)
-            .def("setDriveGearRatio", &PxRevoluteJoint::setDriveGearRatio)
-            .def("getDriveGearRatio", &PxRevoluteJoint::getDriveGearRatio)
-            .def("setRevoluteJointFlags", &PxRevoluteJoint::setRevoluteJointFlags)
-            .def("setRevoluteJointFlag", &PxRevoluteJoint::setRevoluteJointFlag)
-            .def("getRevoluteJointFlags", &PxRevoluteJoint::getRevoluteJointFlags);
+            .def_prop_rw("limit", &PxRevoluteJoint::getLimit, &PxRevoluteJoint::setLimit)
+            .def_prop_rw("driveVelocity", &PxRevoluteJoint::getDriveVelocity, &PxRevoluteJoint::setDriveVelocity)
+            .def_prop_rw("driveForceLimit", &PxRevoluteJoint::getDriveForceLimit, &PxRevoluteJoint::setDriveForceLimit)
+            .def_prop_rw("driveGearRatio", &PxRevoluteJoint::getDriveGearRatio, &PxRevoluteJoint::setDriveGearRatio)
+            .def_prop_rw("revoluteJointFlags", &PxRevoluteJoint::getRevoluteJointFlags,
+                         &PxRevoluteJoint::setRevoluteJointFlags)
+            .def("setRevoluteJointFlag", &PxRevoluteJoint::setRevoluteJointFlag);
 
+    m.def("PxSphericalJointCreate", &PxSphericalJointCreate);
     nb::class_<PxSphericalJoint, PxJoint>(m, "PxSphericalJoint")
-            .def("getLimitCone", &PxSphericalJoint::getLimitCone)
-            .def("setLimitCone", &PxSphericalJoint::setLimitCone)
+            .def_prop_rw("limitCone", &PxSphericalJoint::getLimitCone, &PxSphericalJoint::setLimitCone)
             .def("getSwingYAngle", &PxSphericalJoint::getSwingYAngle)
             .def("getSwingZAngle", &PxSphericalJoint::getSwingZAngle)
-            .def("setSphericalJointFlags", &PxSphericalJoint::setSphericalJointFlags)
-            .def("setSphericalJointFlag", &PxSphericalJoint::setSphericalJointFlag)
-            .def("getSphericalJointFlags", &PxSphericalJoint::getSphericalJointFlags);
+            .def_prop_rw("sphericalJointFlags", &PxSphericalJoint::getSphericalJointFlags,
+                         &PxSphericalJoint::setSphericalJointFlags)
+            .def("setSphericalJointFlag", &PxSphericalJoint::setSphericalJointFlag);
 
+    m.def("PxD6JointCreate", &PxD6JointCreate);
     nb::class_<PxD6Joint, PxJoint>(m, "PxD6Joint")
             .def("setMotion", &PxD6Joint::setMotion)
             .def("getMotion", &PxD6Joint::getMotion)
             .def("getTwistAngle", &PxD6Joint::getTwistAngle)
             .def("getSwingYAngle", &PxD6Joint::getSwingYAngle)
             .def("getSwingZAngle", &PxD6Joint::getSwingZAngle)
-            .def("setDistanceLimit", &PxD6Joint::setDistanceLimit)
-            .def("getDistanceLimit", &PxD6Joint::getDistanceLimit)
+            .def_prop_rw("distanceLimit", &PxD6Joint::getDistanceLimit, &PxD6Joint::setDistanceLimit)
             .def("setLinearLimit",
                  nb::overload_cast<PxD6Axis::Enum, const PxJointLinearLimitPair&>(&PxD6Joint::setLinearLimit))
             .def("getLinearLimit", nb::overload_cast<PxD6Axis::Enum>(&PxD6Joint::getLinearLimit, nb::const_))
-            .def("setTwistLimit", &PxD6Joint::setTwistLimit)
-            .def("getTwistLimit", &PxD6Joint::getTwistLimit)
-            .def("setSwingLimit", &PxD6Joint::setSwingLimit)
-            .def("getSwingLimit", &PxD6Joint::getSwingLimit)
-            .def("setPyramidSwingLimit", &PxD6Joint::setPyramidSwingLimit)
-            .def("getPyramidSwingLimit", &PxD6Joint::getPyramidSwingLimit)
+            .def_prop_rw("twistLimit", &PxD6Joint::getTwistLimit, &PxD6Joint::setTwistLimit)
+            .def_prop_rw("swingLimit", &PxD6Joint::getSwingLimit, &PxD6Joint::setSwingLimit)
+            .def_prop_rw("pyramidSwingLimit", &PxD6Joint::getPyramidSwingLimit, &PxD6Joint::setPyramidSwingLimit)
             .def("setDrive", &PxD6Joint::setDrive)
             .def("getDrive", &PxD6Joint::getDrive)
             .def("setDrivePosition", &PxD6Joint::setDrivePosition)

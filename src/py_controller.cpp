@@ -108,21 +108,14 @@ void bindController(nb::module_& m) {
                     const PxControllerFilters& filters, const PxObstacleContext* obstacles) {
                      return controller->move(disp, minDist, elapsedTime, filters, obstacles).operator uint32_t();
                  })
-            .def("setPosition", &PxController::setPosition)
-            .def("getPosition", &PxController::getPosition)
-            .def("setFootPosition", &PxController::setFootPosition)
-            .def("getFootPosition", &PxController::getFootPosition)
+            .def_prop_rw("position", &PxController::getPosition, &PxController::setPosition)
+            .def_prop_rw("footPosition", &PxController::getFootPosition, &PxController::setFootPosition)
             .def("getActor", &PxController::getActor)
-            .def("setStepOffset", &PxController::setStepOffset)
-            .def("getStepOffset", &PxController::getStepOffset)
-            .def("setNonWalkableMode", &PxController::setNonWalkableMode)
-            .def("getNonWalkableMode", &PxController::getNonWalkableMode)
-            .def("getContactOffset", &PxController::getContactOffset)
-            .def("setContactOffset", &PxController::setContactOffset)
-            .def("getUpDirection", &PxController::getUpDirection)
-            .def("setUpDirection", &PxController::setUpDirection)
-            .def("getSlopeLimit", &PxController::getSlopeLimit)
-            .def("setSlopeLimit", &PxController::setSlopeLimit)
+            .def_prop_rw("stepOffset", &PxController::getStepOffset, &PxController::setStepOffset)
+            .def_prop_rw("nonWalkableMode", &PxController::getNonWalkableMode, &PxController::setNonWalkableMode)
+            .def_prop_rw("contactOffset", &PxController::getContactOffset, &PxController::setContactOffset)
+            .def_prop_rw("upDirection", &PxController::getUpDirection, &PxController::setUpDirection)
+            .def_prop_rw("slopeLimit", &PxController::getSlopeLimit, &PxController::setSlopeLimit)
             .def("invalidateCache", &PxController::invalidateCache)
             .def("getScene", &PxController::getScene, nb::rv_policy::reference)
             .def("getState", &PxController::getState)
@@ -130,20 +123,15 @@ void bindController(nb::module_& m) {
             .def("invalidateCache", &PxController::resize);
 
     nb::class_<PxCapsuleController, PxController>(m, "PxCapsuleController")
-            .def("getRadius", &PxCapsuleController::getRadius)
-            .def("setRadius", &PxCapsuleController::setRadius)
-            .def("getHeight", &PxCapsuleController::getHeight)
-            .def("setHeight", &PxCapsuleController::setHeight)
-            .def("getClimbingMode", &PxCapsuleController::getClimbingMode)
-            .def("setClimbingMode", &PxCapsuleController::setClimbingMode);
+            .def_prop_rw("radius", &PxCapsuleController::getRadius, &PxCapsuleController::setRadius)
+            .def_prop_rw("height", &PxCapsuleController::getHeight, &PxCapsuleController::setHeight)
+            .def_prop_rw("climbingMode", &PxCapsuleController::getClimbingMode, &PxCapsuleController::setClimbingMode);
 
     nb::class_<PxBoxController, PxController>(m, "PxBoxController")
-            .def("getHalfHeight", &PxBoxController::getHalfHeight)
-            .def("getHalfSideExtent", &PxBoxController::getHalfSideExtent)
-            .def("getHalfForwardExtent", &PxBoxController::getHalfForwardExtent)
-            .def("setHalfHeight", &PxBoxController::setHalfHeight)
-            .def("setHalfSideExtent", &PxBoxController::setHalfSideExtent)
-            .def("setHalfForwardExtent", &PxBoxController::setHalfForwardExtent);
+            .def_prop_rw("halfHeight", &PxBoxController::getHalfHeight, &PxBoxController::setHalfHeight)
+            .def_prop_rw("halfSideExtent", &PxBoxController::getHalfSideExtent, &PxBoxController::setHalfSideExtent)
+            .def_prop_rw("halfForwardExtent", &PxBoxController::getHalfForwardExtent,
+                         &PxBoxController::setHalfForwardExtent);
 
     nb::class_<PxControllerState>(m, "PxControllerState")
             .def_rw("deltaXP", &PxControllerState::deltaXP)
