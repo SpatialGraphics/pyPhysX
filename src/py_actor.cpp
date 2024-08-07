@@ -7,6 +7,7 @@
 #include <PxPhysicsAPI.h>
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/vector.h>
+#include <nanobind/stl/tuple.h>
 
 #include "py_utils.h"
 
@@ -75,8 +76,8 @@ void bindActor(nb::module_& m) {
             .def("release", &PxRigidActor::release)
             .def("getInternalActorIndex", &PxRigidActor::getInternalActorIndex)
             .def_prop_rw("globalPose", &PxRigidActor::getGlobalPose, &PxRigidActor::setGlobalPose)
-            .def("attachShape", &PxRigidActor::attachShape)
-            .def("detachShape", &PxRigidActor::detachShape)
+            .def("attachShape", &PxRigidActor::attachShape, "shape"_a)
+            .def("detachShape", &PxRigidActor::detachShape, "shape"_a, "wakeOnLostTouch"_a = true)
             .def("getNbShapes", &PxRigidActor::getNbShapes)
             .def("getNbConstraints", &PxRigidActor::getNbConstraints);
 
@@ -97,12 +98,13 @@ void bindActor(nb::module_& m) {
             .def_prop_rw("maxAngularVelocity", &PxRigidBody::getMaxAngularVelocity, &PxRigidBody::setMaxAngularVelocity)
             .def("getLinearAcceleration", &PxRigidBody::getLinearAcceleration)
             .def("getAngularAcceleration", &PxRigidBody::getAngularAcceleration)
-            .def("addForce", &PxRigidBody::addForce)
-            .def("addTorque", &PxRigidBody::addTorque)
-            .def("clearForce", &PxRigidBody::clearForce)
-            .def("clearTorque", &PxRigidBody::clearTorque)
-            .def("setForceAndTorque", &PxRigidBody::setForceAndTorque)
-            .def("setRigidBodyFlag", &PxRigidBody::setRigidBodyFlag)
+            .def("addForce", &PxRigidBody::addForce, "force"_a, "mode"_a = PxForceMode::eFORCE, "autowake"_a = true)
+            .def("addTorque", &PxRigidBody::addTorque, "torque"_a, "mode"_a = PxForceMode::eFORCE, "autowake"_a = true)
+            .def("clearForce", &PxRigidBody::clearForce, "mode"_a = PxForceMode::eFORCE)
+            .def("clearTorque", &PxRigidBody::clearTorque, "mode"_a = PxForceMode::eFORCE)
+            .def("setForceAndTorque", &PxRigidBody::setForceAndTorque, "force"_a, "torque"_a,
+                 "mode"_a = PxForceMode::eFORCE)
+            .def("setRigidBodyFlag", &PxRigidBody::setRigidBodyFlag, "flag"_a, "value"_a)
             .def_prop_rw("rigidBodyFlags", &PxRigidBody::getRigidBodyFlags, &PxRigidBody::setRigidBodyFlags)
             .def_prop_rw("minCCDAdvanceCoefficient", &PxRigidBody::getMinCCDAdvanceCoefficient,
                          &PxRigidBody::setMinCCDAdvanceCoefficient)
@@ -113,8 +115,8 @@ void bindActor(nb::module_& m) {
                          &PxRigidBody::setContactSlopCoefficient);
 
     nb::class_<PxRigidDynamic, PxRigidBody>(m, "PxRigidDynamic")
-            .def("setKinematicTarget", &PxRigidDynamic::setKinematicTarget)
-            .def("getKinematicTarget", &PxRigidDynamic::getKinematicTarget)
+            .def("setKinematicTarget", &PxRigidDynamic::setKinematicTarget, "destination"_a)
+            .def("getKinematicTarget", &PxRigidDynamic::getKinematicTarget, "target"_a)
             .def("isSleeping", &PxRigidDynamic::isSleeping)
             .def_prop_rw("sleepThreshold", &PxRigidDynamic::getSleepThreshold, &PxRigidDynamic::setSleepThreshold)
             .def_prop_rw("stabilizationThreshold", &PxRigidDynamic::getStabilizationThreshold,
@@ -124,11 +126,17 @@ void bindActor(nb::module_& m) {
             .def("putToSleep", &PxRigidDynamic::putToSleep)
             .def_prop_rw("rigidDynamicLockFlags", &PxRigidDynamic::getRigidDynamicLockFlags,
                          &PxRigidDynamic::setRigidDynamicLockFlags)
-            .def("setRigidDynamicLockFlag", &PxRigidDynamic::setRigidDynamicLockFlag)
+            .def("setRigidDynamicLockFlag", &PxRigidDynamic::setRigidDynamicLockFlag, "flag"_a, "value"_a)
             .def_prop_rw("linearVelocity", &PxRigidDynamic::getLinearVelocity, &PxRigidDynamic::setLinearVelocity)
             .def_prop_rw("angularVelocity", &PxRigidDynamic::getAngularVelocity, &PxRigidDynamic::setAngularVelocity)
-            .def("getSolverIterationCounts", &PxRigidDynamic::getSolverIterationCounts)
-            .def("setSolverIterationCounts", &PxRigidDynamic::setSolverIterationCounts)
+            .def("getSolverIterationCounts",
+                 [](PxRigidDynamic* body) {
+                     std::tuple<PxU32, PxU32> result;
+                     body->getSolverIterationCounts(std::get<0>(result), std::get<1>(result));
+                     return result;
+                 })
+            .def("setSolverIterationCounts", &PxRigidDynamic::setSolverIterationCounts, "minPositionIters"_a,
+                 "minVelocityIters"_a = 1)
             .def_prop_rw("contactReportThreshold", &PxRigidDynamic::getContactReportThreshold,
                          &PxRigidDynamic::setContactReportThreshold)
             .def("getGPUIndex", &PxRigidDynamic::getGPUIndex);
@@ -146,7 +154,7 @@ void bindActor(nb::module_& m) {
 
     //==================================================================================================================
     nb::class_<PxSoftBody, PxActor>(m, "PxSoftBody")
-            .def("setSoftBodyFlag", &PxSoftBody::setSoftBodyFlag)
+            .def("setSoftBodyFlag", &PxSoftBody::setSoftBodyFlag, "flag"_a, "val"_a)
             .def_prop_rw("softBodyFlags", &PxSoftBody::getSoftBodyFlag, &PxSoftBody::setSoftBodyFlags)
             .def_prop_rw("parameter", &PxSoftBody::getParameter, &PxSoftBody::setParameter)
             .def("getPositionInvMassBufferD", &PxSoftBody::getPositionInvMassBufferD)
@@ -154,49 +162,67 @@ void bindActor(nb::module_& m) {
             .def("getSimPositionInvMassBufferD", &PxSoftBody::getSimPositionInvMassBufferD)
             .def("getSimVelocityBufferD", &PxSoftBody::getSimVelocityBufferD)
             .def("markDirty", &PxSoftBody::markDirty)
-            .def("setKinematicTargetBufferD",
-                 [](PxSoftBody* body, const std::vector<PxVec4>& positions, const PxSoftBodyFlags& flags) {
-                     return body->setKinematicTargetBufferD(positions.data(), flags);
-                 })
+            .def(
+                    "setKinematicTargetBufferD",
+                    [](PxSoftBody* body, const std::vector<PxVec4>& positions, const PxSoftBodyFlags& flags) {
+                        return body->setKinematicTargetBufferD(positions.data(), flags);
+                    },
+                    "positions"_a, "flags"_a)
 #ifdef SUPPORT_CUDA
             .def("getCudaContextManager", &PxSoftBody::getCudaContextManager)
 #endif
             .def_prop_rw("wakeCounter", &PxSoftBody::getWakeCounter, &PxSoftBody::setWakeCounter)
             .def("isSleeping", &PxSoftBody::isSleeping)
-            .def("setSolverIterationCounts", &PxSoftBody::setSolverIterationCounts)
-            .def("getSolverIterationCounts", &PxSoftBody::getSolverIterationCounts)
+            .def("setSolverIterationCounts", &PxSoftBody::setSolverIterationCounts, "minPositionIters"_a,
+                 "minVelocityIters"_a = 1)
+            .def("getSolverIterationCounts",
+                 [](PxSoftBody* body) {
+                     std::tuple<PxU32, PxU32> result;
+                     body->getSolverIterationCounts(std::get<0>(result), std::get<1>(result));
+                     return result;
+                 })
             .def("getShape", &PxSoftBody::getShape)
             .def("getCollisionMesh", nb::overload_cast<>(&PxSoftBody::getCollisionMesh, nb::const_))
             .def("getSimulationMesh", nb::overload_cast<>(&PxSoftBody::getSimulationMesh, nb::const_))
             .def("getSoftBodyAuxData", nb::overload_cast<>(&PxSoftBody::getSoftBodyAuxData, nb::const_))
-            .def("attachShape", &PxSoftBody::attachShape)
-            .def("attachSimulationMesh", &PxSoftBody::attachSimulationMesh)
+            .def("attachShape", &PxSoftBody::attachShape, "shape"_a)
+            .def("attachSimulationMesh", &PxSoftBody::attachSimulationMesh, "simulationMesh"_a, "softBodyAuxData"_a)
             .def("detachShape", &PxSoftBody::detachShape)
             .def("detachSimulationMesh", &PxSoftBody::detachSimulationMesh)
             .def("release", &PxSoftBody::release)
-            .def("addParticleFilter", &PxSoftBody::addParticleFilter)
-            .def("removeParticleFilter", &PxSoftBody::removeParticleFilter)
-            .def("addParticleAttachment", &PxSoftBody::addParticleAttachment)
-            .def("removeParticleAttachment", &PxSoftBody::removeParticleAttachment)
-            .def("addRigidFilter", &PxSoftBody::addRigidFilter)
-            .def("removeRigidFilter", &PxSoftBody::removeRigidFilter)
-            .def("addRigidAttachment", &PxSoftBody::addRigidAttachment)
-            .def("removeRigidAttachment", &PxSoftBody::removeRigidAttachment)
-            .def("addTetRigidFilter", &PxSoftBody::addTetRigidFilter)
-            .def("removeTetRigidFilter", &PxSoftBody::removeTetRigidFilter)
-            .def("addTetRigidAttachment", &PxSoftBody::addTetRigidAttachment)
-            .def("addSoftBodyFilter", &PxSoftBody::addSoftBodyFilter)
-            .def("removeSoftBodyFilter", &PxSoftBody::removeSoftBodyFilter)
-            .def("addSoftBodyFilters", &PxSoftBody::addSoftBodyFilters)
-            .def("removeSoftBodyFilters", &PxSoftBody::removeSoftBodyFilters)
-            .def("addSoftBodyAttachment", &PxSoftBody::addSoftBodyAttachment)
-            .def("removeSoftBodyAttachment", &PxSoftBody::removeSoftBodyAttachment)
+            .def("addParticleFilter", &PxSoftBody::addParticleFilter, "particlesystem"_a, "buffer"_a, "particleId"_a,
+                 "tetId"_a)
+            .def("removeParticleFilter", &PxSoftBody::removeParticleFilter, "particlesystem"_a, "buffer"_a,
+                 "particleId"_a, "tetId"_a)
+            .def("addParticleAttachment", &PxSoftBody::addParticleAttachment, "particlesystem"_a, "buffer"_a,
+                 "particleId"_a, "tetId"_a, "barycentric"_a)
+            .def("removeParticleAttachment", &PxSoftBody::removeParticleAttachment, "particlesystem"_a, "handle"_a)
+            .def("addRigidFilter", &PxSoftBody::addRigidFilter, "actor"_a, "vertId"_a)
+            .def("removeRigidFilter", &PxSoftBody::removeRigidFilter, "actor"_a, "vertId"_a)
+            .def("addRigidAttachment", &PxSoftBody::addRigidAttachment, "actor"_a, "vertId"_a, "actorSpacePose"_a,
+                 "constraint"_a.none())
+            .def("removeRigidAttachment", &PxSoftBody::removeRigidAttachment, "actor"_a, "handle"_a)
+            .def("addTetRigidFilter", &PxSoftBody::addTetRigidFilter, "actor"_a, "tetIdx"_a)
+            .def("removeTetRigidFilter", &PxSoftBody::removeTetRigidFilter, "actor"_a, "tetIdx"_a)
+            .def("addTetRigidAttachment", &PxSoftBody::addTetRigidAttachment, "actor"_a, "tetIdx"_a, "barycentric"_a,
+                 "actorSpacePose"_a, "constraint"_a.none())
+            .def("addSoftBodyFilter", &PxSoftBody::addSoftBodyFilter, "otherSoftBody"_a, "otherTetIdx"_a, "tetIdx1"_a)
+            .def("removeSoftBodyFilter", &PxSoftBody::removeSoftBodyFilter, "otherSoftBody"_a, "otherTetIdx"_a,
+                 "tetIdx1"_a)
+            .def("addSoftBodyFilters", &PxSoftBody::addSoftBodyFilters, "otherSoftBody"_a, "otherTetIndices"_a,
+                 "tetIndices"_a, "tetIndicesSize"_a)
+            .def("removeSoftBodyFilters", &PxSoftBody::removeSoftBodyFilters, "otherSoftBody"_a, "otherTetIndices"_a,
+                 "tetIndices"_a, "tetIndicesSize"_a)
+            .def("addSoftBodyAttachment", &PxSoftBody::addSoftBodyAttachment, "softbody0"_a, "tetIdx0"_a,
+                 "tetBarycentric0"_a, "tetIdx1"_a, "tetBarycentric1"_a, "constraint"_a.none(),
+                 "constraintOffset"_a = 0.0f)
+            .def("removeSoftBodyAttachment", &PxSoftBody::removeSoftBodyAttachment, "softbody0"_a, "handle"_a)
             //            .def("addClothFilter", &PxSoftBody::addClothFilter)
             //            .def("removeClothFilter", &PxSoftBody::removeClothFilter)
             //            .def("addVertClothFilter", &PxSoftBody::addVertClothFilter)
             //            .def("removeVertClothFilter", &PxSoftBody::removeVertClothFilter)
             //            .def("addClothAttachment", &PxSoftBody::addClothAttachment)
             //            .def("removeClothAttachment", &PxSoftBody::removeClothAttachment)
-            .def("getWorldBounds", &PxSoftBody::getWorldBounds)
+            .def("getWorldBounds", &PxSoftBody::getWorldBounds, "inflation"_a = 1.01f)
             .def("getGpuSoftBodyIndex", &PxSoftBody::getGpuSoftBodyIndex);
 }
