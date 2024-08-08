@@ -51,11 +51,10 @@ void bindFoundation(nb::module_& m) {
             .def(nb::init<const std::function<void(PxErrorCode::Enum, const char*, const char*, int)>&>());
 
     static PxDefaultAllocator gDefaultAllocatorCallback;
-    static PxDefaultErrorCallback defaultErrorCallback; // todo
     m.def(
             "PxCreateFoundation",
             [](ErrorCallback& callback) {
-                return PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, defaultErrorCallback);
+                return PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, callback);
             },
             "callback"_a, nb::rv_policy::reference);
 }

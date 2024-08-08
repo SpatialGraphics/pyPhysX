@@ -4,18 +4,20 @@
 #  personal capacity and am not conveying any rights to any intellectual
 #  property of any third parties.
 
+from pyPhysX import utils as physx_utils
 import pyPhysX as physx
 from utils import PhysxSceneConfig
 
-physx.enable_gpu()
+physx_utils.enable_gpu()
 
 
 def main():
     def error_callback(code: physx.PxErrorCode, message: str, file: str, line: int):
         print(message)
 
-    foundation = physx.PxCreateFoundation(physx.ErrorCallback(error_callback))
-    engine = physx.PxCreatePhysics(foundation, physx.PxTolerancesScale())
+    callback = physx.ErrorCallback(error_callback)
+    foundation = physx.PxCreateFoundation(callback)
+    engine = physx.PxCreatePhysics(foundation, physx.PxTolerancesScale(0.1, 0.2))
     physx.PxInitExtensions(engine)
 
     scene_config = PhysxSceneConfig()
@@ -45,6 +47,7 @@ def main():
     gpu = physx.findDevice("cuda")
     cuda_context_manager = physx.PxCreateCudaContextManager(foundation, gpu)
     scene_desc.cudaContextManager = cuda_context_manager
+    scene_desc.broadPhaseType = physx.PxBroadPhaseType.eGPU
     scene = engine.createScene(scene_desc)
 
 
