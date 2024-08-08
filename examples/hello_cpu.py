@@ -8,3 +8,4 @@ from utils import PhysicsEngineCPU
 
 if __name__ == '__main__':
     engine = PhysicsEngineCPU()
+    print(f"#softbody = {engine.scene.getNbSoftBodies()}")

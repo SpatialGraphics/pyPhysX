@@ -26,11 +26,11 @@ class PhysicsEngineCPU:
     def __init__(self):
         self.callback = physx.ErrorCallback(error_callback)
         self.foundation = physx.PxCreateFoundation(self.callback)
-        self.engine = physx.PxCreatePhysics(self.foundation, physx.PxTolerancesScale())
-        physx.PxInitExtensions(self.engine)
+        self.creator = physx.PxCreatePhysics(self.foundation, physx.PxTolerancesScale())
+        physx.PxInitExtensions(self.creator)
 
         scene_config = PhysxSceneConfig()
-        scene_desc = physx.PxSceneDesc(self.engine.getTolerancesScale())
+        scene_desc = physx.PxSceneDesc(self.creator.getTolerancesScale())
         scene_desc.gravity = scene_config.gravity
         scene_desc.setFilterShaderCPU()
         scene_desc.solverType = physx.PxSolverType.eTGS if scene_config.enableTGS else physx.PxSolverType.ePGS
@@ -48,10 +48,12 @@ class PhysicsEngineCPU:
         scene_desc.flags = scene_flags
         scene_desc.cpuDispatcher = physx.PxDefaultCpuDispatcherCreate(scene_config.cpuWorkers)
 
-        self.scene = self.engine.createScene(scene_desc)
+        self.scene = self.creator.createScene(scene_desc)
 
     def __del__(self):
         self.scene.release()
+        physx.PxCloseExtensions()
+        self.creator.release()
         self.foundation.release()
 
 
@@ -59,11 +61,11 @@ class PhysicsEngineGPU:
     def __init__(self):
         self.callback = physx.ErrorCallback(error_callback)
         self.foundation = physx.PxCreateFoundation(self.callback)
-        self.engine = physx.PxCreatePhysics(self.foundation, physx.PxTolerancesScale(0.1, 0.2))
-        physx.PxInitExtensions(self.engine)
+        self.creator = physx.PxCreatePhysics(self.foundation, physx.PxTolerancesScale(0.1, 0.2))
+        physx.PxInitExtensions(self.creator)
 
         scene_config = PhysxSceneConfig()
-        scene_desc = physx.PxSceneDesc(self.engine.getTolerancesScale())
+        scene_desc = physx.PxSceneDesc(self.creator.getTolerancesScale())
         scene_desc.gravity = scene_config.gravity
         scene_desc.setFilterShaderGPU()
         scene_desc.solverType = physx.PxSolverType.eTGS if scene_config.enableTGS else physx.PxSolverType.ePGS
@@ -90,8 +92,10 @@ class PhysicsEngineGPU:
         self.cuda_context_manager = physx.PxCreateCudaContextManager(self.foundation, self.gpu)
         scene_desc.cudaContextManager = self.cuda_context_manager
         scene_desc.broadPhaseType = physx.PxBroadPhaseType.eGPU
-        self.scene = self.engine.createScene(scene_desc)
+        self.scene = self.creator.createScene(scene_desc)
 
     def __del__(self):
         self.scene.release()
+        physx.PxCloseExtensions()
+        self.creator.release()
         self.foundation.release()

@@ -27,10 +27,13 @@ void bindPhysics(nb::module_& m) {
                  return PxCreatePhysics(PX_PHYSICS_VERSION, foundation, scale);
              },
              "foundation"_a, "scale"_a, nb::rv_policy::reference)
-            .def("PxInitExtensions", [](physx::PxPhysics& physics) {
-                return PxInitExtensions(physics, nullptr);
-            });
+            .def("PxInitExtensions",
+                 [](physx::PxPhysics& physics) {
+                     return PxInitExtensions(physics, nullptr);
+                 })
+            .def("PxCloseExtensions", &PxCloseExtensions);
     nb::class_<PxPhysics>(m, "PxPhysics")
+            .def("release", &PxPhysics::release)
             .def("getFoundation", &PxPhysics::getFoundation)
             .def("createAggregate", &PxPhysics::createAggregate, "maxActor"_a, "maxShape"_a, "filterHint"_a,
                  nb::rv_policy::reference)

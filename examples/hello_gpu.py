@@ -11,3 +11,4 @@ physx_utils.enable_gpu()
 
 if __name__ == '__main__':
     engine = PhysicsEngineGPU()
+    print(f"#softbody = {engine.scene.getNbSoftBodies()}")
