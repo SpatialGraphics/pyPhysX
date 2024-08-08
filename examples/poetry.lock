@@ -46,6 +46,17 @@ files = [
 ]
 
 [[package]]
+name = "types-usd"
+version = "24.5.1"
+description = "Unofficial python stubs for Pixar's Universal Scene Description (USD)"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types_usd-24.5.1-py2.py3-none-any.whl", hash = "sha256:1b3d22a3c5dede9e1f3d5567bd61bc2195a1d85c6b5ebc667d32862b30e8dab1"},
+    {file = "types_usd-24.5.1.tar.gz", hash = "sha256:407a8dc85b6fe2f98146298dd6d31ea153c4cceced67bf462a23281778497d47"},
+]
+
+[[package]]
 name = "usd-core"
 version = "24.8"
 description = "Pixar's Universal Scene Description"
@@ -78,4 +89,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "d04eab13f8f0042f1bd29a1e6a08d3a48e1a973968e2b2bf3a7e6c9b6a9bf777"
+content-hash = "1b4a67ef4441c5455de0544e83d4dfeacc76fa92a6fea6b066ef14342cdfe4da"

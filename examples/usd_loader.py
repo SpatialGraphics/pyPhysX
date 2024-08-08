@@ -4,10 +4,10 @@
 #  personal capacity and am not conveying any rights to any intellectual
 #  property of any third parties.
 
-from pyPhysX import utils as physx_utils
-from utils import PhysicsEngineGPU
+import pyPhysX as physx
+from utils import PhysxSceneConfig
+import pxr
 
-physx_utils.enable_gpu()
 
-if __name__ == '__main__':
-    engine = PhysicsEngineGPU()
+def main():
+    a = pxr.UsdPhysics.MaterialAPI.GetDynamicFrictionAttr()
